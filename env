@@ -1,7 +1,0 @@
-APP=app
-APP_ENV=development
-APP_KEY=\xbdq\xf0\xd4\xb7k\xa6{\xb2\xdc\xf8\x18\\&\x1c\x1dG\xc5\xc7\r8\x8d\xcd\x08
-DB_URL=postgres://xzcgvsdxqoqnld:2576e1977274688d5080ca08795c9259fb893a7f2853eb99951e930fc6cddb8e@ec2-54-210-128-153.compute-1.amazonaws.com:5432/dcs462kvijj8ao
-MONGO_URL= 
-PORT=3001
-
