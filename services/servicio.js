@@ -132,3 +132,5 @@ class service{
         }
     }
 }
+
+module.exports = service;
