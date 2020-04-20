@@ -15,24 +15,17 @@ class GenericDB {
     }
 
     query(qr, cb) {
-        switch (DB_TYPE) {
-            case "postgres":
-                this.db.any(qr)
-                    .then(function (data) {
-                        console.log("UserConnection -> query() -> data: ", data);
-                        // success;
-                        cb(true, data);
-                    })
-                    .catch(function (error) {
-                        console.log("UserConnection -> error -> error: ", error);
-                        // error;
-                        cb(false, {});
-                    });
-                break;
-
-            default:
-                break;
-        }
+        this.db.any(qr)
+            .then(function (data) {
+                console.log("UserConnection -> query() -> data: ", data);
+                // success;
+                cb(true, data);
+            })
+            .catch(function (error) {
+                console.log("UserConnection -> error -> error: ", error);
+                // error;
+                cb(false, {});
+            });
     }
 
 

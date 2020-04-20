@@ -131,6 +131,76 @@ class service{
             cb(false, {}, 0);
         }
     }
+
+
+    getSpecific(filters, size, pag, orden, cb) {
+        try {
+            this.model.find(filters, function (err, docs) {
+                if (err) {
+                    cb(false,{}, 0);
+                } else {
+                    this.getcount2(filters, function (validar, n) {
+                        if(validar){
+                            cb(true, docs, n);
+                        }else{
+                            cb(false, {}, 0);
+                        }
+                    });
+                }
+            }).skip(size * (pag - 1)).limit(size).sort(orden);
+        } catch (error) {
+            cb(false, {}, 0);
+        }
+    }
+
+    getcount(filters, cb) {
+        try {
+            let filtro = {};
+            if (filters != "") {
+                filtro = {
+                    $or: []
+                };
+                let props = Object.keys(this.model.schema.paths);
+                props.forEach(element => {
+                    if (element != "_id" && element != "__v") {
+                        filtro["$or"].push({ element: { $regex: '.*' + filters + '.*' } });
+                    }
+                });
+            }
+
+            this.model.count(filtro, (err, n) => {
+                if (err) {
+                    console.log("error: ", err);
+                    cb(false,0);
+                } else {
+                    cb(true,n);
+
+                }
+            });
+
+        } catch (error) {
+            cb(false,0);
+        }
+    }
+
+    getcount2(filters, cb) {
+        try {
+
+            this.model.count(filters, (err, n) => {
+                if (err) {
+                    console.log("error: ", err);
+                    cb(false,0);
+                } else {
+                    cb(true,n);
+
+                }
+            });
+
+        } catch (error) {
+            cb(false,0);
+        }
+    }
+    
 }
 
 module.exports = service;
