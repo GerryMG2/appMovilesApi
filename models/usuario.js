@@ -17,7 +17,12 @@ var usuarioSchema = new Schema(
         tags:[{type:String}],
         saldo:{type: Number, required: true},
         ip_disp: [{type: String}],
-        carrito:[{type: String}]
+        
+        carrito:[{type: String}],
+        cant_personas: {type: Number, require: true},
+        publico: [{type: String, required: true}],
+        costo: {type: Number, required: true},
+        descuento: {type: String}
     }
 );
 

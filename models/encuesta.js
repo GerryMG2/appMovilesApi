@@ -10,7 +10,16 @@ var encuestaSchema = new Schema(
         ip_disp: {type: Number, required: true},
         tags_publico: [{type: String}],
         lanzamiento_pago: [{type: String, ref: "lanzamiento"}],
-        preguntas: [{type: String, required: true}]
+        
+        preguntas: [{type: String, required: true}],
+        encabezado: {type: String, require: true},
+        tipo: {type: String, required: true},
+        pregunta_abierta: {type: Boolean, required: true},
+        multi_respuesta: {type: Boolean, required: true},
+        requiere: [{type: String}],
+        opciones: [{type: String, required: true}],
+
+        titulo_opcion: {type: String, required: true}
     }
 );
 
