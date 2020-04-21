@@ -4,17 +4,22 @@ var conexion = require("../db_connection/connection");
 
 class transactionalModelSQL {
     constructor(modelo, table_name) {
+        this.modelo = modelo;
+        this.table_name = table_name;
         this.init();
 
     }
 
     init() {
-        this.modelo = modelo;
         this.conx = new conexion();
         this.campos = Object.keys(this.modelo);
     }
 
     getOne(objId,cb){
+
+    }
+
+    getspecifiedSearch(filters,size,pag,orden,cb){
 
     }
 
@@ -45,10 +50,26 @@ class transactionalModelSQL {
 
 
     #createTable() {
+        let strCreationBegin = `CREATE TABLE ${this.table_name} (`;
+        let endStrCreate = `);`;
+        let fields = "";
+
+        this.campos.forEach(element => {
+            let campo = `${this.modelo[element]["name"]} ${this.modelo[element]["type"]},`;
+            fields = fields.concat(campo);
+        });
+        fields = fields.slice(0,-1);
+
+        let queryResult = strCreationBegin.concat(fields).concat(endStrCreate);
+        return queryResult;
 
     }
 
     #createRelations() {
+        
+    }
+
+    #destroyRelations(){
 
     }
 

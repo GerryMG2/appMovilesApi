@@ -100,6 +100,39 @@ class service{
         }
     }
 
+    getSearchFilter(filters,filtros, size, pag, orden, cb) {
+        try {
+            let filtro = {};
+            if (filters != "") {
+                filtro = {
+                    $and: [{ $or: []}, filters]
+                };
+                let props = Object.keys(this.model.schema.paths);
+                props.forEach(element => {
+                    if (element != "_id" && element != "__v") {
+                        filtro["$and"][0].push({ element: { $regex: '.*' + filtros + '.*' } });
+                    }
+                })
+            }
+            this.model.find(filtro,filtros, function (err, docs) {
+                if (err) {
+                    cb(false,{}, 0);
+                } else {
+                    this.getcount3(filters, function (validar, n) {
+                        if(validar){
+                            cb(true, docs, n);
+                        }else{
+                            cb(false, {}, 0);
+                        }
+                    });
+                }
+            }).skip(size * (pag - 1)).limit(size).sort(orden);
+        } catch (error) {
+            cb(false, {}, 0);
+        }
+    }
+
+
     get(filters, size, pag, orden, cb) {
         try {
             let filtro = {};
@@ -152,7 +185,7 @@ class service{
             cb(false, {}, 0);
         }
     }
-
+    //no lleva ruta
     getcount(filters, cb) {
         try {
             let filtro = {};
@@ -183,6 +216,38 @@ class service{
         }
     }
 
+
+    //no lleva ruta
+    getcount3(filters, filtros, cb) {
+        try {
+            let filtro = {};
+            if (filters != "") {
+                filtro = {
+                    $and: [{ $or: []}, filters]
+                };
+                let props = Object.keys(this.model.schema.paths);
+                props.forEach(element => {
+                    if (element != "_id" && element != "__v") {
+                        filtro["$and"][0].push({ element: { $regex: '.*' + filtros + '.*' } });
+                    }
+                })
+            }
+            this.model.count(filtro, (err, n) => {
+                if (err) {
+                    console.log("error: ", err);
+                    cb(false,0);
+                } else {
+                    cb(true,n);
+
+                }
+            });
+
+        } catch (error) {
+            cb(false,0);
+        }
+    }
+
+    //no lleva ruta
     getcount2(filters, cb) {
         try {
 
