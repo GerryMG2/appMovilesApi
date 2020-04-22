@@ -100,50 +100,17 @@ class service{
         }
     }
 
-    getSearchFilter(filters,filtros, size, pag, orden, cb) {
+    get(filters,filtros, size, pag, orden, cb) {
         try {
-            let filtro = {};
+            let filtro = filtros;
             if (filters != "") {
                 filtro = {
-                    $and: [{ $or: []}, filters]
+                    $and: [{ $or: []}, filtros]
                 };
                 let props = Object.keys(this.model.schema.paths);
                 props.forEach(element => {
                     if (element != "_id" && element != "__v") {
-                        filtro["$and"][0].push({ element: { $regex: '.*' + filtros + '.*' } });
-                    }
-                })
-            }
-            this.model.find(filtro,filtros, function (err, docs) {
-                if (err) {
-                    cb(false,{}, 0);
-                } else {
-                    this.getcount3(filters, function (validar, n) {
-                        if(validar){
-                            cb(true, docs, n);
-                        }else{
-                            cb(false, {}, 0);
-                        }
-                    });
-                }
-            }).skip(size * (pag - 1)).limit(size).sort(orden);
-        } catch (error) {
-            cb(false, {}, 0);
-        }
-    }
-
-
-    get(filters, size, pag, orden, cb) {
-        try {
-            let filtro = {};
-            if (filters != "") {
-                filtro = {
-                    $or: []
-                };
-                let props = Object.keys(this.model.schema.paths);
-                props.forEach(element => {
-                    if (element != "_id" && element != "__v") {
-                        filtro["$or"].push({ element: { $regex: '.*' + filters + '.*' } });
+                        filtro["$and"][0].push({ element: { $regex: '.*' + filters + '.*' } });
                     }
                 })
             }
@@ -151,7 +118,7 @@ class service{
                 if (err) {
                     cb(false,{}, 0);
                 } else {
-                    this.getcount(filters, function (validar, n) {
+                    this.getcount(filters,filtros, function (validar, n) {
                         if(validar){
                             cb(true, docs, n);
                         }else{
@@ -165,70 +132,18 @@ class service{
         }
     }
 
-
-    getSpecific(filters, size, pag, orden, cb) {
-        try {
-            this.model.find(filters, function (err, docs) {
-                if (err) {
-                    cb(false,{}, 0);
-                } else {
-                    this.getcount2(filters, function (validar, n) {
-                        if(validar){
-                            cb(true, docs, n);
-                        }else{
-                            cb(false, {}, 0);
-                        }
-                    });
-                }
-            }).skip(size * (pag - 1)).limit(size).sort(orden);
-        } catch (error) {
-            cb(false, {}, 0);
-        }
-    }
     //no lleva ruta
-    getcount(filters, cb) {
+    getcount(filters, filtros, cb) {
         try {
-            let filtro = {};
+            let filtro = filtros;
             if (filters != "") {
                 filtro = {
-                    $or: []
+                    $and: [{ $or: []}, filtros]
                 };
                 let props = Object.keys(this.model.schema.paths);
                 props.forEach(element => {
                     if (element != "_id" && element != "__v") {
-                        filtro["$or"].push({ element: { $regex: '.*' + filters + '.*' } });
-                    }
-                });
-            }
-
-            this.model.count(filtro, (err, n) => {
-                if (err) {
-                    console.log("error: ", err);
-                    cb(false,0);
-                } else {
-                    cb(true,n);
-
-                }
-            });
-
-        } catch (error) {
-            cb(false,0);
-        }
-    }
-
-
-    //no lleva ruta
-    getcount3(filters, filtros, cb) {
-        try {
-            let filtro = {};
-            if (filters != "") {
-                filtro = {
-                    $and: [{ $or: []}, filters]
-                };
-                let props = Object.keys(this.model.schema.paths);
-                props.forEach(element => {
-                    if (element != "_id" && element != "__v") {
-                        filtro["$and"][0].push({ element: { $regex: '.*' + filtros + '.*' } });
+                        filtro["$and"][0].push({ element: { $regex: '.*' + filters + '.*' } });
                     }
                 })
             }
@@ -247,24 +162,7 @@ class service{
         }
     }
 
-    //no lleva ruta
-    getcount2(filters, cb) {
-        try {
 
-            this.model.count(filters, (err, n) => {
-                if (err) {
-                    console.log("error: ", err);
-                    cb(false,0);
-                } else {
-                    cb(true,n);
-
-                }
-            });
-
-        } catch (error) {
-            cb(false,0);
-        }
-    }
     
 }
 

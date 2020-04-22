@@ -23,7 +23,7 @@ class controller{
 
     get(req,res){
         try {
-            this.service.get(req.body.filters, req.body.size, req.body.pag,JSON.parse(req.body.orden), (validar, docs, count) => {
+            this.service.get(req.body.filters, JSON.parse(req.body.filtro),req.body.size, req.body.pag,JSON.parse(req.body.orden), (validar, docs, count) => {
                 if(validar){
                     res.status(200).json({msg: "ok", correct: true, docs: docs, count: count});
                 }else{
