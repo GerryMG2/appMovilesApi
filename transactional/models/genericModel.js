@@ -15,11 +15,36 @@ class transactionalModelSQL {
         this.campos = Object.keys(this.modelo);
     }
 
-    getOne(objId,cb){
+    getOne(objId, cb) {
+        try {
+            let conditions = "";
+
+
+            this.campos.forEach(element => {
+                if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]]) {
+                    conditions = conditions.concat(`${this.modelo[element]["name"]}=${objId[this.modelo[element]["name"]]} and`);
+                }else{
+                    throw `No existe una condicion valida para toda la llave de la tabla ${this.table_name} porque no existe la primary key ${this.modelo[element]["name"]} en la consulta.`
+                }
+            });
+
+            let query = `SELECT * FROM ${this.table_name} WHERE ${conditions}`;
+
+            this.conx.query(query, (validar, datos) => {
+                if (validar) {
+                    cb(true, datos);
+                } else {
+                    cb(false, {});
+                }
+            });
+        } catch (error) {
+            console.log("error: ", error)
+            cb(false, {});
+        }
 
     }
 
-    get(filters,filtros,size,pag,orden,cb){
+    get(filters, filtros, size, pag, orden, cb) {
 
     }
 
@@ -27,7 +52,7 @@ class transactionalModelSQL {
 
     }
 
-    update(objId, model, cb){
+    update(objId, model, cb) {
 
     }
 
@@ -35,52 +60,72 @@ class transactionalModelSQL {
 
     }
 
-    delete(objeId, cb){
+    delete(objeId, cb) {
 
     }
 
-    createTable(){
-        this.conx.query(this.#qrCreateTable(),(validar,datos)=>{
-            if(validar){
-                console.log(`Tabla ${this.table_name} Creada correctamente.`);
-                console.log(datos);
-            }else{
-                console.log(`Error al crear la tabla ${this.table_name} `);
-            }
-        });
+    createTable() {
+        try {
+            this.conx.query(this.#qrCreateTable(), (validar, datos) => {
+                if (validar) {
+                    console.log(`Tabla ${this.table_name} Creada correctamente.`);
+                    console.log(datos);
+                } else {
+                    console.log(`Error al crear la tabla ${this.table_name} `);
+                }
+            });
+        } catch (error) {
+            console.log("error: ", error);
+        }
+
     }
 
-    createRelations(){
-        this.conx.query(this.#qrCreateRelations(),(validar,datos)=>{
-            if(validar){
-                console.log(`Relaciones de la tabla ${this.table_name} Creada correctamente.`);
-                console.log(datos);
-            }else{
-                console.log(`Error al crear las relaciones de la tabla ${this.table_name}`);
-            }
-        });
+    createRelations() {
+        try {
+            this.conx.query(this.#qrCreateRelations(), (validar, datos) => {
+                if (validar) {
+                    console.log(`Relaciones de la tabla ${this.table_name} Creada correctamente.`);
+                    console.log(datos);
+                } else {
+                    console.log(`Error al crear las relaciones de la tabla ${this.table_name}`);
+                }
+            });
+        } catch (error) {
+            console.log("error: ", error);
+        }
+
     }
 
-    EliminarRelaciones(){
-        this.conx.query(this.#qrDestroyRelations(),(validar,datos)=>{
-            if(validar){
-                console.log(`Se han eliminado las relaciones de la tabla ${this.table_name} correctamente`);
-                console.log(datos);
-            }else{
-                console.log(`Error al eliminar las relaciones de la tabla ${this.table_name}`);
-            }
-        });
+    EliminarRelaciones() {
+        try {
+            this.conx.query(this.#qrDestroyRelations(), (validar, datos) => {
+                if (validar) {
+                    console.log(`Se han eliminado las relaciones de la tabla ${this.table_name} correctamente`);
+                    console.log(datos);
+                } else {
+                    console.log(`Error al eliminar las relaciones de la tabla ${this.table_name}`);
+                }
+            });
+        } catch (error) {
+            console.log("error: ", error);
+        }
+
     }
 
-    EliminarTabla(){
-        this.conx.query(this.#qrDestroyTable(),(validar,datos)=>{
-            if(validar){
-                console.log(`Se ha eliminado la tabla ${this.table_name} correctamente`);
-                console.log(datos);
-            }else{
-                console.log(`Error al eliminar la tabla ${this.table_name}`);
-            }
-        });
+    EliminarTabla() {
+        try {
+            this.conx.query(this.#qrDestroyTable(), (validar, datos) => {
+                if (validar) {
+                    console.log(`Se ha eliminado la tabla ${this.table_name} correctamente`);
+                    console.log(datos);
+                } else {
+                    console.log(`Error al eliminar la tabla ${this.table_name}`);
+                }
+            });
+        } catch (error) {
+            console.log("error: ", error);
+        }
+
     }
 
 
@@ -94,7 +139,7 @@ class transactionalModelSQL {
             let campo = `${this.modelo[element]["name"]} ${this.modelo[element]["type"]} ${this.modelo[element]["special"] ? this.modelo[element]["special"] : ""},`;
             fields = fields.concat(campo);
         });
-        fields = fields.slice(0,-1);
+        fields = fields.slice(0, -1);
 
         let queryResult = strCreationBegin.concat(fields).concat(endStrCreate);
         return queryResult;
@@ -105,15 +150,15 @@ class transactionalModelSQL {
         let queryResult = "";
 
         this.campos.forEach(element => {
-            if( this.modelo[element]["primaryKey"] || this.modelo[element]["foreignKey"] ){
-               let consulta = "";
-               if(this.modelo[element]["primaryKey"]){
-                consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD PRIMARY KEY (${this.modelo[element]["name"]});`)
-               }
-               if(this.modelo[element]["foreignKey"]){
-                consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD CONSTRAINT ${this.modelo[element]["commentForeign"]} FOREIGN KEY (${this.modelo[element]["name"]}) REFERENCES ${this.modelo[element]["ref"]} (${this.modelo[element]["refField"]}) ;`)
-               }
-               queryResult = queryResult.concat(consulta);
+            if (this.modelo[element]["primaryKey"] || this.modelo[element]["foreignKey"]) {
+                let consulta = "";
+                if (this.modelo[element]["primaryKey"]) {
+                    consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD PRIMARY KEY (${this.modelo[element]["name"]});`)
+                }
+                if (this.modelo[element]["foreignKey"]) {
+                    consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD CONSTRAINT ${this.modelo[element]["commentForeign"]} FOREIGN KEY (${this.modelo[element]["name"]}) REFERENCES ${this.modelo[element]["ref"]} (${this.modelo[element]["refField"]}) ;`)
+                }
+                queryResult = queryResult.concat(consulta);
             }
         });
 
@@ -122,10 +167,10 @@ class transactionalModelSQL {
         return queryResult;
     }
 
-    #qrDestroyRelations(){
+    #qrDestroyRelations() {
         let queryResult = "";
         this.campos.forEach(element => {
-            if(this.modelo[element]["foreignKey"] ){
+            if (this.modelo[element]["foreignKey"]) {
                 queryResult = queryResult.concat(`ALTER TABLE ${this.table_name} DROP IF EXISTS CONSTRAINT ${this.modelo[element]["commentForeign"]};`)
             }
         });
