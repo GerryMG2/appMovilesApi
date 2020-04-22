@@ -22,13 +22,14 @@ class transactionalModelSQL {
 
             this.campos.forEach(element => {
                 if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]]) {
-                    conditions = conditions.concat(`${this.modelo[element]["name"]}=${objId[this.modelo[element]["name"]]} and`);
+                    conditions = conditions.concat(`${this.modelo[element]["name"]}=${objId[this.modelo[element]["name"]]} AND`);
                 }else{
                     throw `No existe una condicion valida para toda la llave de la tabla ${this.table_name} porque no existe la primary key ${this.modelo[element]["name"]} en la consulta.`
                 }
             });
+            conditions = conditions.slice(0,-3);
 
-            let query = `SELECT * FROM ${this.table_name} WHERE ${conditions}`;
+            let query = `SELECT * FROM ${this.table_name} WHERE ${conditions};`;
 
             this.conx.query(query, (validar, datos) => {
                 if (validar) {
@@ -45,7 +46,7 @@ class transactionalModelSQL {
     }
 
     get(filters, filtros, size, pag, orden, cb) {
-
+        
     }
 
     insert(model, cb) {
@@ -80,14 +81,30 @@ class transactionalModelSQL {
 
     }
 
-    createRelations() {
+    createRelationsPK() {
         try {
-            this.conx.query(this.#qrCreateRelations(), (validar, datos) => {
+            this.conx.query(this.#qrCreateRelationsPrimaryKey(), (validar, datos) => {
                 if (validar) {
-                    console.log(`Relaciones de la tabla ${this.table_name} Creada correctamente.`);
+                    console.log(`Relaciones PK de la tabla ${this.table_name} Creada correctamente.`);
                     console.log(datos);
                 } else {
-                    console.log(`Error al crear las relaciones de la tabla ${this.table_name}`);
+                    console.log(`Error al crear las relaciones PK de la tabla ${this.table_name}`);
+                }
+            });
+        } catch (error) {
+            console.log("error: ", error);
+        }
+
+    }
+
+    createRelationsFK() {
+        try {
+            this.conx.query(this.#qrCreateRelationsForeignKey(), (validar, datos) => {
+                if (validar) {
+                    console.log(`Relaciones FK de la tabla ${this.table_name} Creada correctamente.`);
+                    console.log(datos);
+                } else {
+                    console.log(`Error al crear las relaciones FK de la tabla ${this.table_name}`);
                 }
             });
         } catch (error) {
@@ -146,15 +163,31 @@ class transactionalModelSQL {
 
     }
 
-    #qrCreateRelations() {
+    #qrCreateRelationsPrimaryKey() {
         let queryResult = "";
 
         this.campos.forEach(element => {
-            if (this.modelo[element]["primaryKey"] || this.modelo[element]["foreignKey"]) {
+            if (this.modelo[element]["primaryKey"]) {
                 let consulta = "";
                 if (this.modelo[element]["primaryKey"]) {
                     consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD PRIMARY KEY (${this.modelo[element]["name"]});`)
                 }
+
+                queryResult = queryResult.concat(consulta);
+            }
+        });
+
+
+
+        return queryResult;
+    }
+
+    #qrCreateRelationsForeignKey() {
+        let queryResult = "";
+
+        this.campos.forEach(element => {
+            if (this.modelo[element]["foreignKey"]) {
+                let consulta = "";
                 if (this.modelo[element]["foreignKey"]) {
                     consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD CONSTRAINT ${this.modelo[element]["commentForeign"]} FOREIGN KEY (${this.modelo[element]["name"]}) REFERENCES ${this.modelo[element]["ref"]} (${this.modelo[element]["refField"]}) ;`)
                 }
