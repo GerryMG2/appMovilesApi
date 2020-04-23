@@ -100,7 +100,7 @@ class service{
         }
     }
 
-    get(filters,filtros, size, pag, orden, cb) {
+    get(filters="",filtros={}, size=10, pag=1, orden={}, cb) {
         try {
             let filtro = filtros;
             if (filters != "") {

@@ -10,6 +10,8 @@ class transactionalModelSQL {
 
     }
 
+
+
     init() {
         this.conx = new conexion();
         this.campos = Object.keys(this.modelo);
@@ -23,11 +25,11 @@ class transactionalModelSQL {
             this.campos.forEach(element => {
                 if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]]) {
                     conditions = conditions.concat(`${this.modelo[element]["name"]}=${objId[this.modelo[element]["name"]]} AND`);
-                }else{
+                } else {
                     throw `No existe una condicion valida para toda la llave de la tabla ${this.table_name} porque no existe la primary key ${this.modelo[element]["name"]} en la consulta.`
                 }
             });
-            conditions = conditions.slice(0,-3);
+            conditions = conditions.slice(0, -3);
 
             let query = `SELECT * FROM ${this.table_name} WHERE ${conditions};`;
 
@@ -45,8 +47,72 @@ class transactionalModelSQL {
 
     }
 
-    get(filters, filtros, size, pag, orden, cb) {
-        
+    get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
+        try {
+            let offset = size * (pag -1);
+            let conditionsFiltros = "";
+            let conditionsFilters = "";
+            let keysFiltros = Object.keys(filtros);
+            let keysOrden = Object.keys(orden);
+            let pagination = `LIMIT ${size} OFFSET ${offset}`;
+            let order = "";
+
+            if (filtros != {}) {
+                let fil = ""
+                keysFiltros.forEach(element => {
+                    if (this.modelo[element]["modelType"] != "Number") {
+                        fil = fil.concat(`${this.modelo[element]["name"]} = '${filtros[element]}' AND`)
+                    }else{
+                        fil = fil.concat(`${this.modelo[element]["name"]} = ${filtros[element]} AND`)
+                    }
+                });
+                conditionsFiltros = fil.slice(0,-3);
+            }
+
+            if (filters.trim() != "") {
+                let search = ""
+                if (filtros != {}) {
+                    search = search.concat("AND (");
+                }
+                this.campos.forEach(element => {
+                    if (this.modelo[element]["modelType"] != "Number" && this.modelo[element]["modelType"] != "Boolean") {
+                        search = search.concat(`UPPER(${this.modelo[element]["name"]}) like '%${filters.trim().toUpperCase()}%' OR`);
+                    }
+
+                });
+                conditionsFilters = search.slice(0,-2);
+            }
+
+            if (orden != {}) {
+                let ord = "ORDER BY ";
+                keysFiltros.forEach(element => {
+                    switch (orden[element]) {
+                        case 1:
+                            ord = ord.concat(`${this.modelo[element]["name"]} ASC,`);
+                            break;
+                        case 0:
+                            ord = ord.concat(`${this.modelo[element]["name"]} DESC,`);
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                });
+                order = ord.slice(0,-1);
+            }
+
+            let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
+            this.conx.query(query, (validar, datos) => {
+                if (validar) {
+                    cb(true, datos);
+                } else {
+                    cb(false, {});
+                }
+            });
+        } catch (error) {
+            cb(false, {})
+        }
+
     }
 
     insert(model, cb) {
@@ -220,13 +286,13 @@ class transactionalModelSQL {
 module.exports = transactionalModelSQL;
 
 // let ejemplo = {
-//     id_tran_detail: { type: "BIGSERIAL", primaryKey: true, name: "id_tran_detail" },
-//     id_factura: { type: "BIGINT", name: "id_factura", foreignKey: true, ref: "transaccion", refField: "id_factura", commentForeign: "id_factura_fk"  },
-//     id_servicio: { type: "BIGINT", name: "id_servicio", foreignKey: true, ref: "servicios", refField: "Id_Servicios", commentForeign: "id_servicio_fk" },
-//     id_documento: { type: "BIGINT", name: "id_documento", foreignKey: true, ref: "tipo_transaccion_documento", refField: "id_documento" , commentForeign: "id_tipoTransaccion_fk"},
-//     costo: { type: "MONEY", name: "costo", special: "NOT NULL" },
-//     monto: { type: "MONEY", name: "monto", special: "NOT NULL" },
-//     descuento: { type: "MONEY", name: "descuento" , special: "NOT NULL"},
-//     monto_con_desc: { type: "MONEY", name: "monto_con_desc" , special: "NOT NULL"},
-//     id_descuento: { type: "BIGINT", name: "id_descuento", foreignKey: true, ref: "descuento", refField: "id_descuento", commentForeign: "id_descuento_fk" }
+//     id_tran_detail: { type: "BIGSERIAL", primaryKey: true, name: "id_tran_detail", modelType: "Number" },
+//     id_factura: { type: "BIGINT", name: "id_factura", foreignKey: true, ref: "transaccion", refField: "id_factura", commentForeign: "id_factura_fk",modelType: "Number"  },
+//     id_servicio: { type: "BIGINT", name: "id_servicio", foreignKey: true, ref: "servicios", refField: "Id_Servicios", commentForeign: "id_servicio_fk" ,modelType: "Number"},
+//     id_documento: { type: "BIGINT", name: "id_documento", foreignKey: true, ref: "tipo_transaccion_documento", refField: "id_documento" , commentForeign: "id_tipoTransaccion_fk", modelType: "Number"},
+//     costo: { type: "MONEY", name: "costo", special: "NOT NULL" , modelType: "Number"},
+//     monto: { type: "MONEY", name: "monto", special: "NOT NULL" , modelType: "Number"},
+//     descuento: { type: "MONEY", name: "descuento" , special: "NOT NULL", modelType: "Number"},
+//     monto_con_desc: { type: "MONEY", name: "monto_con_desc" , special: "NOT NULL", modelType: "Number"},
+//     id_descuento: { type: "BIGINT", name: "id_descuento", foreignKey: true, ref: "descuento", refField: "id_descuento", commentForeign: "id_descuento_fk", modelType: "Number" }
 // }
