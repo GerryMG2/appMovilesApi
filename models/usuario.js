@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 
 var usuarioSchema = new Schema(
     {
-        dui: { type: String, unique: true, require: true },
+        numId: { type: String, unique: true, require: true },
         nombre: { type: String, required: true },
         peso: { type: Number, required: true },
         nacimiento: { type: Date, required: true },

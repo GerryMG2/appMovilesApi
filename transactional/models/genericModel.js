@@ -3,8 +3,13 @@ var conexion = require("../db_connection/connection");
 
 
 class transactionalModelSQL {
-    constructor(modelo, table_name) {
+    constructor(modelo, table_name, msg_create = { ok: "Created", err: "Not created" },
+        msg_update = { ok: "Updated", err: "Not updated" },
+        mgs_delete = { ok: "Deleted", err: "Not deleted" }) {
         this.modelo = modelo;
+        this.msg_create = msg_create;
+        this.msg_update = msg_update;
+        this.mgs_delete = mgs_delete;
         this.table_name = table_name;
         this.init();
 
@@ -23,7 +28,7 @@ class transactionalModelSQL {
 
 
             this.campos.forEach(element => {
-                if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]]) {
+                if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]] != null) {
                     conditions = conditions.concat(`${this.modelo[element]["name"]}=${objId[this.modelo[element]["name"]]} AND`);
                 } else {
                     throw `No existe una condicion valida para toda la llave de la tabla ${this.table_name} porque no existe la primary key ${this.modelo[element]["name"]} en la consulta.`
@@ -49,7 +54,7 @@ class transactionalModelSQL {
 
     get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
         try {
-            let offset = size * (pag -1);
+            let offset = size * (pag - 1);
             let conditionsFiltros = "";
             let conditionsFilters = "";
             let keysFiltros = Object.keys(filtros);
@@ -62,11 +67,11 @@ class transactionalModelSQL {
                 keysFiltros.forEach(element => {
                     if (this.modelo[element]["modelType"] != "Number") {
                         fil = fil.concat(`${this.modelo[element]["name"]} = '${filtros[element]}' AND`)
-                    }else{
+                    } else {
                         fil = fil.concat(`${this.modelo[element]["name"]} = ${filtros[element]} AND`)
                     }
                 });
-                conditionsFiltros = fil.slice(0,-3);
+                conditionsFiltros = fil.slice(0, -3);
             }
 
             if (filters.trim() != "") {
@@ -80,7 +85,7 @@ class transactionalModelSQL {
                     }
 
                 });
-                conditionsFilters = search.slice(0,-2);
+                conditionsFilters = search.slice(0, -2);
             }
 
             if (orden != {}) {
@@ -90,15 +95,15 @@ class transactionalModelSQL {
                         case 1:
                             ord = ord.concat(`${this.modelo[element]["name"]} ASC,`);
                             break;
-                        case 0:
+                        case -1:
                             ord = ord.concat(`${this.modelo[element]["name"]} DESC,`);
                             break;
-                        
+
                         default:
                             break;
                     }
                 });
-                order = ord.slice(0,-1);
+                order = ord.slice(0, -1);
             }
 
             let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
@@ -116,19 +121,132 @@ class transactionalModelSQL {
     }
 
     insert(model, cb) {
+        try {
+            let fields = "";
+            let valores = "";
 
+            let keyFields = Objetc.keys(model);
+            keyFields.forEach(element => {
+                fields = concat(`${this.modelo[element]["name"]},`);
+                if (this.modelo[element]["modelType"] == "Number" ||
+                    this.modelo[element]["modelType"] == "Boolean") {
+                    valores = valores.concat(`${model[element]},`);
+                } else {
+                    valores = valores.concat(`'${model[element]}',`);
+                }
+
+            });
+            fields = fields.slice(0, -1);
+            valores = valores.slice(0, -1);
+            let resultQuerry = `INSERT INTO ${this.table_name}(${fields}) values(${valores});`;
+
+
+            this.conx.query(resultQuerry, (validar, datos) => {
+                if (validar) {
+                    cb(true);
+                } else {
+                    cb(false);
+                }
+            });
+
+        } catch (error) {
+            cb(false);
+        }
     }
 
     update(objId, model, cb) {
+        try {
+            let conditions = "";
+            let changes = "";
+            let modelKeys = Object.keys(model);
 
+            this.campos.forEach(element => {
+                if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]] != null) {
+                    if (this.modelo[element]["modelType"] == "Number" ||
+                        this.modelo[element]["modelType"] == "Boolean") {
+                        conditions = conditions.concat(`${this.modelo[element]["name"]}=${objId[element]} AND`);
+                    } else {
+                        conditions = conditions.concat(`${this.modelo[element]["name"]}='${objId[element]}' AND`);
+                    }
+                } else {
+                    throw "Hace falta valores de la llave para poder hacer la actualizacion."
+                }
+            });
+            conditions = conditions.slice(0,-3);
+
+            modelKeys.forEach(element => {
+                if (this.modelo[element]["modelType"] == "Number" ||
+                    this.modelo[element]["modelType"] == "Boolean") {
+                    changes = changes.concat(`${this.modelo[element]["name"]}=${model[element]},`);
+                } else {
+                    changes = changes.concat(`${this.modelo[element]["name"]}='${model[element]}',`);
+                }
+            });
+            changes = changes.slice(0,-1);
+            let resultQuerry = `UPDATE ${this.table_name} SET ${changes} WHERE ${conditions};`;
+
+            this.conx.query(resultQuerry, (validar, datos) => {
+                if (validar) {
+                    cb(true,this.msg_update.ok);
+                } else {
+                    cb(false,this.msg_update.err);
+                }
+            });
+        } catch (error) {
+            cb(false, this.mgs_delete.err);
+        }
     }
 
     upsert(objId, model, cb) {
-
+        try {
+            this.insert(model,(validar)=>{
+                if(validar){
+                    cb(true);
+                }else{
+                    this.update(objId,model,(validar,msg)=>{
+                        if(validar){
+                            cb(true);
+                        }else{
+                            cb(false);
+                        }
+                    })
+                }
+            })
+        } catch (error) {
+            cb(false);
+        }
     }
 
     delete(objeId, cb) {
+        try {
+            let conditions = "";
+            this.campos.forEach(element => {
+                if (this.modelo[element]["primaryKey"] && objeId[this.modelo[element]["name"]] != null) {
+                    if (this.modelo[element]["modelType"] == "Number" ||
+                        this.modelo[element]["modelType"] == "Boolean") {
+                        conditions = conditions.concat(`${this.modelo[element]["name"]}=${objeId[element]} AND`);
+                    } else {
+                        conditions = conditions.concat(`${this.modelo[element]["name"]}='${objeId[element]}' AND`);
+                    }
+                } else {
+                    throw "Hace falta valores de la llave para poder hacer la eliminacion."
+                }
+            });
+            conditions = conditions.slice(0,-3);
 
+
+            let queryResult = `DELETE FROM ${this.table_name} WHERE ${conditions};`;
+
+            this.conx.query(queryResult, (validar, datos) => {
+                if (validar) {
+                    cb(true,this.mgs_delete.ok);
+                } else {
+                    cb(false,this.msg_delete.err);
+                }
+            });
+        } catch (error) {
+            cb(false, this.mgs_delete.err);
+        }
     }
 
     createTable() {
