@@ -22,7 +22,7 @@ class transactionalModelSQL {
         this.campos = Object.keys(this.modelo);
     }
 
-    getOne(objId, cb) {
+    getOneById(objId, cb) {
         try {
             let conditions = "";
 
@@ -105,22 +105,29 @@ class transactionalModelSQL {
                 });
                 order = ord.slice(0, -1);
             }
-
+            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
             let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
             this.conx.query(query, (validar, datos) => {
                 if (validar) {
-                    cb(true, datos);
+                    this.conx.query(queryCount, (validar, datos) => {
+                        if (validar) {
+                            cb(true, datos[0].cuenta);
+                        } else {
+                            cb(false, {}, 0);
+                        }
+                    })
+
                 } else {
-                    cb(false, {});
+                    cb(false, {}, 0);
                 }
             });
         } catch (error) {
-            cb(false, {})
+            cb(false, {}, 0)
         }
 
     }
 
-    insert(model, cb) {
+    create(model, cb) {
         try {
             let fields = "";
             let valores = "";
@@ -172,7 +179,7 @@ class transactionalModelSQL {
                     throw "Hace falta valores de la llave para poder hacer la actualizacion."
                 }
             });
-            conditions = conditions.slice(0,-3);
+            conditions = conditions.slice(0, -3);
 
             modelKeys.forEach(element => {
                 if (this.modelo[element]["modelType"] == "Number" ||
@@ -182,14 +189,14 @@ class transactionalModelSQL {
                     changes = changes.concat(`${this.modelo[element]["name"]}='${model[element]}',`);
                 }
             });
-            changes = changes.slice(0,-1);
+            changes = changes.slice(0, -1);
             let resultQuerry = `UPDATE ${this.table_name} SET ${changes} WHERE ${conditions};`;
 
             this.conx.query(resultQuerry, (validar, datos) => {
                 if (validar) {
-                    cb(true,this.msg_update.ok);
+                    cb(true, this.msg_update.ok);
                 } else {
-                    cb(false,this.msg_update.err);
+                    cb(false, this.msg_update.err);
                 }
             });
         } catch (error) {
@@ -197,16 +204,16 @@ class transactionalModelSQL {
         }
     }
 
-    upsert(objId, model, cb) {
+    updateOrCreate(objId, model, cb) {
         try {
-            this.insert(model,(validar)=>{
-                if(validar){
+            this.create(model, (validar) => {
+                if (validar) {
                     cb(true);
-                }else{
-                    this.update(objId,model,(validar,msg)=>{
-                        if(validar){
+                } else {
+                    this.update(objId, model, (validar, msg) => {
+                        if (validar) {
                             cb(true);
-                        }else{
+                        } else {
                             cb(false);
                         }
                     })
@@ -232,16 +239,16 @@ class transactionalModelSQL {
                     throw "Hace falta valores de la llave para poder hacer la eliminacion."
                 }
             });
-            conditions = conditions.slice(0,-3);
+            conditions = conditions.slice(0, -3);
 
 
             let queryResult = `DELETE FROM ${this.table_name} WHERE ${conditions};`;
 
             this.conx.query(queryResult, (validar, datos) => {
                 if (validar) {
-                    cb(true,this.mgs_delete.ok);
+                    cb(true, this.mgs_delete.ok);
                 } else {
-                    cb(false,this.msg_delete.err);
+                    cb(false, this.msg_delete.err);
                 }
             });
         } catch (error) {
