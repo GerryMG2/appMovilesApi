@@ -109,9 +109,9 @@ class transactionalModelSQL {
             let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
             this.conx.query(query, (validar, datos) => {
                 if (validar) {
-                    this.conx.query(queryCount, (validar, datos) => {
+                    this.conx.query(queryCount, (validar, datosC) => {
                         if (validar) {
-                            cb(true, datos[0].cuenta);
+                            cb(true, datos, datosC[0].cuenta);
                         } else {
                             cb(false, {}, 0);
                         }

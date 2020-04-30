@@ -6,6 +6,7 @@ var usuarioSchema = new Schema(
     {
         numId: { type: String, unique: true, require: true },
         nombre: { type: String, required: true },
+        apellido: { type: String, required: true },
         peso: { type: Number, required: true },
         nacimiento: { type: Date, required: true },
         altura: { type: Number, required: true },
