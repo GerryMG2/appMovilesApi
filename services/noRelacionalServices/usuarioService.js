@@ -1,5 +1,5 @@
-const generalService = require("../generalServices/servicio")
-const modelUsuario = require("../../models/usuario")
+const generalService = require("../generalServices/servicio");
+const modelUsuario = require("../../models/usuario");
 
 
 class usuarioService  extends generalService{

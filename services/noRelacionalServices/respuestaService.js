@@ -1,5 +1,5 @@
-const generalService = require("../generalServices/servicio")
-const modelRespuesta = require("../../models/respuesta")
+const generalService = require("../generalServices/servicio");
+const modelRespuesta = require("../../models/respuesta");
 
 
 class respuestaService  extends generalService{
