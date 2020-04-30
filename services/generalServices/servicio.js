@@ -1,12 +1,12 @@
-class service{
+class service {
 
     constructor(
-        model, 
-        msg_create = {ok: "Created", err: "Not created"},
-        msg_update = {ok: "Updated", err: "Not updated"}, 
-        mgs_delete = {ok: "Deleted", err: "Not deleted"}, 
+        model,
+        msg_create = { ok: "Created", err: "Not created" },
+        msg_update = { ok: "Updated", err: "Not updated" },
+        mgs_delete = { ok: "Deleted", err: "Not deleted" },
         id = "_id"
-    ){
+    ) {
         this.model = model;
         this.msgCreate = msg_create;
         this.msgUpdate = msg_update;
@@ -48,7 +48,7 @@ class service{
         }
     }
 
-    update(id, newModel, cb){
+    update(id, newModel, cb) {
         try {
             var conditions = {};
             conditions[this.modelId] = id;
@@ -65,7 +65,7 @@ class service{
         }
     }
 
-    delete(id, cb){
+    delete(id, cb) {
         try {
             var conditions = {};
             conditions[this.modelId] = id;
@@ -100,28 +100,30 @@ class service{
         }
     }
 
-    get(filters="",filtros={}, size=10, pag=1, orden={}, cb) {
+    get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
         try {
             let filtro = filtros;
             if (filters != "") {
                 filtro = {
-                    $and: [{ $or: []}, filtros]
+                    $and: [{ $or: [] }, filtros]
                 };
                 let props = Object.keys(this.model.schema.paths);
                 props.forEach(element => {
                     if (element != "_id" && element != "__v") {
-                        filtro["$and"][0].push({ element: { $regex: '.*' + filters + '.*' } });
+                        if (this.model.schema.paths[element] in ["String", "Date", "Number", "Boolean", "ObjectId"]) {
+                            filtro["$and"][0].push({ element: { $regex: '.*' + filters + '.*' } });
+                        }
                     }
                 })
             }
             this.model.find(filtro, function (err, docs) {
                 if (err) {
-                    cb(false,{}, 0);
+                    cb(false, {}, 0);
                 } else {
-                    this.getcount(filters,filtros, function (validar, n) {
-                        if(validar){
+                    this.getcount(filters, filtros, function (validar, n) {
+                        if (validar) {
                             cb(true, docs, n);
-                        }else{
+                        } else {
                             cb(false, {}, 0);
                         }
                     });
@@ -138,7 +140,7 @@ class service{
             let filtro = filtros;
             if (filters != "") {
                 filtro = {
-                    $and: [{ $or: []}, filtros]
+                    $and: [{ $or: [] }, filtros]
                 };
                 let props = Object.keys(this.model.schema.paths);
                 props.forEach(element => {
@@ -150,20 +152,20 @@ class service{
             this.model.count(filtro, (err, n) => {
                 if (err) {
                     console.log("error: ", err);
-                    cb(false,0);
+                    cb(false, 0);
                 } else {
-                    cb(true,n);
+                    cb(true, n);
 
                 }
             });
 
         } catch (error) {
-            cb(false,0);
+            cb(false, 0);
         }
     }
 
 
-    
+
 }
 
 module.exports = service;
