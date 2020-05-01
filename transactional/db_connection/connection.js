@@ -17,12 +17,12 @@ class GenericDB {
     query(qr, cb) {
         this.db.any(qr)
             .then(function (data) {
-                console.log("UserConnection -> query() -> data: ", data);
+                console.log("Connection -> query() -> data: ", data);
                 // success;
                 cb(true, data);
             })
             .catch(function (error) {
-                console.log("UserConnection -> error -> error: ", error);
+                console.log("Connection -> error -> error: ", error);
                 // error;
                 cb(false, {});
             });
