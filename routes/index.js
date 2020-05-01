@@ -1,19 +1,19 @@
 var express = require('express');
 var router = express.Router();
 
-const encuestaController = require("../controllers/controllers/encuestaController");
+const encuestaController = require("../controllers/api_controller_norelational/encuestaController");
 const encuesta = new encuestaController();
 
-const lanzamientoController = require("../controllers/controllers/lanzamientoController");
+const lanzamientoController = require("../controllers/api_controller_norelational/lanzamientoController");
 const lanzamiento = new lanzamientoController();
 
-const notificacionController = require("../controllers/controllers/notificacionController");
+const notificacionController = require("../controllers/api_controller_norelational/notificacionController");
 const notificacion = new notificacionController();
 
-const respuestaController = require("../controllers/controllers/respuestaController");
+const respuestaController = require("../controllers/api_controller_norelational/respuestaController");
 const respuesta = new respuestaController();
 
-const usuarioController = require("../controllers/controllers/usuarioController");
+const usuarioController = require("../controllers/api_controller_norelational/usuarioController");
 const usuario = new usuarioController();
 
 router.get("/encuesta", encuesta.get);
