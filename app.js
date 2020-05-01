@@ -4,8 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var apiRouter = require('./routes/api');
+var apiTRouter = require('./routes/apiTransaccional');
+
 
 //configs
 const {APP_KEY} = require("./config");
@@ -38,8 +39,8 @@ app.use(session({
   saveUninitialized: true
 }))
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api', apiRouter);
+app.use('/apit', apiTRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
