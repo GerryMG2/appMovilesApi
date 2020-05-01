@@ -10,6 +10,9 @@ var usersRouter = require('./routes/users');
 //configs
 const {APP_KEY} = require("./config");
 
+//mongo
+const db = require("../app/utils/noRelationalDbConnections/mongoConnection");
+
 //session
 var session = require('express-session');
 
