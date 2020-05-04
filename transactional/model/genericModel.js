@@ -380,7 +380,7 @@ class transactionalModelSQL {
             if (this.modelo[element]["foreignKey"]) {
                 let consulta = "";
                 if (this.modelo[element]["foreignKey"]) {
-                    consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD CONSTRAINT ${this.modelo[element]["commentForeign"]} FOREIGN KEY (${this.modelo[element]["name"]}) REFERENCES ${this.modelo[element]["ref"]} (${this.modelo[element]["refField"]}) ;`)
+                    consulta = consulta.concat(`ALTER TABLE IF EXISTS ${this.table_name} ADD CONSTRAINT ${this.modelo[element]["commentForeign"]} FOREIGN KEY (${this.modelo[element]["name"]}) REFERENCES ${this.modelo[element]["ref"]} (${this.modelo[element]["refField"]}) ;`)
                 }
                 queryResult = queryResult.concat(consulta);
             }
@@ -395,7 +395,7 @@ class transactionalModelSQL {
         let queryResult = "";
         this.campos.forEach(element => {
             if (this.modelo[element]["foreignKey"]) {
-                queryResult = queryResult.concat(`ALTER TABLE ${this.table_name} DROP IF EXISTS CONSTRAINT ${this.modelo[element]["commentForeign"]};`)
+                queryResult = queryResult.concat(`ALTER TABLE IF EXISTS ${this.table_name} DROP  CONSTRAINT IF EXISTS ${this.modelo[element]["commentForeign"]};`)
             }
         });
 

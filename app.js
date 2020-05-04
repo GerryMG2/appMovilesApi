@@ -14,6 +14,9 @@ const {APP_KEY} = require("./config");
 //mongo
 const db = require("../app/utils/noRelationalDbConnections/mongoConnection");
 
+const dbPinit = require("./scripts/databaseCreations");
+dbPinit();
+
 //session
 var session = require('express-session');
 
