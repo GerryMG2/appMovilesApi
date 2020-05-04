@@ -39,7 +39,7 @@ class field extends React.component {
         }
 
         return (
-            <div class="ObjectFieldShow">{variableText}</div>
+            <div class="ObjectFieldShow" onDoubleClick={this.props.ondclick}>{variableText}</div>
         )
 
     }
@@ -47,15 +47,15 @@ class field extends React.component {
 }
 let transaccion_detalle = {
 
-	id_tran_detail: {type: "BIGSERIAL", primaryKey: true, name: "id_tran_detalle", modelType: "Number"},
-	id_factura: {type: "BIGINT", name: "id_factura", foreignKey: true, ref: "factura", refField: "id_factura", commentForeign: "id_factura_fk", modelType: "Number"},
-	id_servicio: {type: "BIGINT", name: "id_servicio", foreignKey: true, ref: "servicio", refField: "id_servicio", commentForeign: "id_servicio_fk", modelType: "Number"},
-	id_documento: {type: "BIGINT", name: "id_documento", foreignKey: true, ref: "documento", refField: "id_documento", commentForeign: "id_documento_fk", modelType: "Number"},
-	costo: {type: "MONEY", name: "costo", modelType: "Number"},
-	monto: {type: "MONEY", name: "monto", modelType: "Number"},
-	descuento: {type: "MONEY", name: "descuento", modelType: "Number"},
-	monto_con_descuento: {type: "MONEY", name: "monto_con_descuento", modelType: "Number" },
-	id_descuento: {type: "BIGINT", name: "id_descuento", foreignKey: true, ref: "descuento", refField: "id_descuento", commentForeign: "id_descuento_fk", modelType: "Number"}
+    id_tran_detail: { type: "BIGSERIAL", primaryKey: true, name: "id_tran_detalle", modelType: "Number" },
+    id_factura: { type: "BIGINT", name: "id_factura", foreignKey: true, ref: "factura", refField: "id_factura", commentForeign: "id_factura_fk", modelType: "Number" },
+    id_servicio: { type: "BIGINT", name: "id_servicio", foreignKey: true, ref: "servicio", refField: "id_servicio", commentForeign: "id_servicio_fk", modelType: "Number" },
+    id_documento: { type: "BIGINT", name: "id_documento", foreignKey: true, ref: "documento", refField: "id_documento", commentForeign: "id_documento_fk", modelType: "Number" },
+    costo: { type: "MONEY", name: "costo", modelType: "Number" },
+    monto: { type: "MONEY", name: "monto", modelType: "Number" },
+    descuento: { type: "MONEY", name: "descuento", modelType: "Number" },
+    monto_con_descuento: { type: "MONEY", name: "monto_con_descuento", modelType: "Number" },
+    id_descuento: { type: "BIGINT", name: "id_descuento", foreignKey: true, ref: "descuento", refField: "id_descuento", commentForeign: "id_descuento_fk", modelType: "Number" }
 
 }
 
@@ -78,54 +78,159 @@ let ejemplo = {
 }
 
 class objetoComplete extends React.component {
-    
-    renderStructure(element, dato){
-        if(this.state.typeDb == "Mongo"){
-            if(Array.isArray(element) || element.type){
+
+    handlerManual(dato, tipo){
+        if(tipo=="Campo"){
+            this.props.handlefilter(dato);
+        }
+    }
+
+    renderStructure(element, dato) {
+        if (this.state.typeDb == "Mongo") {
+            if (Array.isArray(element) || element.type) {
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
                 return (
-                    <field 
-                    value={dato}
-                    tipo={tipo}
-                    restricted={element.restricted ? element.restricted : ""}
-                    security={element.security ? element.security : ""}
+                    <field
+                        value={dato}
+                        tipo={tipo}
+                        restricted={element.restricted ? element.restricted : ""}
+                        security={element.security ? element.security : ""}
+                        ondclick={() => this.handlerManual(dato, tipo)}
                     />
                 )
-            }else{
+            } else {
                 let keys = Object.keys(element);
-                keys.forEach(ele =>{
-                    this.renderStructure(element[ele],dato[ele]);
+                keys.forEach(ele => {
+                    this.renderStructure(element[ele], dato[ele]);
                 });
             }
-        }else{
+        } else {
             return (
-                <field 
-                value={dato}
-                tipo={"Campo"}
-                restricted={element.restricted ? element.restricted : ""}
-                security={element.security ? element.security : ""}
+                <field
+                    value={dato}
+                    tipo={"Campo"}
+                    restricted={element.restricted ? element.restricted : ""}
+                    security={element.security ? element.security : ""}
+                    ondclick={() => this.props.handlefilter(dato)}
                 />
             )
         }
-        
+
+    }
+
+    renderChoice(position) {
+        return (
+            <input type="checkbox" class="checkBoxSelect" onClick={() => this.props.checkObject(position)}></input>
+        )
+    }
+
+    renderEdit(position) {
+        return (
+            <input type="button" class="editButton" onClick={() => this.props.editObject(position)}></input>
+        )
+    }
+
+    renderDelete(position) {
+        return (
+            <input type="button" class="deleteButton" onClick={() => this.props.deleteObject(position)}></input>
+        )
+    }
+
+    renderAllFields() {
+        let keysStructure = Object.keys(this.state.structure);
+
+        keysStructure.forEach(key => {
+            return (
+                this.renderStructure(this.state.structure[key], this.state.value[key])
+            )
+
+        });
     }
 
     constructor(props) {
         super(props);
+        this.state.position = props.position;
         this.state.typeDb = props.dbType;
         this.state.value = props.datos;
         this.state.structure = props.structure;
 
+        this.renderStructure = this.renderStructure.bind(this);
+        this.renderChoice = this.renderChoice.bind(this);
+        this.renderEdit = this.renderEdit.bind(this);
+        this.renderDelete = this.renderDelete.bind(this);
+        this.renderAllFields = this.renderAllFields.bind(this);
+
+    }
+    render() {
+        return (
+            <div class="ObjectComplete">
+                {this.renderChoice(this.state.position)}
+                {this.renderAllFields()}
+                {this.renderEdit(this.state.position)}
+                {this.renderDelete(this.state.position)}
+            </div>
+        )
+    }
+}
+
+class navBarSeach extends React.component {
+    constructor(props) {
+        super(props);
+        this.state.mensaje = "Buscar...";
+        this.state.value = "";
+
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(e){
+        let copyValue = this.state;
+        copyValue.value = e.target.value;
+        this.props.changeSearch(e.target.value);
+    }
+
+    render() {
+        return (
+            <div class="searchBox">
+                <button type="submit"><i class="fa fa-search"></i></button>
+                <input type="text" placeholder={this.state.mensaje} value={this.state.value} onChange={this.handleChange} name="search"/>
+            </div>
+        )
+    }
+}
+
+class listObjects extends React.component {
+    renderall(){
+        let cont = 0;
+        this.state.listDatos.forEach(element => {
+            return (
+                <objetoComplete
+                position={cont}
+                dbType={this.state.dbType}
+                datos={element}
+                structure={this.structure}
+                handlefilter={ dato => this.props.handleFilter(dato) }
+                checkObject={ position => this.props.check(position)}
+                editObject={position => this.props.edit(position)}
+                deleteObject={position => this.props.delete(position)}
+                />
+            );
+            count++;
+        });
+    }
+
+    contructor(props){
+        super(props);
+        this.state.structure = props.structure;
+        this.state.listDatos = props.listaDatos;
+        this.state.dbType = props.dbtype;
+        this.render = this.renderall.bind(this);
     }
 
     render(){
-        let keysStructure = Object.keys(this.state.structure);
-
-        keysStructure.forEach(key =>{
-            return(
-                this.renderStructure(this.state.structure[key], this.state.value[key])
-                )
-            
-        });
+        return (
+            <div class="containerObjects">
+                {this.renderall()}
+            </div>
+        )
     }
 }
