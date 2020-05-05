@@ -1,35 +1,26 @@
 
 
-class field extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state.value = props.datos;
-        this.state.tipo = props.type;
-        this.state.restricted = props.restricted;
-        this.state.security = props.security;
-
-    }
-
-
+class Field extends React.Component {
+   
     render() {
         let variableText = "";
-        switch (this.state.tipo) {
+        switch (this.props.type) {
             case "Lista":
-                variableText = `${this.state.value.length} Elementos`;
+                variableText = `${this.props.datos.length} Elementos`;
                 break;
             case "campo":
-                if (this.state.restricted == "password") {
-                    for (const iterator of this.state.value) {
+                if (this.props.restricted == "password") {
+                    for (const iterator of this.props.datos) {
                         variableText += "*";
                     }
-                } else if (this.state.restricted == "card") {
-                    for (const iterator of this.state.value) {
+                } else if (this.props.restricted == "card") {
+                    for (const iterator of this.props.datos) {
                         variableText += "#";
                     }
-                    variableText = variableText.slice(0, -4).concat(this.state.value.slice(-4));
+                    variableText = variableText.slice(0, -4).concat(this.props.datos.slice(-4));
 
                 } else {
-                    variableText = this.state.value;
+                    variableText = this.props.datos;
                 }
 
                 break;
@@ -79,41 +70,42 @@ let ejemplo = {
 }
 
 
-class objetoComplete extends React.Component {
+class ObjetoComplete extends React.Component {
 
-    handlerManual(dato, tipo){
+    handlerManual(dato, tipo, key){
         if(tipo=="Campo"){
-            this.props.handlefilter(dato);
+            this.props.handlefilter(dato, key);
         }
     }
 
-    renderStructure(element, dato) {
-        if (this.state.typeDb == "Mongo") {
+    renderStructure(element, dato, key) {
+        if (this.props.dbType == "Mongo") {
             if (Array.isArray(element) || element.type) {
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
                 return (
-                    <field
+                    <Field
                         value={dato}
                         tipo={tipo}
                         restricted={element.restricted ? element.restricted : ""}
                         security={element.security ? element.security : ""}
-                        ondclick={() => this.handlerManual(dato, tipo)}
+                        ondclick={() => this.handlerManual(dato, tipo, key)}
                     />
                 )
             } else {
                 let keys = Object.keys(element);
+                let newkey = key.concat(",");
                 keys.forEach(ele => {
-                    this.renderStructure(element[ele], dato[ele]);
+                    this.renderStructure(element[ele], dato[ele], newkey.concat(ele));
                 });
             }
         } else {
             return (
-                <field
+                <Field
                     value={dato}
                     tipo={"Campo"}
                     restricted={element.restricted ? element.restricted : ""}
                     security={element.security ? element.security : ""}
-                    ondclick={() => this.props.handlefilter(dato)}
+                    ondclick={() => this.props.handlefilter(dato, key)}
                 />
             )
         }
@@ -139,11 +131,11 @@ class objetoComplete extends React.Component {
     }
 
     renderAllFields() {
-        let keysStructure = Object.keys(this.state.structure);
+        let keysStructure = Object.keys(this.props.structure);
 
         keysStructure.forEach(key => {
             return (
-                this.renderStructure(this.state.structure[key], this.state.value[key])
+                this.renderStructure(this.props.structure[key], this.props.datos[key], key.toString())
             )
 
         });
@@ -151,11 +143,6 @@ class objetoComplete extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state.position = props.position;
-        this.state.typeDb = props.dbType;
-        this.state.value = props.datos;
-        this.state.structure = props.structure;
-
         this.renderStructure = this.renderStructure.bind(this);
         this.renderChoice = this.renderChoice.bind(this);
         this.renderEdit = this.renderEdit.bind(this);
@@ -166,53 +153,54 @@ class objetoComplete extends React.Component {
     render() {
         return (
             <div class="ObjectComplete">
-                {this.renderChoice(this.state.position)}
+                {this.renderChoice(props.position)}
                 {this.renderAllFields()}
-                {this.renderEdit(this.state.position)}
-                {this.renderDelete(this.state.position)}
+                {this.renderEdit(props.position)}
+                {this.renderDelete(props.position)}
             </div>
         )
     }
 }
 
 
-class navBarSeach extends React.Component {
+class NavBarSeach extends React.Component {
     constructor(props) {
         super(props);
-        this.state.mensaje = "Buscar...";
-        this.state.value = props.valorBusqueda;
-
         this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange(e){
-        let copyValue = this.state;
-        copyValue.value = e.target.value;
         this.props.changeSearch(e.target.value);
+    }
+    handleKeyUp(e){
+        if(e.key == "Enter"){
+            this.props.search();
+        }
+        e.preventDefault();
     }
 
     render() {
         return (
             <div class="searchBox">
-                <button type="submit"><i class="fa fa-search"></i></button>
-                <input type="text" placeholder={this.state.mensaje} value={this.state.value} onChange={this.handleChange} name="search"/>
+                <button type="submit" onClick={this.props.search}><i class="fa fa-search"></i></button>
+                <input type="text" placeholder={this.props.mensajeBuscar} onKeyUp={this.handleKeyUp} value={this.props.valorBusqueda} onChange={this.handleChange} name="search"/>
             </div>
         )
     }
 }
 
 
-class listObjects extends React.Component {
+class ListObjects extends React.Component {
     renderall(){
         let cont = 0;
-        this.state.listDatos.forEach(element => {
+        this.props.listaDatos.forEach(element => {
             return (
-                <objetoComplete
+                <ObjetoComplete
                 position={cont}
-                dbType={this.state.dbType}
+                dbType={this.props.dbtype}
                 datos={element}
-                structure={this.structure}
-                handlefilter={ dato => this.props.handleFilter(dato) }
+                structure={this.props.structure}
+                handlefilter={ dato,key => this.props.handleFilter(dato, key) }
                 checkObject={ position => this.props.check(position)}
                 editObject={position => this.props.edit(position)}
                 deleteObject={position => this.props.delete(position)}
@@ -224,9 +212,7 @@ class listObjects extends React.Component {
 
     constructor(props){
         super(props);
-        this.state.structure = props.structure;
-        this.state.listDatos = props.listaDatos;
-        this.state.dbType = props.dbtype;
+
         this.renderall = this.renderall.bind(this);
     }
 
@@ -240,11 +226,11 @@ class listObjects extends React.Component {
 }
 
 
-class filter_group extends React.Component {
+class FilterGroup extends React.Component {
 
     handleChange(e){
-        let copyValue = this.state;
         
+        this.props.handlefilter(e.target.value, e.target.name);
         
     }
 
@@ -266,24 +252,18 @@ class filter_group extends React.Component {
             }
         } else {
             return (
-                <field
-                    value={dato}
-                    tipo={"Campo"}
-                    restricted={element.restricted ? element.restricted : ""}
-                    security={element.security ? element.security : ""}
-                    ondclick={() => this.props.handlefilter(dato)}
-                />
+                 <input type="text" value={dato} name={key} onChange={this.handleChange} />
             )
         }
 
     }
 
     renderAllFields() {
-        let keysStructure = Object.keys(this.state.structure);
+        let keysStructure = Object.keys(this.props.structure);
 
         keysStructure.forEach(key => {
             return (
-                this.renderStructure(this.state.structure[key], this.state.value[key],key.toString())
+                this.renderStructure(this.props.structure[key], this.props.filters[key],key.toString())
             )
 
         });
@@ -291,52 +271,46 @@ class filter_group extends React.Component {
 
     constructor(props){
         super(props);
-        this.state.structure = props.structure;
-        this.state.typeDb = props.dbType;
-        this.state.value = props.filters;
-
+        
+        this.renderAllFields = this.renderAllFields.bind(this);
+        this.renderStructure = this.renderStructure.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 }
 
-class Recuadro extends React.Component {
-
-    render(){
-        return (
-            <div onClick={this.props.onclick}>{this.props.color}</div>
-        )
-    }
-}
-
-class Papa extends React.Component {
+class ModuloAdmin extends React.Component {
     constructor(props){
         super(props);
-        this.state = {contador: 0, listaColor: [], color: ""};
-        this.state.contador = 0;
-        this.state.listaColor = ["Rojo", "Amarillo", "Azul"]
-        this.state.color = "Rojo";
 
-        this.handleClick = this.handleClick.bind(this);
     }
-
-    handleClick(){
-        let copystate = this.state;
-        if(copystate.contador === 2){
-            copystate.contador = 0;
-        }else{
-            copystate.contador++;
-        }
-        copystate.color = copystate.listaColor[copystate.contador];
-        this.setState(copystate);
-    }
-
     render(){
         return (
-            <div>
-                <Recuadro 
-                color={this.state.color}
-                onclick={() => this.handleClick()}
+            <div class="containerModule">
+                <NavBarSeach
+                changeSearch={ value => this.props.changesearch(value)}
+                search={()=> this.props.seach()}
+
                 />
+                <div class="listaAndFilters">
+                    <FilterGroup
+                        handlefilter={value,key => this.props.changeFilter(value,key)}
+                        structure={this.props.structure}
+                        filters={this.props.filters}
+                    />
+
+                    <ListObjects 
+                        listaDatos={this.props.listaDatos}
+                        dbtype={this.props.dbType}
+                        structure={this.props.structure}
+                        handleFilter={value,key => this.changeFilter(value,key)}
+                        check={position => this.props.check(position)}
+                        edit={position => this.props.edit(position)}
+                        delete={position => this.props.delete(position)}
+                    />
+                    
+                </div>
             </div>
-        )
+        );
     }
+
 }
