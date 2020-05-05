@@ -1,6 +1,6 @@
 
 
-class field extends React.component {
+class field extends React.Component {
     constructor(props) {
         super(props);
         this.state.value = props.datos;
@@ -79,7 +79,7 @@ let ejemplo = {
 }
 
 
-class objetoComplete extends React.component {
+class objetoComplete extends React.Component {
 
     handlerManual(dato, tipo){
         if(tipo=="Campo"){
@@ -176,7 +176,7 @@ class objetoComplete extends React.component {
 }
 
 
-class navBarSeach extends React.component {
+class navBarSeach extends React.Component {
     constructor(props) {
         super(props);
         this.state.mensaje = "Buscar...";
@@ -202,7 +202,7 @@ class navBarSeach extends React.component {
 }
 
 
-class listObjects extends React.component {
+class listObjects extends React.Component {
     renderall(){
         let cont = 0;
         this.state.listDatos.forEach(element => {
@@ -222,7 +222,7 @@ class listObjects extends React.component {
         });
     }
 
-    contructor(props){
+    constructor(props){
         super(props);
         this.state.structure = props.structure;
         this.state.listDatos = props.listaDatos;
@@ -240,7 +240,7 @@ class listObjects extends React.component {
 }
 
 
-class filter_group extends React.component {
+class filter_group extends React.Component {
 
     handleChange(e){
         let copyValue = this.state;
@@ -289,7 +289,7 @@ class filter_group extends React.component {
         });
     }
 
-    contructor(props){
+    constructor(props){
         super(props);
         this.state.structure = props.structure;
         this.state.typeDb = props.dbType;
@@ -298,23 +298,19 @@ class filter_group extends React.component {
     }
 }
 
-class recuadro extends React.component {
-
-    contructor(props){
-        super(props);
-        this.state.color = props.color;
-    }
+class Recuadro extends React.Component {
 
     render(){
         return (
-            <div onClick={this.props.onclick}>{this.state.color}</div>
+            <div onClick={this.props.onclick}>{this.props.color}</div>
         )
     }
 }
 
-class papa extends React.component {
-    contructor(props){
+class Papa extends React.Component {
+    constructor(props){
         super(props);
+        this.state = {contador: 0, listaColor: [], color: ""};
         this.state.contador = 0;
         this.state.listaColor = ["Rojo", "Amarillo", "Azul"]
         this.state.color = "Rojo";
@@ -324,7 +320,7 @@ class papa extends React.component {
 
     handleClick(){
         let copystate = this.state;
-        if(copystate.contador == 2){
+        if(copystate.contador === 2){
             copystate.contador = 0;
         }else{
             copystate.contador++;
@@ -336,20 +332,11 @@ class papa extends React.component {
     render(){
         return (
             <div>
-                <recuadro 
-                color={this.state.color}
-                onclick={() => this.handleClick()}
-                />
-                <recuadro 
+                <Recuadro 
                 color={this.state.color}
                 onclick={() => this.handleClick()}
                 />
             </div>
         )
     }
-
-
-
-
-
 }
