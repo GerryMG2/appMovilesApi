@@ -45,6 +45,7 @@ class field extends React.component {
     }
 
 }
+
 let transaccion_detalle = {
 
     id_tran_detail: { type: "BIGSERIAL", primaryKey: true, name: "id_tran_detalle", modelType: "Number" },
@@ -58,7 +59,7 @@ let transaccion_detalle = {
     id_descuento: { type: "BIGINT", name: "id_descuento", foreignKey: true, ref: "descuento", refField: "id_descuento", commentForeign: "id_descuento_fk", modelType: "Number" }
 
 }
-
+// keys = ["usuario", "nombre_encuesta",....]
 let ejemplo = {
     usuario: { type: String, ref: "usuario" },
     nombre_encuesta: { type: String, require: true },
@@ -76,6 +77,7 @@ let ejemplo = {
         opciones: [{ titulo_opcion: { type: String } }]
     }]
 }
+
 
 class objetoComplete extends React.component {
 
@@ -173,11 +175,12 @@ class objetoComplete extends React.component {
     }
 }
 
+
 class navBarSeach extends React.component {
     constructor(props) {
         super(props);
         this.state.mensaje = "Buscar...";
-        this.state.value = "";
+        this.state.value = props.valorBusqueda;
 
         this.handleChange = this.handleChange.bind(this);
     }
@@ -197,6 +200,7 @@ class navBarSeach extends React.component {
         )
     }
 }
+
 
 class listObjects extends React.component {
     renderall(){
@@ -223,7 +227,7 @@ class listObjects extends React.component {
         this.state.structure = props.structure;
         this.state.listDatos = props.listaDatos;
         this.state.dbType = props.dbtype;
-        this.render = this.renderall.bind(this);
+        this.renderall = this.renderall.bind(this);
     }
 
     render(){
@@ -233,4 +237,119 @@ class listObjects extends React.component {
             </div>
         )
     }
+}
+
+
+class filter_group extends React.component {
+
+    handleChange(e){
+        let copyValue = this.state;
+        
+        
+    }
+
+    renderStructure(element, dato, key) {
+        if (this.state.typeDb == "Mongo") {
+            if (Array.isArray(element) || element.type) {
+                let tipo = Array.isArray(element) ? "Lista" : "Campo";
+                if(tipo == "Campo"){
+                    return (
+                        <input type="text" value={dato} name={key} onChange={this.handleChange} />
+                    )
+                }
+            } else {
+                let keys = Object.keys(element);
+                let newKey = key.concat(",");
+                keys.forEach(ele => {
+                    this.renderStructure(element[ele], dato[ele], newKey.concat(ele) );
+                });
+            }
+        } else {
+            return (
+                <field
+                    value={dato}
+                    tipo={"Campo"}
+                    restricted={element.restricted ? element.restricted : ""}
+                    security={element.security ? element.security : ""}
+                    ondclick={() => this.props.handlefilter(dato)}
+                />
+            )
+        }
+
+    }
+
+    renderAllFields() {
+        let keysStructure = Object.keys(this.state.structure);
+
+        keysStructure.forEach(key => {
+            return (
+                this.renderStructure(this.state.structure[key], this.state.value[key],key.toString())
+            )
+
+        });
+    }
+
+    contructor(props){
+        super(props);
+        this.state.structure = props.structure;
+        this.state.typeDb = props.dbType;
+        this.state.value = props.filters;
+
+    }
+}
+
+class recuadro extends React.component {
+
+    contructor(props){
+        super(props);
+        this.state.color = props.color;
+    }
+
+    render(){
+        return (
+            <div onClick={this.props.onclick}>{this.state.color}</div>
+        )
+    }
+}
+
+class papa extends React.component {
+    contructor(props){
+        super(props);
+        this.state.contador = 0;
+        this.state.listaColor = ["Rojo", "Amarillo", "Azul"]
+        this.state.color = "Rojo";
+
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(){
+        let copystate = this.state;
+        if(copystate.contador == 2){
+            copystate.contador = 0;
+        }else{
+            copystate.contador++;
+        }
+        copystate.color = copystate.listaColor[copystate.contador];
+        this.setState(copystate);
+    }
+
+    render(){
+        return (
+            <div>
+                <recuadro 
+                color={this.state.color}
+                onclick={() => this.handleClick()}
+                />
+                <recuadro 
+                color={this.state.color}
+                onclick={() => this.handleClick()}
+                />
+            </div>
+        )
+    }
+
+
+
+
+
 }
