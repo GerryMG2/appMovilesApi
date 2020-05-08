@@ -11,6 +11,9 @@ const cliente = new clienteController();
 const descuentoController = require("../controllers/api_controllers_transaccional/descuentoController");
 const descuento = new descuentoController();
 
+const cuentaController = require("../controllers/api_controllers_transaccional/cuentaController");
+const cuenta = new cuentaController();
+
 
 const detalleEncuestaController = require("../controllers/api_controllers_transaccional/detalleEncuestaController");
 const detalleEncuesta = new detalleEncuestaController();
@@ -65,6 +68,14 @@ router.post("/cliente", cliente.create);
 router.delete("/cliente", cliente.delete);
 router.put("/cliente", cliente.update);
 router.put("/cliente/upsert", cliente.updateOrCreate);
+
+router.get("/cuenta", cuenta.get);
+router.get("/cuenta/id", cuenta.getOneById);
+router.post("/cuenta", cuenta.create);
+router.delete("/cuenta", cuenta.delete);
+router.put("/cuenta", cuenta.update);
+router.put("/cuenta/upsert", cuenta.updateOrCreate);
+
 
 router.get("/descuento", descuento.get);
 router.get("/descuento/id", descuento.getOneById);

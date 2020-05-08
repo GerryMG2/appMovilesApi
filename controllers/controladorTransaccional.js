@@ -23,7 +23,7 @@ class controllerTransaccional{
 
     get(req,res){
         try {
-            this.service.get(req.body.filters, JSON.parse(req.body.filtro),req.body.size, req.body.pag,JSON.parse(req.body.orden), (validar, docs, count) => {
+            this.service.get(req.query.filters, JSON.parse(req.query.filtro),parseInt(req.query.size), parseInt(req.query.pag),JSON.parse(req.query.orden), (validar, docs, count) => {
                 if(validar){
                     res.status(200).json({msg: "ok", correct: true, docs: docs, count: count});
                 }else{
@@ -39,7 +39,7 @@ class controllerTransaccional{
 
     getOneById(req, res){
         try {
-            this.service.getOneById(JSON.parse(req.body.id), (validar, docs) => {
+            this.service.getOneById(JSON.parse(req.query.id), (validar, docs) => {
                 if(validar){
                     res.status(500).json({msg: "ok", correct: true, docs: docs});
                 }else{
