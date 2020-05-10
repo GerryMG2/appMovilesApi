@@ -55,7 +55,7 @@ class controllerTransaccional{
 
     delete(req, res){
         try {
-            this.service.delete(req.body.id, (validar, msg) => {
+            this.service.delete(JSON.parse(req.body.id), (validar, msg) => {
                 if(validar){
                     res.status(200).json({msg: msg, correct: true});
                 }else{

@@ -379,7 +379,7 @@ class ModuloAdmin extends React.Component {
 
                 />
                 <div>
-                    <input type="button" value="Create" onClick={() => this.props.create(this.props.modelBlanck)} />
+                    <input type="button" value="Create" onClick={() => this.props.create()} />
                 </div>
                 <div class="listaAndFilters">
                     <FilterGroup
@@ -414,29 +414,6 @@ class ModuloAdmin extends React.Component {
 
 //desde aqui createOrEdit pantalla
 
-function deepFind(obj, path) {
-    var paths = path.split('.')
-        , current = obj
-        , i;
-
-    for (i = 0; i < paths.length; ++i) {
-        if (paths[i][0] == "#") {
-            if (current[parseInt(paths[i].substring(1))] == undefined) {
-                return undefined;
-            } else {
-                current = current[parseInt(paths[i].substring(1))];
-            }
-        } else {
-
-            if (current[paths[i]] == undefined) {
-                return undefined;
-            } else {
-                current = current[paths[i]];
-            }
-        }
-    }
-    return current;
-}
 
 class CreateOrUpdateField extends React.Component {
 
@@ -444,11 +421,11 @@ class CreateOrUpdateField extends React.Component {
         lista.forEach(element => {
             if (element.valor === select) {
                 return (
-                    <option value={element.valor} selected>{element.show}</option>
+                    <option value={element.save} selected>{element.show}</option>
                 )
             } else {
                 return (
-                    <option value={element.valor}>{element.show}</option>
+                    <option value={element.save}>{element.show}</option>
                 )
             }
         });
@@ -661,6 +638,7 @@ class FormCreateOrUpdate extends React.Component {
                         estructura={estructura}
                         path={path}
                         listaOpciones={listaOpcionesfeach}
+                        handleFieldChange={tipo, path, value => this.props.handleFieldChange(tipo, path, value)}
                     />
                 );
             } else {
@@ -706,6 +684,7 @@ class FormCreateOrUpdate extends React.Component {
                 estructura={estructura}
                 path={path}
                 listaOpciones={listaOpcionesfeach}
+                handleFieldChange={tipo, path, value => this.props.handleFieldChange(tipo, path, value)}
             />
 
         }
@@ -724,18 +703,18 @@ class FormCreateOrUpdate extends React.Component {
 
                 return (
                     <div class="formUpdateOrCreate">
-                        <input type="button" value="x" onClick={()=> this.props.exitCreateOrUpdate()}/>
-                        {this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], newkeys.toString(), this.props.listaOpciones[element])}
-                        <button class="btn-crear" value="Create" onClick={this.props.createObject}></button>
+                        <input type="button" value="x" onClick={() => this.props.exitCreateOrUpdate()} />
+                        {this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], element.toString(), this.props.listaOpciones[element])}
+                        <button class="btn-crear" value="Create" onClick={() => this.props.createObject()}></button>
                     </div>
                 );
             } else {
 
                 return (
                     <div class="formUpdateOrCreate">
-                        <input type="button" value="x" onClick={()=> this.props.exitCreateOrUpdate()}/>
-                        {this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], newkeys.toString(), this.props.listaOpciones[element])}
-                        <button class="btn-update" value="update" onClick={this.props.updateObject}></button>
+                        <input type="button" value="x" onClick={() => this.props.exitCreateOrUpdate()} />
+                        {this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], element.toString(), this.props.listaOpciones[element])}
+                        <button class="btn-update" value="update" onClick={() => this.props.updateObject()}></button>
                     </div>
                 );
             }
@@ -1138,24 +1117,209 @@ class MasterPage extends React.Component {
 
     }
 
-    get(urlname, dbType, filters, filtro, page, size, orden) {
+    recursiveOptionList(estructura, params) {
+       
+                if (estructura.ref) {
+                    let query = Object.keys(params)
+                    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+                    .join("&");
+                let options_and_body = {
+                    method: "GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
 
-        let params = {
-            filters: filters,
-            filtro: JSON.stringify(filtro),
-            page: page,
-            size: size,
-            orden: JSON.stringify(orden),
-        };
 
-        if (dbType == "Mongo") {
+                let auxUrl = `/${prefix}${estructura.ref}/` + "?" + query;
+                fetch(auxUrl, options_and_body)
+                    .then(res => res.json())
+                    .catch(error => console.log("error: ", error))
+                    .then(response => {
+                        return response.docs.map(obj => {
+                            let a = {save: null, show: null}
+                            for (i in obj) {
+
+                                if (i == estructura.fieldShow ) {
+                                    console.log(i);
+                                    a.show = obj[i]
+                                }
+                                if (i == "_id") {
+                                    console.log(i);
+                                    a.save = obj[i]
+                                }
+                            }
 
 
+                            return a
+                        });
+                        
+                    });
+                    
+                } else {
+                    if (Array.isArray(estructura)) {
+                        //
+                        let objRetu = []
+                        objRetu.push(this.recursiveOptionList(estructura[0],params));
+                        return objRetu;
+                    } else {
+                        if(!estructura.type){
+                            // objeto
+                            let ret = {}
+                            let newkeys = Object.keys(estructura);
+                            newkeys.forEach(ele => {
+                                ret[ele] = this.recursiveOptionList(estructura[ele],params);
+                            });
+                            return ret;
+                        }
+                    }
+                }
+        
+
+    }
+
+    getOptionsList() {
+        let copy = this.state;
+        let prefix = "";
+        let params = {};
+        let blank = this.state.modelo.blank;
+        if (this.state.modelo.dbType == "Mongo") {
+            params = {
+                filters: "",
+                filtro: JSON.stringify({}),
+                page: 1,
+                size: 0,
+                orden: JSON.stringify({}),
+            };
+            prefix = "/api"
         } else {
-
+            params = {
+                filters: "",
+                filtro: JSON.stringify({}),
+                page: 1,
+                size: "ALL",
+                orden: JSON.stringify({}),
+            };
+            prefix = "/apit"
         }
 
 
+
+        let keys = Object.keys(this.state.modelo.modelo);
+        keys.forEach(element => {
+            if (this.state.modelo.dbType == "Mongo") {
+                if (this.state.modelo.modelo[element].ref) {
+                    let query = Object.keys(params)
+                        .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+                        .join("&");
+                    let options_and_body = {
+                        method: "GET",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    };
+                    let auxUrl = `/${prefix}${this.state.modelo.modelo[element].ref}/` + "?" + query;
+
+
+
+                    fetch(auxUrl, options_and_body)
+                        .then(res => res.json())
+                        .catch(error => console.log("error: ", error))
+                        .then(response => {
+                            console.log("success: ", response);
+                            blank[element] = response.docs.map(obj => {
+                                let a = {save: null, show: null}
+                                for (i in obj) {
+
+                                    if (i == this.state.modelo.modelo[element].fieldShow ) {
+                                        console.log(i);
+                                        a.show = obj[i]
+                                    }
+                                    if (i == "_id") {
+                                        console.log(i);
+                                        a.save = obj[i]
+                                    }
+                                }
+
+
+                                return a
+                            });
+                        });
+                } else {
+                    if (Array.isArray(element)) {
+                        blank[element][0] = this.recursiveOptionList(this.state.modelo.modelo[element][0],params)
+                    } else {
+                        if(!this.state.modelo.modelo[element].type){
+                            let keysI = this.state.modelo.modelo[element];
+
+                            keysI.forEach(ele=>{
+                                blank[element][ele] = this.recursiveOptionList(this.state.modelo.modelo[element][ele],params);
+                            });
+                        }
+                    }
+                }
+            } else {
+                //[{null, []}]
+                let query = Object.keys(params)
+                    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+                    .join("&");
+                let options_and_body = {
+                    method: "GET",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+
+
+                let auxUrl = `/${prefix}${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                fetch(auxUrl, options_and_body)
+                    .then(res => res.json())
+                    .catch(error => console.log("error: ", error))
+                    .then(response => {
+                        blank[element] = response.docs.map(obj => {
+                            let a = {save: null, show: null}
+                            for (i in obj) {
+
+                                if (i == this.state.modelo.modelo[element].fieldShow ) {
+                                    console.log(i);
+                                    a.show = obj[i]
+                                }
+                                if (i == this.state.modelo.modelo[element].refField) {
+                                    console.log(i);
+                                    a.save = obj[i]
+                                }
+                            }
+
+
+                            return a
+                        });
+                    });
+            }
+        });
+
+        console.log("finished blank:", blank);
+        return blank;
+
+    }
+
+    get() {
+        let copy = this.state;
+        let params = {
+            filters: this.state.filters,
+            filtro: JSON.stringify(this.state.filtros),
+            page: this.state.page,
+            size: this.state.size,
+            orden: JSON.stringify(this.state.orden),
+        };
+        let prefix = "";
+        if (this.state.modelo.dbType == "Mongo") {
+            prefix = "/api"
+        } else {
+            prexi = "/apit"
+        }
 
         let query = Object.keys(params)
             .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
@@ -1168,14 +1332,18 @@ class MasterPage extends React.Component {
             }
         };
 
-        let auxUrl = `/${urlname}/` + "?" + query;
+        let auxUrl = `/${prefix}${this.state.modelo.urlname}/` + "?" + query;
 
         fetch(auxUrl, options_and_body)
             .then(res => res.json())
             .catch(error => console.log("error: ", error))
             .then(response => {
                 console.log("success: ", response);
-
+                copy.listaDatos = response.docs;
+                copy.elementosTotales = response.count;
+                copy.checkList = []
+                copy.listaOpciones= {}
+                this.setState(copy);
             });
 
     }
@@ -1184,17 +1352,79 @@ class MasterPage extends React.Component {
 
     }
 
-    delete() {
+    delete(position) {
+        let options_and_body = {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
 
+        let prefix = "";
+        if (this.state.modelo.dbType == "Mongo") {
+            prefix = "/api"
+        } else {
+            prexi = "/apit"
+        }
+
+
+        if (this.state.modelo.dbType == "Mongo") {
+            options_and_body["body"] = JSON.stringify({
+                id: this.state.listaDatos[position]["_id"]
+            });
+        } else {
+            let idcond = {};
+            let keyModel = Object.keys(this.state.modelo.modelo);
+            keyModel.forEach(element => {
+                if (this.state.modelo.modelo.primaryKey) {
+                    idcond[element] = this.state.listaDatos[position][key];
+                }
+            });
+
+            options_and_body["body"] = JSON.stringify({
+                id: idcond
+            });
+
+        }
+
+        let url = `${prefix}/${this.state.modelo.modelo.urlname}/`;
+        fetch(url, options_and_body)
+            .then(res => res.json())
+            .catch(error => {
+                console.log("error: ", error);
+                Swal.fire("Error al eliminar.", error, "error");
+            })
+            .then(response => {
+                console.log("success: ", response);
+                Swal.fire(response.msg, "Continua", response.ok);
+            })
+            .then(() => { })
+            .then(() => {
+                // implement get
+                this.get();
+            });
     }
+
     changeModel(cont) {
         let copy = this.state;
         copy.Model = Modelos[cont];
         copy.CreateOrUpdate = "None";
+        copy.filtros = {};
+        copy.filters = "";
+        copy.orden = {};
+        copy.listaDatos = [];
+        copy.page = 1;
+        copy.size = 20;
+        copy.elementosTotales = 0;
+        copy.checkList = [];
+        copy.listaOpciones = {};
+
         this.setState(copy);
 
 
         //TODO: get implementation
+        this.get();
     }
 
     constructor(props) {
@@ -1209,10 +1439,16 @@ class MasterPage extends React.Component {
             size: 20,
             listaDatos =[],
             elementosTotales = 0,
-
+            filters: "",
+            orden: {},
+            filtros: {},
+            checkList =[],
+            listaOpciones: {}
         };
         this.get = this.get.bind(this);
         this.changeModel = this.changeModel.bind(this);
+        //implemente all methods
+        this.get();
 
     }
 
@@ -1230,6 +1466,84 @@ class MasterPage extends React.Component {
         });
     }
 
+    changeseach(value) {
+        let copy = this.state;
+        copy.seach = value;
+        this.setState(copy);
+
+    }
+    changeFilter(value, key) {
+        let copy = this.state;
+        copy.filtros["key"] = value;
+        this.setState(copy);
+        //implememnt get
+        this.get();
+    }
+
+    searchGet() {
+        this.get();
+        //implement get
+    }
+
+    toCreate() {
+        let copy = this.state;
+        copy.elementoToUpdateOrCreate = this.state.modelo.blank;
+        copy.CreateOrUpdate = "Create";
+        // implement options lis
+        copy.listaOpciones = await this.getOptionsList();
+        this.setState(copy);
+    }
+
+    check(position) {
+        let copy = this.state;
+        let index = copy.checkList.indexOf(position);
+        if (index > -1) {
+            copy.checkList.splice(index, 1);
+        } else {
+            copy.checkList.push(position);
+        }
+        this.setState(copy);
+
+    }
+
+    edit(position) {
+        let copy = this.state;
+        copy.elementoToUpdateOrCreate = copy.listaDatos[position];
+        copy.CreateOrUpdate = "Update";
+        // implement option list
+        copy.listaOpciones = await this.getOptionsList();
+        this.setState(copy);
+    }
+
+    changeOrden(key) {
+        let copy = this.state;
+        if (this.state.orden[key] == undefined) {
+            copy.orden[key] = -1;
+        } else {
+            copy.orden[key] = copy.orden[key] * -1;
+        }
+
+        this.setState(copy);
+        this.get();
+        // implement get
+    }
+
+    pagination(page) {
+        let copy = this.state;
+        copy.page = page;
+        this.setState(copy);
+        this.get();
+        // implement get
+    }
+
+    exitCreateUpdate() {
+        let copy = this.state;
+        copy.elementoToUpdateOrCreate = {};
+        copy.CreateOrUpdate = "None";
+        copy.listaOpciones = {};
+        this.setState(copy);
+    }
+
     render() {
         if (this.state.CreateOrUpdate == "None") {
             return (
@@ -1238,21 +1552,76 @@ class MasterPage extends React.Component {
                         {this.renderTables}
                     </div>
                     <div class="module">
-                        <ModuloAdmin 
-                            changesearch={}
-                            seach={}
-                            
+
+                        <ModuloAdmin
+                            changesearch={value => this.changeseach(value)}
+                            seach={() => this.searchGet()}
+                            create={() => this.toCreate()}
+                            changeFilter={value, key => this.changeFilter(value, key)}
+                            structure={this.state.modelo.modelo}
+                            filters={this.state.filters}
+                            listaDatos={this.state.listaDatos}
+                            dbType={this.state.modelo.dbType}
+                            check={position => this.check(position)}
+                            edit={position => this.edit(position)}
+                            delete={position => this.delete(position)}
+                            changeOrden={key => this.changeOrden(key)}
+                            pagination={page => this.pagination(page)}
+                            size={this.state.size}
+                            page={this.state.page}
+                            totalcount={this.state.elementosTotales}
                         />
                     </div>
                 </div>
             );
         } else {
-            if (this.CreateOrUpdate == "Create") {
+            return (
+                <div class="main">
+                    <div class="costadoTablasMenu">
+                        {this.renderTables}
+                    </div>
+                    <div class="module">
 
-            } else {
-
-            }
+                        <FormCreateOrUpdate
+                            exitCreateOrUpdate={() => this.exitCreateUpdate()}
+                            estructura={this.state.modelo.modelo}
+                            dbType={this.state.modelo.dbType}
+                            datos={this.state.elementoToUpdateOrCreate}
+                            createObject={() => this.create()}
+                            updateObject={() => this.update()}
+                            typeFomr={this.state.CreateOrUpdate}
+                            listaOpciones={this.state.listaOpciones}
+                            handleFieldChange={tipo, path, value => this.changeData(tipo, path, value)}
+                        />
+                    </div>
+                </div>
+            );
 
         }
     }
+}
+
+
+function deepFind(obj, path) {
+    var paths = path.split('.')
+        , current = obj
+        , i;
+
+    for (i = 0; i < paths.length; ++i) {
+        if (paths[i][0] == "#") {
+            if (current[parseInt(paths[i].substring(1))] == undefined) {
+                return undefined;
+            } else {
+                current = current[parseInt(paths[i].substring(1))];
+            }
+        } else {
+
+            if (current[paths[i]] == undefined) {
+                return undefined;
+            } else {
+                current = current[paths[i]];
+            }
+        }
+    }
+    return current;
 }
