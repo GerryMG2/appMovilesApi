@@ -155,5 +155,5 @@ router.put("/usuario", usuario.update);
 router.put("/usuario/upsert", usuario.updateOrCreate);
 
 
-
+module.exports = router;
 

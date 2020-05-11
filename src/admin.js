@@ -650,7 +650,7 @@ class FormCreateOrUpdate extends React.Component {
                         let newPa = path.concat("#").concat(cont);
                         item.push(
                             <div class="objectInlist">
-                                <button value="-" onClick={() => this.props.deleteInList(newPa)}></button>
+                                <button value="-" onClick={() => this.props.deleteInList(path, cont)}></button>
                                 {this.renderList("Mongo", estructura[0], dato[cont], newPa, listaOpcionesfeach[0])}
 
                             </div>);
@@ -1114,68 +1114,123 @@ class MasterPage extends React.Component {
     }
 
     create() {
+        let options_and_body = {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
+        options_and_body["body"] = JSON.stringify(body);
+
+        let body = {};
+        if (this.state.modelo.dbType == "Mongo") {
+            body = this.state.elementoToUpdateOrCreate;
+
+        } else {
+            let keys = Object.keys(this.state.modelo.modelo);
+            let newModel = {};
+
+            keys.forEach(ele => {
+                if (!this.state.modelo.modelo.primaryKey && !this.state.modelo.modelo.type == "BIGSERIAL") {
+                    newModel[ele] = this.state.elementoToUpdateOrCreate[ele];
+                }
+
+            });
+
+            body = newModel;
+
+        }
+
+
+        let prefix = "";
+        if (this.state.modelo.dbType == "Mongo") {
+            prefix = "/api";
+        } else {
+            prexi = "/apit";
+        }
+
+        let auxUrl = `/${prefix}${this.state.modelo.urlname}/` + "?" + query;
+        fetch(auxUrl, options_and_body)
+            .then(res => res.json())
+            .catch(error => {
+                console.log("error: ", error);
+                Swal.fire("Hubo un problema para crear el objet", error, "error");
+            })
+            .then(response => {
+                console.log("success: ", response);
+                Swal.fire("Se creo correctamente", "Continua", "ok");
+            })
+            .then(() => {
+                let copy = this.state;
+                copy.elementoToUpdateOrCreate = {};
+                copy.CreateOrUpdate = "None";
+                copy.listaOpciones = {};
+                this.setState(copy);
+                this.get();
+            });
 
     }
 
     recursiveOptionList(estructura, params) {
-       
-                if (estructura.ref) {
-                    let query = Object.keys(params)
-                    .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
-                    .join("&");
-                let options_and_body = {
-                    method: "GET",
-                    credentials: "same-origin",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                };
 
-
-                let auxUrl = `/${prefix}${estructura.ref}/` + "?" + query;
-                fetch(auxUrl, options_and_body)
-                    .then(res => res.json())
-                    .catch(error => console.log("error: ", error))
-                    .then(response => {
-                        return response.docs.map(obj => {
-                            let a = {save: null, show: null}
-                            for (i in obj) {
-
-                                if (i == estructura.fieldShow ) {
-                                    console.log(i);
-                                    a.show = obj[i]
-                                }
-                                if (i == "_id") {
-                                    console.log(i);
-                                    a.save = obj[i]
-                                }
-                            }
-
-
-                            return a
-                        });
-                        
-                    });
-                    
-                } else {
-                    if (Array.isArray(estructura)) {
-                        //
-                        let objRetu = []
-                        objRetu.push(this.recursiveOptionList(estructura[0],params));
-                        return objRetu;
-                    } else {
-                        if(!estructura.type){
-                            // objeto
-                            let ret = {}
-                            let newkeys = Object.keys(estructura);
-                            newkeys.forEach(ele => {
-                                ret[ele] = this.recursiveOptionList(estructura[ele],params);
-                            });
-                            return ret;
-                        }
-                    }
+        if (estructura.ref) {
+            let query = Object.keys(params)
+                .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+                .join("&");
+            let options_and_body = {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
                 }
-        
+            };
+
+
+            let auxUrl = `/${prefix}${estructura.ref}/` + "?" + query;
+            fetch(auxUrl, options_and_body)
+                .then(res => res.json())
+                .catch(error => console.log("error: ", error))
+                .then(response => {
+                    return response.docs.map(obj => {
+                        let a = { save: null, show: null }
+                        for (i in obj) {
+
+                            if (i == estructura.fieldShow) {
+                                console.log(i);
+                                a.show = obj[i]
+                            }
+                            if (i == "_id") {
+                                console.log(i);
+                                a.save = obj[i]
+                            }
+                        }
+
+
+                        return a
+                    });
+
+                });
+
+        } else {
+            if (Array.isArray(estructura)) {
+                //
+                let objRetu = []
+                objRetu.push(this.recursiveOptionList(estructura[0], params));
+                return objRetu;
+            } else {
+                if (!estructura.type) {
+                    // objeto
+                    let ret = {}
+                    let newkeys = Object.keys(estructura);
+                    newkeys.forEach(ele => {
+                        ret[ele] = this.recursiveOptionList(estructura[ele], params);
+                    });
+                    return ret;
+                }
+            }
+        }
+
 
     }
 
@@ -1230,10 +1285,10 @@ class MasterPage extends React.Component {
                         .then(response => {
                             console.log("success: ", response);
                             blank[element] = response.docs.map(obj => {
-                                let a = {save: null, show: null}
+                                let a = { save: null, show: null }
                                 for (i in obj) {
 
-                                    if (i == this.state.modelo.modelo[element].fieldShow ) {
+                                    if (i == this.state.modelo.modelo[element].fieldShow) {
                                         console.log(i);
                                         a.show = obj[i]
                                     }
@@ -1249,13 +1304,13 @@ class MasterPage extends React.Component {
                         });
                 } else {
                     if (Array.isArray(element)) {
-                        blank[element][0] = this.recursiveOptionList(this.state.modelo.modelo[element][0],params)
+                        blank[element][0] = this.recursiveOptionList(this.state.modelo.modelo[element][0], params)
                     } else {
-                        if(!this.state.modelo.modelo[element].type){
+                        if (!this.state.modelo.modelo[element].type) {
                             let keysI = this.state.modelo.modelo[element];
 
-                            keysI.forEach(ele=>{
-                                blank[element][ele] = this.recursiveOptionList(this.state.modelo.modelo[element][ele],params);
+                            keysI.forEach(ele => {
+                                blank[element][ele] = this.recursiveOptionList(this.state.modelo.modelo[element][ele], params);
                             });
                         }
                     }
@@ -1280,10 +1335,10 @@ class MasterPage extends React.Component {
                     .catch(error => console.log("error: ", error))
                     .then(response => {
                         blank[element] = response.docs.map(obj => {
-                            let a = {save: null, show: null}
+                            let a = { save: null, show: null }
                             for (i in obj) {
 
-                                if (i == this.state.modelo.modelo[element].fieldShow ) {
+                                if (i == this.state.modelo.modelo[element].fieldShow) {
                                     console.log(i);
                                     a.show = obj[i]
                                 }
@@ -1316,9 +1371,9 @@ class MasterPage extends React.Component {
         };
         let prefix = "";
         if (this.state.modelo.dbType == "Mongo") {
-            prefix = "/api"
+            prefix = "/api";
         } else {
-            prexi = "/apit"
+            prexi = "/apit";
         }
 
         let query = Object.keys(params)
@@ -1342,14 +1397,72 @@ class MasterPage extends React.Component {
                 copy.listaDatos = response.docs;
                 copy.elementosTotales = response.count;
                 copy.checkList = []
-                copy.listaOpciones= {}
+                copy.listaOpciones = {}
                 this.setState(copy);
             });
 
     }
 
     update() {
+        let body = { id: null, model: null };
+        if (this.state.modelo.dbType == "Mongo") {
+            body.id = this.state.elementoToUpdateOrCreate["_id"];
+            body.model = this.state.elementoToUpdateOrCreate;
+        } else {
+            let keys = Object.keys(this.state.modelo.modelo);
+            let newModel = {};
+            let newkey = {};
+            keys.forEach(ele => {
+                if (this.state.modelo.modelo.primaryKey) {
+                    newkey[ele] = this.state.elementoToUpdateOrCreate[ele];
+                } else {
+                    newModel[ele] = this.state.elementoToUpdateOrCreate[ele];
+                }
 
+            });
+            body.id = newkey;
+            body.model = newModel;
+
+        }
+
+        let prefix = "";
+        if (this.state.modelo.dbType == "Mongo") {
+            prefix = "/api";
+        } else {
+            prexi = "/apit";
+        }
+
+
+
+        let options_and_body = {
+            method: "PUT",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
+        let url = `${prefix}/${this.state.modelo.urlname}/`;
+
+        options_and_body["body"] = JSON.stringify(body);
+        fetch(url, options_and_body)
+            .then(res => res.json())
+            .catch(error => {
+                console.log("error: ", error);
+                Swal.fire("Hubo un problema para actualizar", error, "error");
+            })
+            .then(response => {
+                console.log("success: ", response);
+                Swal.fire("actualizado", "Continua", "success");
+            })
+            .then(() => {
+                let copy = this.state;
+                copy.elementoToUpdateOrCreate = {};
+                copy.CreateOrUpdate = "None";
+                copy.listaOpciones = {};
+                this.setState(copy);
+                this.get();
+
+            });
     }
 
     delete(position) {
@@ -1437,12 +1550,12 @@ class MasterPage extends React.Component {
             CreateOrUpdate: "None",
             page: 1,
             size: 20,
-            listaDatos =[],
-            elementosTotales = 0,
+            listaDatos: [],
+            elementosTotales: 0,
             filters: "",
             orden: {},
             filtros: {},
-            checkList =[],
+            checkList: [],
             listaOpciones: {}
         };
         this.get = this.get.bind(this);
@@ -1490,7 +1603,7 @@ class MasterPage extends React.Component {
         copy.elementoToUpdateOrCreate = this.state.modelo.blank;
         copy.CreateOrUpdate = "Create";
         // implement options lis
-        copy.listaOpciones = await this.getOptionsList();
+        copy.listaOpciones = this.getOptionsList();
         this.setState(copy);
     }
 
@@ -1511,7 +1624,7 @@ class MasterPage extends React.Component {
         copy.elementoToUpdateOrCreate = copy.listaDatos[position];
         copy.CreateOrUpdate = "Update";
         // implement option list
-        copy.listaOpciones = await this.getOptionsList();
+        copy.listaOpciones = this.getOptionsList();
         this.setState(copy);
     }
 
@@ -1522,7 +1635,8 @@ class MasterPage extends React.Component {
         } else {
             copy.orden[key] = copy.orden[key] * -1;
         }
-
+        copy.page = 1;
+        copy.size = 20;
         this.setState(copy);
         this.get();
         // implement get
@@ -1541,6 +1655,49 @@ class MasterPage extends React.Component {
         copy.elementoToUpdateOrCreate = {};
         copy.CreateOrUpdate = "None";
         copy.listaOpciones = {};
+        this.setState(copy);
+    }
+
+    changeData(tipo, path, value) {
+        let copy = this.state;
+        switch (tipo) {
+            case "String":
+                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+                break;
+            case "Boolean":
+                let valor = value == "true";
+                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, valor);
+                break;
+            case "Date":
+                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+                break;
+            case "Number":
+                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, parseFloat(value));
+                break;
+
+            default:
+                break;
+        }
+        this.setState(copy);
+    }
+
+    insertInList(path) {
+        let copy = this.state;
+
+        let value = deepFind(this.state.elementoToUpdateOrCreate, path);
+        let valuePush = deepFind(this.state.modelo.blank, path.concat(".#0"));
+        value.push(valuePush);
+        copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+
+        this.setState(copy);
+    }
+
+    deleteInList(path, count) {
+        let copy = this.state;
+        let value = deepFind(this.state.elementoToUpdateOrCreate, path);
+
+        value.splice(count, 1);
+        copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
         this.setState(copy);
     }
 
@@ -1592,6 +1749,8 @@ class MasterPage extends React.Component {
                             typeFomr={this.state.CreateOrUpdate}
                             listaOpciones={this.state.listaOpciones}
                             handleFieldChange={tipo, path, value => this.changeData(tipo, path, value)}
+                            insertList={() => this.insertInList(path)}
+                            deleteInList={newPath, count => this.deleteInList(newPath, count)}
                         />
                     </div>
                 </div>
@@ -1599,6 +1758,34 @@ class MasterPage extends React.Component {
 
         }
     }
+}
+
+ReactDOM.render(<MasterPage />, document.getElementById('contenedorReact'));
+
+function insertValuePath(obj, path, value) {
+    let copy = obj;
+    path = path.split(".");
+    if (path == "") {
+        return value;
+    } else {
+
+        if (path.length == 1) {
+            if (path[0][0] == "#") {
+                copy[parseInt(path[0].substring(1))] = insertValuePath(obj[parseInt(path[0].substring(1))],
+                    "", value);
+            } else {
+                copy[path[0]] = insertValuePath(obj[path[0]], "", value);
+            }
+        } else {
+            if (path[0][0] == "#") {
+                copy[parseInt(path[0].substring(1))] = insertValuePath(obj[parseInt(path[0].substring(1))],
+                    path.slice(1).join("."), value);
+            } else {
+                copy[path[0]] = insertValuePath(obj[path[0]], path.slice(1).join("."), value);
+            }
+        }
+    }
+    return copy;
 }
 
 

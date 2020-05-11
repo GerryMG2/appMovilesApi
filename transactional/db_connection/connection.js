@@ -5,11 +5,12 @@ class GenericDB {
     static db = null;
     constructor() {
 
-        if (this.db == null) {
+        if (GenericDB.db == null) {
             var dbClass = require("../../utils/dbRelationalsConnections/postgress");
+            console.log("DB_URL:",DB_URL)
             var dbGenerator = new dbClass(DB_URL);
 
-            this.db = dbGenerator.getdb();
+            GenericDB.db = dbGenerator.getdb();
         }
 
     }

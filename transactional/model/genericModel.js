@@ -338,7 +338,7 @@ class transactionalModelSQL {
 
 
 
-    #qrCreateTable() {
+    #qrCreateTable= ()=>{
         let strCreationBegin = `CREATE TABLE ${this.table_name} (`;
         let endStrCreate = `);`;
         let fields = "";
@@ -354,7 +354,7 @@ class transactionalModelSQL {
 
     }
 
-    #qrCreateRelationsPrimaryKey() {
+    #qrCreateRelationsPrimaryKey= ()=> {
         let queryResult = "";
 
         this.campos.forEach(element => {
@@ -373,7 +373,7 @@ class transactionalModelSQL {
         return queryResult;
     }
 
-    #qrCreateRelationsForeignKey() {
+    #qrCreateRelationsForeignKey = ()=> {
         let queryResult = "";
 
         this.campos.forEach(element => {
@@ -391,7 +391,7 @@ class transactionalModelSQL {
         return queryResult;
     }
 
-    #qrDestroyRelations() {
+    #qrDestroyRelations= ()=> {
         let queryResult = "";
         this.campos.forEach(element => {
             if (this.modelo[element]["foreignKey"]) {
@@ -402,7 +402,7 @@ class transactionalModelSQL {
         return queryResult;
     }
 
-    #qrDestroyTable() {
+    #qrDestroyTable= ()=> {
         return `DROP TABLE IF EXISTS ${this.table_name} CASCADE;`;
     }
 
