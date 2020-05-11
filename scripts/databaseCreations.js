@@ -7,18 +7,21 @@ var scritpDBinit = () => {
     try {
         if(DB_POSTGRES_DEVELOPMENT == "true"){
             var listaServicios = []
-            console.log("Initialization of DB creations");
-            console.log("Is running a danguerous method,that can delete all the data in DB.");
-            glob("../transactional/transactionServices/*", {}, function (err, files) {
+            console.warn("Initialization of DB creations");
+            console.warn("Is running a danguerous method,that can delete all the data in DB.");
+            glob("transactional/transactionServices/*", {}, function (err, files) {
                 if(!err){
                     files.forEach(file =>{
-                        let servicio = require(`../transactional/transactionServices/${file}`);
+                        console.log(file);
+                        let servicio = require(`../${file}`);
+                       
                         let servicioInit = new servicio();
                         listaServicios.push(servicioInit);
                     });
-
+                    console.error(files[0]);
                     //delete relations
                     listaServicios.forEach(service =>{
+                        
                         service.EliminarRelaciones();
                     });
                     console.log("se eliminaron las relaciones");

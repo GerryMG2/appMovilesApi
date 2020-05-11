@@ -46,7 +46,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
-            console.log("error: ", error)
+            console.error("error: ", error)
             cb(false, {});
         }
 
@@ -267,7 +267,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
-            console.log("error: ", error);
+            console.error("error: ", error);
         }
 
     }
@@ -283,7 +283,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
-            console.log("error: ", error);
+            console.error("error: ", error);
         }
 
     }
@@ -299,7 +299,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
-            console.log("error: ", error);
+            console.error("error: ", error);
         }
 
     }
@@ -315,7 +315,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
-            console.log("error: ", error);
+            console.error("error: ", error);
         }
 
     }
@@ -326,12 +326,13 @@ class transactionalModelSQL {
                 if (validar) {
                     console.log(`Se ha eliminado la tabla ${this.table_name} correctamente`);
                     console.log(datos);
+                   
                 } else {
                     console.log(`Error al eliminar la tabla ${this.table_name}`);
                 }
             });
         } catch (error) {
-            console.log("error: ", error);
+            console.error("error: ", error);
         }
 
     }
@@ -351,7 +352,7 @@ class transactionalModelSQL {
 
         let queryResult = strCreationBegin.concat(fields).concat(endStrCreate);
         return queryResult;
-
+        console.log(queryResult);
     }
 
     #qrCreateRelationsPrimaryKey= ()=> {
@@ -369,7 +370,7 @@ class transactionalModelSQL {
         });
 
 
-
+        console.log(queryResult);
         return queryResult;
     }
 
@@ -387,7 +388,7 @@ class transactionalModelSQL {
         });
 
 
-
+        console.log(queryResult);
         return queryResult;
     }
 
@@ -398,7 +399,7 @@ class transactionalModelSQL {
                 queryResult = queryResult.concat(`ALTER TABLE IF EXISTS ${this.table_name} DROP  CONSTRAINT IF EXISTS ${this.modelo[element]["commentForeign"]};`)
             }
         });
-
+        console.log(queryResult);
         return queryResult;
     }
 

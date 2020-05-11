@@ -16,7 +16,7 @@ class GenericDB {
     }
 
     query(qr, cb) {
-        this.db.any(qr)
+        GenericDB.db.any(qr)
             .then(function (data) {
                 console.log("Connection -> query() -> data: ", data);
                 // success;
