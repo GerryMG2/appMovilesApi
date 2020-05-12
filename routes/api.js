@@ -3,7 +3,7 @@ var router = express.Router();
 
 const encuestaController = require("../controllers/api_controller_norelational/encuestaController");
 const encuesta = new encuestaController();
-
+console.log("encuesta ID: ",encuesta.service.modelId);
 const lanzamientoController = require("../controllers/api_controller_norelational/lanzamientoController");
 const lanzamiento = new lanzamientoController();
 

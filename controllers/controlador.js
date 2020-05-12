@@ -1,8 +1,16 @@
 class controller{
 
-    constructor(service, options){
-        this.service = new service();
+    constructor(serv, options){
+        this.service = new serv();
+        console.log("ID:",this.service.modelId);
         this.options = options;
+
+        this.update = this.update.bind(this);
+        this.get = this.get.bind(this);
+        this.delete = this.delete.bind(this);
+        this.getOneById = this.getOneById.bind(this);
+        this.create = this.create.bind(this);
+        this.updateOrCreate = this.updateOrCreate.bind(this);
     }
 
     update(req, res){
@@ -23,6 +31,7 @@ class controller{
 
     get(req,res){
         try {
+            console.log("ID in get:",this.service.modelId);
             this.service.get(req.query.filters, JSON.parse(req.query.filtro),parseInt(req.query.size), parseInt(req.query.pag),JSON.parse(req.query.orden), (validar, docs, count) => {
                 if(validar){
                     res.status(200).json({msg: "ok", correct: true, docs: docs, count: count});

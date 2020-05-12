@@ -3,6 +3,13 @@ class controllerTransaccional{
     constructor(service, options){
         this.service = new service();
         this.options = options;
+
+        this.update = this.update.bind(this);
+        this.get = this.get.bind(this);
+        this.getOneById = this.getOneById.bind(this);
+        this.delete = this.delete.bind(this);
+        this.updateOrCreate = this.updateOrCreate.bind(this);
+        this.create = this.create.bind(this);
     }
 
     update(req, res){

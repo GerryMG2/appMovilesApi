@@ -54,6 +54,11 @@ class transactionalModelSQL {
 
     get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
         try {
+            console.log("Fileter:", filters);
+            console.log("filtros:", filtros=={}) ;
+            console.log("orden:", orden=={});
+            console.log("page:", pag);
+            console.log("size:", size);
             let offset = size * (pag - 1);
             let conditionsFiltros = "";
             let conditionsFilters = "";
@@ -62,7 +67,7 @@ class transactionalModelSQL {
             let pagination = `LIMIT ${size} OFFSET ${offset}`;
             let order = "";
 
-            if (filtros != {}) {
+            if (Object.entries(filtros).length > 0) {
                 let fil = ""
                 keysFiltros.forEach(element => {
                     if (this.modelo[element]["modelType"] != "Number") {
@@ -88,9 +93,9 @@ class transactionalModelSQL {
                 conditionsFilters = search.slice(0, -2);
             }
 
-            if (orden != {}) {
+            if (Object.entries(orden).length > 0) {
                 let ord = "ORDER BY ";
-                keysFiltros.forEach(element => {
+                keysOrden.forEach(element => {
                     switch (orden[element]) {
                         case 1:
                             ord = ord.concat(`${this.modelo[element]["name"]} ASC,`);
@@ -105,13 +110,16 @@ class transactionalModelSQL {
                 });
                 order = ord.slice(0, -1);
             }
-            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
+            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ;`;
+            console.log("qr count:", queryCount);
+            
             let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
+            console.log("qr select: ", query);
             this.conx.query(query, (validar, datos) => {
                 if (validar) {
                     this.conx.query(queryCount, (validar, datosC) => {
                         if (validar) {
-                            cb(true, datos, datosC[0].cuenta);
+                            cb(true, datos, parseInt(datosC[0].cuenta));
                         } else {
                             cb(false, {}, 0);
                         }

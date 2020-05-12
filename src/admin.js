@@ -1192,10 +1192,10 @@ class MasterPage extends React.Component {
         if (this.state.modelo.dbType == "Mongo") {
             prefix = "/api";
         } else {
-            prexi = "/apit";
+            prefix = "/apit";
         }
 
-        let auxUrl = `/${prefix}${this.state.modelo.urlname}/` + "?" + query;
+        let auxUrl = `${prefix}/${this.state.modelo.urlname}/` + "?" + query;
         fetch(auxUrl, options_and_body)
             .then(res => res.json())
             .catch(error => {
@@ -1218,7 +1218,7 @@ class MasterPage extends React.Component {
     }
 
     recursiveOptionList(estructura, params) {
-
+        console.log(estructura);
         if (estructura.ref) {
             let query = Object.keys(params)
                 .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
@@ -1232,28 +1232,33 @@ class MasterPage extends React.Component {
             };
 
 
-            let auxUrl = `/${prefix}${estructura.ref}/` + "?" + query;
+            let auxUrl = `/api/${estructura.ref}/` + "?" + query;
             fetch(auxUrl, options_and_body)
                 .then(res => res.json())
                 .catch(error => console.log("error: ", error))
                 .then(response => {
-                    return response.docs.map(obj => {
-                        let a = { save: null, show: null }
-                        for (i in obj) {
+                    if (response.count > 0) {
+                        return response.docs.map(obj => {
+                            let a = { save: null, show: null }
+                            for (i in obj) {
 
-                            if (i == estructura.fieldShow) {
-                                console.log(i);
-                                a.show = obj[i]
+                                if (i == estructura.fieldShow) {
+                                    console.log(i);
+                                    a.show = obj[i]
+                                }
+                                if (i == "_id") {
+                                    console.log(i);
+                                    a.save = obj[i]
+                                }
                             }
-                            if (i == "_id") {
-                                console.log(i);
-                                a.save = obj[i]
-                            }
-                        }
 
 
-                        return a
-                    });
+                            return a;
+                        });
+                    } else {
+                        return [];
+                    }
+
 
                 });
 
@@ -1280,7 +1285,7 @@ class MasterPage extends React.Component {
     }
 
     getOptionsList() {
-        let copy = this.state;
+        console.log("getting list");
         let prefix = "";
         let params = {};
         let blank = this.state.modelo.blank;
@@ -1310,6 +1315,7 @@ class MasterPage extends React.Component {
         keys.forEach(element => {
             if (this.state.modelo.dbType == "Mongo") {
                 if (this.state.modelo.modelo[element].ref) {
+                    console.log("entra en ref");
                     let query = Object.keys(params)
                         .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
                         .join("&");
@@ -1320,7 +1326,7 @@ class MasterPage extends React.Component {
                             "Content-Type": "application/json"
                         }
                     };
-                    let auxUrl = `/${prefix}${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                    let auxUrl = `${prefix}/${this.state.modelo.modelo[element].ref}/` + "?" + query;
 
 
 
@@ -1349,10 +1355,12 @@ class MasterPage extends React.Component {
                         });
                 } else {
                     if (Array.isArray(element)) {
+                        console.log("es un array");
                         blank[element][0] = this.recursiveOptionList(this.state.modelo.modelo[element][0], params)
                     } else {
                         if (!this.state.modelo.modelo[element].type) {
-                            let keysI = this.state.modelo.modelo[element];
+                            console.log("es un objeto");
+                            let keysI = Object.keys(this.state.modelo.modelo[element]);
 
                             keysI.forEach(ele => {
                                 blank[element][ele] = this.recursiveOptionList(this.state.modelo.modelo[element][ele], params);
@@ -1374,7 +1382,7 @@ class MasterPage extends React.Component {
                 };
 
 
-                let auxUrl = `/${prefix}${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                let auxUrl = `${prefix}/${this.state.modelo.modelo[element].ref}/` + "?" + query;
                 fetch(auxUrl, options_and_body)
                     .then(res => res.json())
                     .catch(error => console.log("error: ", error))
@@ -1410,7 +1418,7 @@ class MasterPage extends React.Component {
         let params = {
             filters: this.state.filters,
             filtro: JSON.stringify(this.state.filtros),
-            page: this.state.page,
+            pag: this.state.page,
             size: this.state.size,
             orden: JSON.stringify(this.state.orden),
         };
@@ -1418,7 +1426,7 @@ class MasterPage extends React.Component {
         if (this.state.modelo.dbType == "Mongo") {
             prefix = "/api";
         } else {
-            prexi = "/apit";
+            prefix = "/apit";
         }
 
         let query = Object.keys(params)
@@ -1432,18 +1440,23 @@ class MasterPage extends React.Component {
             }
         };
 
-        let auxUrl = `/${prefix}${this.state.modelo.urlname}/` + "?" + query;
+        let auxUrl = `${prefix}/${this.state.modelo.urlname}/` + "?" + query;
 
         fetch(auxUrl, options_and_body)
             .then(res => res.json())
             .catch(error => console.log("error: ", error))
             .then(response => {
-                console.log("success: ", response);
-                copy.listaDatos = response.docs;
-                copy.elementosTotales = response.count;
-                copy.checkList = []
-                copy.listaOpciones = {}
-                this.setState(copy);
+                if (response.correct) {
+                    console.log("success: ", response);
+                    copy.listaDatos = response.docs;
+                    copy.elementosTotales = response.count;
+                    copy.checkList = []
+                    copy.listaOpciones = {}
+                    this.setState(copy);
+                } else {
+                    console.log("error: ", response);
+                }
+
             });
 
     }
@@ -1474,7 +1487,7 @@ class MasterPage extends React.Component {
         if (this.state.modelo.dbType == "Mongo") {
             prefix = "/api";
         } else {
-            prexi = "/apit";
+            prefix = "/apit";
         }
 
 
@@ -1523,7 +1536,7 @@ class MasterPage extends React.Component {
         if (this.state.modelo.dbType == "Mongo") {
             prefix = "/api"
         } else {
-            prexi = "/apit"
+            prefix = "/apit"
         }
 
         if (this.state.modelo.dbType == "Mongo") {
@@ -1566,7 +1579,7 @@ class MasterPage extends React.Component {
     changeModel(e) {
         console.log(e.target);
         let copy = this.state;
-        copy.Model = this.Modelos[e.target.cont];
+        copy.modelo = this.Modelos[e.target.getAttribute("cont")];
         copy.CreateOrUpdate = "None";
         copy.filtros = {};
         copy.filters = "";
@@ -1616,7 +1629,7 @@ class MasterPage extends React.Component {
         let cont = 0;
         let items = [];
         this.Modelos.forEach(element => {
-            console.log(element);
+            // console.log(element);
 
             items.push(<div class="table_list">
                 <input type="button" cont={cont} value={element.nombre} onClick={this.changeModel} />
@@ -1646,11 +1659,13 @@ class MasterPage extends React.Component {
     }
 
     toCreate() {
+        console.log(copy);
         let copy = this.state;
         copy.elementoToUpdateOrCreate = this.state.modelo.blank;
         copy.CreateOrUpdate = "Create";
         // implement options lis
         copy.listaOpciones = this.getOptionsList();
+        console.log(copy);
         this.setState(copy);
     }
 
@@ -1751,7 +1766,7 @@ class MasterPage extends React.Component {
     render() {
         if (this.state.CreateOrUpdate == "None") {
             return (
-                <div class="container-fluid main">
+                <div class="row">
                     <div class="col-2 costadoTablasMenu">
                         {this.renderTables()}
                     </div>
@@ -1780,11 +1795,11 @@ class MasterPage extends React.Component {
             );
         } else {
             return (
-                <div class="main">
-                    <div class="costadoTablasMenu">
+                <div class="row">
+                    <div class="col-2 costadoTablasMenu">
                         {this.renderTables()}
                     </div>
-                    <div class="module">
+                    <div class="col-8 module">
 
                         <FormCreateOrUpdate
                             exitCreateOrUpdate={() => this.exitCreateUpdate()}
@@ -1795,9 +1810,9 @@ class MasterPage extends React.Component {
                             updateObject={() => this.update()}
                             typeFomr={this.state.CreateOrUpdate}
                             listaOpciones={this.state.listaOpciones}
-                            handleFieldChange={tipo, path, value => this.changeData(tipo, path, value)}
+                            handleFieldChange={(tipo, path, value) => this.changeData(tipo, path, value)}
                             insertList={() => this.insertInList(path)}
-                            deleteInList={newPath, count => this.deleteInList(newPath, count)}
+                            deleteInList={(newPath, count) => this.deleteInList(newPath, count)}
                         />
                     </div>
                 </div>

@@ -12,6 +12,13 @@ class service {
         this.msgUpdate = msg_update;
         this.msgDelete = mgs_delete;
         this.modelId = id;
+        // this.updateOrCreate = this.updateOrCreate.bind(this);
+        // this.create = this.create.bind(this);
+        // this.get = this.get.bind(this);
+        // this.getOneById = this.getOneById.bind(this);
+        // this.getcount = this.getcount.bind(this);
+        // this.delete = this.delete.bind(this);
+        // this.update = this.update.bind(this);
     }
 
     updateOrCreate(id, newModel, cb) {
@@ -102,6 +109,14 @@ class service {
 
     get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
         try {
+            let nn = 0;
+            let validarCount = false;
+            this.getcount(filters, filtros, function (validar, n) {
+                if (validar) {
+                   nn =n;
+                   validarCount = true;
+                } 
+            });
             let filtro = filtros;
             if (filters != "") {
                 filtro = {
@@ -116,17 +131,16 @@ class service {
                     }
                 })
             }
+            
             this.model.find(filtro, function (err, docs) {
                 if (err) {
                     cb(false, {}, 0);
                 } else {
-                    this.getcount(filters, filtros, function (validar, n) {
-                        if (validar) {
-                            cb(true, docs, n);
-                        } else {
-                            cb(false, {}, 0);
-                        }
-                    });
+                    if(validarCount){
+                        cb(true, docs, nn);
+                    }else{
+                        cb(false, {}, 0);
+                    }
                 }
             }).skip(size * (pag - 1)).limit(size).sort(orden);
         } catch (error) {

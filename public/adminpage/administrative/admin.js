@@ -149,14 +149,14 @@ var ObjetoComplete = function (_React$Component2) {
 
             if (this.props.dbType == "Mongo") {
                 if (Array.isArray(element) || element.type) {
-                    var _tipo = Array.isArray(element) ? "Lista" : "Campo";
+                    var tipo = Array.isArray(element) ? "Lista" : "Campo";
                     var _item = React.createElement(Field, {
                         value: dato,
-                        tipo: _tipo,
+                        tipo: tipo,
                         restricted: element.restricted ? element.restricted : "",
                         security: element.security ? element.security : "",
                         ondclick: function ondclick() {
-                            return _this3.handlerManual(dato, _tipo, key);
+                            return _this3.handlerManual(dato, tipo, key);
                         }
                     });
                     return _item;
@@ -419,8 +419,8 @@ var FilterGroup = function (_React$Component5) {
 
             if (this.state.typeDb == "Mongo") {
                 if (Array.isArray(element) || element.type) {
-                    var _tipo2 = Array.isArray(element) ? "Lista" : "Campo";
-                    if (_tipo2 == "Campo") {
+                    var tipo = Array.isArray(element) ? "Lista" : "Campo";
+                    if (tipo == "Campo") {
                         var _items2 = React.createElement("input", { type: "text", value: dato, name: key, onChange: this.handleChange });
                         return _items2;
                     }
@@ -700,7 +700,7 @@ var CreateOrUpdateField = function (_React$Component8) {
         key: "renderField",
         value: function renderField(dbType, dato, estructura, path, listaOpciones) {
             if (dbType === "Mongo" && path != "_id") {
-                var _newPath = path.splite(".").slice(-1)[0];
+                var newPath = path.splite(".").slice(-1)[0];
                 if (estructura.type) {
                     if (estructura.ref) {
 
@@ -710,7 +710,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                             React.createElement(
                                 "span",
                                 null,
-                                _newPath
+                                newPath
                             ),
                             React.createElement(
                                 "select",
@@ -722,9 +722,9 @@ var CreateOrUpdateField = function (_React$Component8) {
                         return _item4;
                         // se renderiz con opciones
                     } else {
-                        var _tipo3 = estructura.type.name;
+                        var tipo = estructura.type.name;
                         var _item5 = void 0;
-                        switch (_tipo3) {
+                        switch (tipo) {
                             case "String":
                                 _item5 = React.createElement(
                                     "div",
@@ -732,7 +732,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                     React.createElement(
                                         "span",
                                         null,
-                                        _newPath
+                                        newPath
                                     ),
                                     React.createElement("input", { type: "text", tipo: "String", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                 );
@@ -746,9 +746,9 @@ var CreateOrUpdateField = function (_React$Component8) {
                                     React.createElement(
                                         "span",
                                         null,
-                                        _newPath
+                                        newPath
                                     ),
-                                    React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath, "class": "checkboxfield", onChange: this.handleChangeC })
+                                    React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: newPath, "class": "checkboxfield", onChange: this.handleChangeC })
                                 );
                                 return _item5;
                                 break;
@@ -759,7 +759,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                     React.createElement(
                                         "span",
                                         null,
-                                        _newPath
+                                        newPath
                                     ),
                                     React.createElement("input", { type: "text", tipo: "Number", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                 );
@@ -772,7 +772,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                     React.createElement(
                                         "span",
                                         null,
-                                        _newPath
+                                        newPath
                                     ),
                                     React.createElement("input", { type: "date", tipo: "Date", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                 );
@@ -786,7 +786,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                 }
                 // se renderiza
             } else {
-                var _newPath2 = path.splite(".").slice(-1)[0];
+                var _newPath = path.splite(".").slice(-1)[0];
                 if (estructura.type != "BIGSERIAL") {
                     if (estructura.primaryKey) {
                         if (estructura.foreignKey) {
@@ -797,7 +797,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                 React.createElement(
                                     "span",
                                     null,
-                                    _newPath2
+                                    _newPath
                                 ),
                                 React.createElement(
                                     "select",
@@ -817,7 +817,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
                                         React.createElement("input", { type: "text", tipo: "String", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                     );
@@ -830,9 +830,9 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
-                                        React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath2, "class": "checkboxfield", onChange: this.handleChangeC })
+                                        React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath, "class": "checkboxfield", onChange: this.handleChangeC })
                                     );
                                     return _item7;
 
@@ -844,7 +844,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
                                         React.createElement("input", { type: "text", tipo: "Number", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                     );
@@ -857,7 +857,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
                                         React.createElement("input", { type: "date", tipo: "Date", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                     );
@@ -875,7 +875,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                 React.createElement(
                                     "span",
                                     null,
-                                    _newPath2
+                                    _newPath
                                 ),
                                 React.createElement(
                                     "select",
@@ -895,7 +895,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
                                         React.createElement("input", { type: "text", tipo: "String", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                     );
@@ -908,9 +908,9 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
-                                        React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath2, "class": "checkboxfield", onChange: this.handleChangeC })
+                                        React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath, "class": "checkboxfield", onChange: this.handleChangeC })
                                     );
                                     return _item9;
 
@@ -922,7 +922,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
                                         React.createElement("input", { type: "text", tipo: "Number", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                     );
@@ -935,7 +935,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         React.createElement(
                                             "span",
                                             null,
-                                            _newPath2
+                                            _newPath
                                         ),
                                         React.createElement("input", { type: "date", tipo: "Date", name: path, id: "textfield", value: dato, onChange: this.handleChange })
                                     );
@@ -1527,10 +1527,10 @@ var MasterPage = function (_React$Component10) {
             if (this.state.modelo.dbType == "Mongo") {
                 prefix = "/api";
             } else {
-                prexi = "/apit";
+                prefix = "/apit";
             }
 
-            var auxUrl = "/" + prefix + this.state.modelo.urlname + "/" + "?" + query;
+            var auxUrl = prefix + "/" + this.state.modelo.urlname + "/" + "?" + query;
             fetch(auxUrl, options_and_body).then(function (res) {
                 return res.json();
             }).catch(function (error) {
@@ -1553,6 +1553,7 @@ var MasterPage = function (_React$Component10) {
         value: function recursiveOptionList(estructura, params) {
             var _this25 = this;
 
+            console.log(estructura);
             if (estructura.ref) {
                 var _query = Object.keys(params).map(function (k) {
                     return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
@@ -1565,28 +1566,32 @@ var MasterPage = function (_React$Component10) {
                     }
                 };
 
-                var auxUrl = "/" + prefix + estructura.ref + "/" + "?" + _query;
+                var auxUrl = "/api/" + estructura.ref + "/" + "?" + _query;
                 fetch(auxUrl, options_and_body).then(function (res) {
                     return res.json();
                 }).catch(function (error) {
                     return console.log("error: ", error);
                 }).then(function (response) {
-                    return response.docs.map(function (obj) {
-                        var a = { save: null, show: null };
-                        for (i in obj) {
+                    if (response.count > 0) {
+                        return response.docs.map(function (obj) {
+                            var a = { save: null, show: null };
+                            for (i in obj) {
 
-                            if (i == estructura.fieldShow) {
-                                console.log(i);
-                                a.show = obj[i];
+                                if (i == estructura.fieldShow) {
+                                    console.log(i);
+                                    a.show = obj[i];
+                                }
+                                if (i == "_id") {
+                                    console.log(i);
+                                    a.save = obj[i];
+                                }
                             }
-                            if (i == "_id") {
-                                console.log(i);
-                                a.save = obj[i];
-                            }
-                        }
 
-                        return a;
-                    });
+                            return a;
+                        });
+                    } else {
+                        return [];
+                    }
                 });
             } else {
                 if (Array.isArray(estructura)) {
@@ -1612,7 +1617,7 @@ var MasterPage = function (_React$Component10) {
         value: function getOptionsList() {
             var _this26 = this;
 
-            var copy = this.state;
+            console.log("getting list");
             var prefix = "";
             var params = {};
             var blank = this.state.modelo.blank;
@@ -1640,6 +1645,7 @@ var MasterPage = function (_React$Component10) {
             keys.forEach(function (element) {
                 if (_this26.state.modelo.dbType == "Mongo") {
                     if (_this26.state.modelo.modelo[element].ref) {
+                        console.log("entra en ref");
                         var _query2 = Object.keys(params).map(function (k) {
                             return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
                         }).join("&");
@@ -1650,7 +1656,7 @@ var MasterPage = function (_React$Component10) {
                                 "Content-Type": "application/json"
                             }
                         };
-                        var auxUrl = "/" + prefix + _this26.state.modelo.modelo[element].ref + "/" + "?" + _query2;
+                        var auxUrl = prefix + "/" + _this26.state.modelo.modelo[element].ref + "/" + "?" + _query2;
 
                         fetch(auxUrl, options_and_body).then(function (res) {
                             return res.json();
@@ -1677,10 +1683,12 @@ var MasterPage = function (_React$Component10) {
                         });
                     } else {
                         if (Array.isArray(element)) {
+                            console.log("es un array");
                             blank[element][0] = _this26.recursiveOptionList(_this26.state.modelo.modelo[element][0], params);
                         } else {
                             if (!_this26.state.modelo.modelo[element].type) {
-                                var keysI = _this26.state.modelo.modelo[element];
+                                console.log("es un objeto");
+                                var keysI = Object.keys(_this26.state.modelo.modelo[element]);
 
                                 keysI.forEach(function (ele) {
                                     blank[element][ele] = _this26.recursiveOptionList(_this26.state.modelo.modelo[element][ele], params);
@@ -1701,7 +1709,7 @@ var MasterPage = function (_React$Component10) {
                         }
                     };
 
-                    var _auxUrl = "/" + prefix + _this26.state.modelo.modelo[element].ref + "/" + "?" + _query3;
+                    var _auxUrl = prefix + "/" + _this26.state.modelo.modelo[element].ref + "/" + "?" + _query3;
                     fetch(_auxUrl, _options_and_body).then(function (res) {
                         return res.json();
                     }).catch(function (error) {
@@ -1739,7 +1747,7 @@ var MasterPage = function (_React$Component10) {
             var params = {
                 filters: this.state.filters,
                 filtro: JSON.stringify(this.state.filtros),
-                page: this.state.page,
+                pag: this.state.page,
                 size: this.state.size,
                 orden: JSON.stringify(this.state.orden)
             };
@@ -1747,7 +1755,7 @@ var MasterPage = function (_React$Component10) {
             if (this.state.modelo.dbType == "Mongo") {
                 prefix = "/api";
             } else {
-                prexi = "/apit";
+                prefix = "/apit";
             }
 
             var query = Object.keys(params).map(function (k) {
@@ -1761,19 +1769,23 @@ var MasterPage = function (_React$Component10) {
                 }
             };
 
-            var auxUrl = "/" + prefix + this.state.modelo.urlname + "/" + "?" + query;
+            var auxUrl = prefix + "/" + this.state.modelo.urlname + "/" + "?" + query;
 
             fetch(auxUrl, options_and_body).then(function (res) {
                 return res.json();
             }).catch(function (error) {
                 return console.log("error: ", error);
             }).then(function (response) {
-                console.log("success: ", response);
-                copy.listaDatos = response.docs;
-                copy.elementosTotales = response.count;
-                copy.checkList = [];
-                copy.listaOpciones = {};
-                _this27.setState(copy);
+                if (response.correct) {
+                    console.log("success: ", response);
+                    copy.listaDatos = response.docs;
+                    copy.elementosTotales = response.count;
+                    copy.checkList = [];
+                    copy.listaOpciones = {};
+                    _this27.setState(copy);
+                } else {
+                    console.log("error: ", response);
+                }
             });
         }
     }, {
@@ -1804,7 +1816,7 @@ var MasterPage = function (_React$Component10) {
             if (this.state.modelo.dbType == "Mongo") {
                 prefix = "/api";
             } else {
-                prexi = "/apit";
+                prefix = "/apit";
             }
 
             var options_and_body = {
@@ -1851,7 +1863,7 @@ var MasterPage = function (_React$Component10) {
             if (this.state.modelo.dbType == "Mongo") {
                 prefix = "/api";
             } else {
-                prexi = "/apit";
+                prefix = "/apit";
             }
 
             if (this.state.modelo.dbType == "Mongo") {
@@ -1891,7 +1903,7 @@ var MasterPage = function (_React$Component10) {
         value: function changeModel(e) {
             console.log(e.target);
             var copy = this.state;
-            copy.Model = this.Modelos[e.target.cont];
+            copy.modelo = this.Modelos[e.target.getAttribute("cont")];
             copy.CreateOrUpdate = "None";
             copy.filtros = {};
             copy.filters = "";
@@ -1946,7 +1958,7 @@ var MasterPage = function (_React$Component10) {
             var cont = 0;
             var items = [];
             this.Modelos.forEach(function (element) {
-                console.log(element);
+                // console.log(element);
 
                 items.push(React.createElement(
                     "div",
@@ -1982,11 +1994,13 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "toCreate",
         value: function toCreate() {
+            console.log(copy);
             var copy = this.state;
             copy.elementoToUpdateOrCreate = this.state.modelo.blank;
             copy.CreateOrUpdate = "Create";
             // implement options lis
             copy.listaOpciones = this.getOptionsList();
+            console.log(copy);
             this.setState(copy);
         }
     }, {
@@ -2098,7 +2112,7 @@ var MasterPage = function (_React$Component10) {
             if (this.state.CreateOrUpdate == "None") {
                 return React.createElement(
                     "div",
-                    { "class": "container-fluid main" },
+                    { "class": "row" },
                     React.createElement(
                         "div",
                         { "class": "col-2 costadoTablasMenu" },
@@ -2148,15 +2162,15 @@ var MasterPage = function (_React$Component10) {
             } else {
                 return React.createElement(
                     "div",
-                    { "class": "main" },
+                    { "class": "row" },
                     React.createElement(
                         "div",
-                        { "class": "costadoTablasMenu" },
+                        { "class": "col-2 costadoTablasMenu" },
                         this.renderTables()
                     ),
                     React.createElement(
                         "div",
-                        { "class": "module" },
+                        { "class": "col-8 module" },
                         React.createElement(FormCreateOrUpdate, {
                             exitCreateOrUpdate: function exitCreateOrUpdate() {
                                 return _this31.exitCreateUpdate();
@@ -2172,15 +2186,15 @@ var MasterPage = function (_React$Component10) {
                             },
                             typeFomr: this.state.CreateOrUpdate,
                             listaOpciones: this.state.listaOpciones,
-                            handleFieldChange: (tipo, path, function (value) {
+                            handleFieldChange: function handleFieldChange(tipo, path, value) {
                                 return _this31.changeData(tipo, path, value);
-                            }),
+                            },
                             insertList: function insertList() {
                                 return _this31.insertInList(path);
                             },
-                            deleteInList: (newPath, function (count) {
+                            deleteInList: function deleteInList(newPath, count) {
                                 return _this31.deleteInList(newPath, count);
-                            })
+                            }
                         })
                     )
                 );

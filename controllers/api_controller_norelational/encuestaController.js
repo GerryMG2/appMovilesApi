@@ -4,6 +4,7 @@ const encuestaService = require("../../services/noRelacionalServices/encuestaSer
 class encuestaController extends genericController{
     constructor(){
         super(encuestaService, {});
+        console.log("encuesta controller: ")
     }
 }
 
