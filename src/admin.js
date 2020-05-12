@@ -1481,7 +1481,6 @@ class MasterPage extends React.Component {
             prexi = "/apit"
         }
 
-
         if (this.state.modelo.dbType == "Mongo") {
             options_and_body["body"] = JSON.stringify({
                 id: this.state.listaDatos[position]["_id"]
