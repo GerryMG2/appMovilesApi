@@ -326,7 +326,7 @@ class transactionalModelSQL {
                 if (validar) {
                     console.log(`Se ha eliminado la tabla ${this.table_name} correctamente`);
                     console.log(datos);
-                   
+
                 } else {
                     console.log(`Error al eliminar la tabla ${this.table_name}`);
                 }
@@ -339,7 +339,7 @@ class transactionalModelSQL {
 
 
 
-    #qrCreateTable= ()=>{
+    #qrCreateTable = () => {
         let strCreationBegin = `CREATE TABLE ${this.table_name} (`;
         let endStrCreate = `);`;
         let fields = "";
@@ -351,30 +351,34 @@ class transactionalModelSQL {
         fields = fields.slice(0, -1);
 
         let queryResult = strCreationBegin.concat(fields).concat(endStrCreate);
-        return queryResult;
         console.log(queryResult);
+        return queryResult;
+
     }
 
-    #qrCreateRelationsPrimaryKey= ()=> {
+    #qrCreateRelationsPrimaryKey = () => {
         let queryResult = "";
-
+        let field = "";
         this.campos.forEach(element => {
             if (this.modelo[element]["primaryKey"]) {
-                let consulta = "";
-                if (this.modelo[element]["primaryKey"]) {
-                    consulta = consulta.concat(`ALTER TABLE ${this.table_name} ADD PRIMARY KEY (${this.modelo[element]["name"]});`)
-                }
 
-                queryResult = queryResult.concat(consulta);
+                field = field.concat(`${this.modelo[element]["name"]},`);
+
             }
         });
+        field = field.slice(0, -1);
 
-
+        let cns = `ALTER TABLE ${this.table_name} ADD PRIMARY KEY (${field});`;
+        if(field == ""){
+            queryResult = "SELECT 'NOT PRIMARY KEYS'";
+        }else{
+            queryResult = cns;
+        }
         console.log(queryResult);
         return queryResult;
     }
 
-    #qrCreateRelationsForeignKey = ()=> {
+    #qrCreateRelationsForeignKey = () => {
         let queryResult = "";
 
         this.campos.forEach(element => {
@@ -388,22 +392,32 @@ class transactionalModelSQL {
         });
 
 
+
+        if (queryResult == "") {
+            queryResult = "SELECT 'Not Relations';"
+        }
         console.log(queryResult);
         return queryResult;
     }
 
-    #qrDestroyRelations= ()=> {
+    #qrDestroyRelations = () => {
         let queryResult = "";
         this.campos.forEach(element => {
             if (this.modelo[element]["foreignKey"]) {
-                queryResult = queryResult.concat(`ALTER TABLE IF EXISTS ${this.table_name} DROP  CONSTRAINT IF EXISTS ${this.modelo[element]["commentForeign"]};`)
+                queryResult = queryResult.concat(`ALTER TABLE IF EXISTS ${this.table_name} DROP CONSTRAINT IF EXISTS ${this.modelo[element]["commentForeign"]};`)
             }
         });
-        console.log(queryResult);
+
+        if (queryResult == "") {
+
+            queryResult = "SELECT 'Not Relations';"
+        }
+        console.log("qr:", queryResult);
         return queryResult;
     }
 
-    #qrDestroyTable= ()=> {
+    #qrDestroyTable = () => {
+        console.log(`DROP TABLE IF EXISTS ${this.table_name} CASCADE;`);
         return `DROP TABLE IF EXISTS ${this.table_name} CASCADE;`;
     }
 

@@ -24,7 +24,7 @@ var scritpDBinit = () => {
                         
                         service.EliminarRelaciones();
                     });
-                    console.log("se eliminaron las relaciones");
+                    
 
                     //delete tables
                     listaServicios.forEach(service =>{
@@ -32,14 +32,14 @@ var scritpDBinit = () => {
 
                     });
                     
-                    console.log("se eliminaron las tablas");
+                    
 
                     //crear tablas
                     listaServicios.forEach(service =>{
                         service.createTable();
                     });
                     
-                    console.log("se crearon las tablas");
+                   
 
                     //crear pks
                     listaServicios.forEach(service =>{
@@ -47,7 +47,7 @@ var scritpDBinit = () => {
                     });
 
                     
-                    console.log("se crearon las pks");
+                    
 
                     //crear fks
                     listaServicios.forEach(service =>{
@@ -55,7 +55,7 @@ var scritpDBinit = () => {
                     });
 
                     
-                    console.log("se crearon las fks");
+                   
 
 
 
