@@ -83,32 +83,37 @@ class ObjetoComplete extends React.Component {
         if (this.props.dbType == "Mongo") {
             if (Array.isArray(element) || element.type) {
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
-                return (
-                    <Field
-                        value={dato}
-                        tipo={tipo}
-                        restricted={element.restricted ? element.restricted : ""}
-                        security={element.security ? element.security : ""}
-                        ondclick={() => this.handlerManual(dato, tipo, key)}
-                    />
-                )
+                let item = <Field
+                    value={dato}
+                    tipo={tipo}
+                    restricted={element.restricted ? element.restricted : ""}
+                    security={element.security ? element.security : ""}
+                    ondclick={() => this.handlerManual(dato, tipo, key)}
+                />;
+                return item;
+
             } else {
+                let items = [];
                 let keys = Object.keys(element);
                 let newkey = key.concat(".");
                 keys.forEach(ele => {
-                    this.renderStructure(element[ele], dato[ele], newkey.concat(ele));
+                    items.push(...this.renderStructure(element[ele], dato[ele], newkey.concat(ele)));
                 });
+
+                return items;
             }
         } else {
-            return (
-                <Field
-                    value={dato}
-                    tipo={"Campo"}
-                    restricted={element.restricted ? element.restricted : ""}
-                    security={element.security ? element.security : ""}
-                    ondclick={() => this.props.handlefilter(dato, key)}
-                />
-            )
+
+
+            let item = <Field
+                value={dato}
+                tipo={"Campo"}
+                restricted={element.restricted ? element.restricted : ""}
+                security={element.security ? element.security : ""}
+                ondclick={() => this.props.handlefilter(dato, key)}
+            />;
+            return item;
+
         }
 
     }
@@ -133,13 +138,13 @@ class ObjetoComplete extends React.Component {
 
     renderAllFields() {
         let keysStructure = Object.keys(this.props.structure);
-
+        let items = [];
         keysStructure.forEach(key => {
-            return (
-                this.renderStructure(this.props.structure[key], this.props.datos[key], key.toString())
-            )
+
+            items.push(...this.renderStructure(this.props.structure[key], this.props.datos[key], key.toString()));
 
         });
+        return items;
     }
 
     constructor(props) {
@@ -195,33 +200,35 @@ class ListObjects extends React.Component {
 
     renderTitle() {
         let keys = Object.keys(this.props.structure);
-
+        let items = [];
         keys.forEach(element => {
             if (this.props.orden[key] == 1) {
-                return (
-                    <div>
-                        <div>{element}</div>
-                        <input type="button" value="&#x2b61;" onClick={() => this.props.changeOrden(key)} />
 
-                    </div>
-                );
+                items.push(<div>
+                    <div>{element}</div>
+                    <input type="button" value="&#x2b61;" onClick={() => this.props.changeOrden(key)} />
+
+                </div>);
+
             } else {
-                return (
+                item.push(
                     <div>
                         <div>{element}</div>
                         <input type="button" value="&#x2b63;" onClick={() => this.props.changeOrden(key)} />
 
-                    </div>
-                );
+                    </div>);
+
             }
 
         });
+        return items;
     }
 
     renderall() {
         let cont = 0;
+        let items = [];
         this.props.listaDatos.forEach(element => {
-            return (
+            items.push(
                 <ObjetoComplete
                     position={cont}
                     dbType={this.props.dbtype}
@@ -270,34 +277,39 @@ class FilterGroup extends React.Component {
             if (Array.isArray(element) || element.type) {
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
                 if (tipo == "Campo") {
-                    return (
-                        <input type="text" value={dato} name={key} onChange={this.handleChange} />
-                    )
+                    let items =
+                        <input type="text" value={dato} name={key} onChange={this.handleChange} />;
+                    return items;
                 }
             } else {
                 let keys = Object.keys(element);
                 let newKey = key.concat(".");
+                let items = [];
                 keys.forEach(ele => {
-                    this.renderStructure(element[ele], dato[ele], newKey.concat(ele));
+                    items.push(...this.renderStructure(element[ele], dato[ele], newKey.concat(ele)));
                 });
+                return items;
             }
         } else {
-            return (
-                <input type="text" value={dato} name={key} onChange={this.handleChange} />
-            )
+            let item =
+                <input type="text" value={dato} name={key} onChange={this.handleChange} />;
+            return item;
+
         }
 
     }
 
     renderAllFields() {
         let keysStructure = Object.keys(this.props.structure);
-
+        let items = [];
         keysStructure.forEach(key => {
-            return (
-                this.renderStructure(this.props.structure[key], this.props.filters[key], key.toString())
-            )
+
+            items.push(...this.renderStructure(this.props.structure[key], this.props.filters[key], key.toString()));
+
 
         });
+
+        return items;
     }
 
     constructor(props) {
@@ -306,6 +318,14 @@ class FilterGroup extends React.Component {
         this.renderAllFields = this.renderAllFields.bind(this);
         this.renderStructure = this.renderStructure.bind(this);
         this.handleChange = this.handleChange.bind(this);
+    }
+
+    render() {
+        return (
+            <div class="listaFiltros">
+                {this.renderAllFields}
+            </div>
+        );
     }
 }
 
@@ -383,7 +403,7 @@ class ModuloAdmin extends React.Component {
                 </div>
                 <div class="listaAndFilters">
                     <FilterGroup
-                        handlefilter={value, key => this.props.changeFilter(value, key)}
+                        handlefilter={(value, key) => this.props.changeFilter(value, key)}
                         structure={this.props.structure}
                         filters={this.props.filters}
                     />
@@ -392,7 +412,7 @@ class ModuloAdmin extends React.Component {
                         listaDatos={this.props.listaDatos}
                         dbtype={this.props.dbType}
                         structure={this.props.structure}
-                        handleFilter={value, key => this.changeFilter(value, key)}
+                        handleFilter={(value, key) => this.changeFilter(value, key)}
                         check={position => this.props.check(position)}
                         edit={position => this.props.edit(position)}
                         delete={position => this.props.delete(position)}
@@ -418,17 +438,19 @@ class ModuloAdmin extends React.Component {
 class CreateOrUpdateField extends React.Component {
 
     renderOptions(lista, select) {
+        let items = [];
         lista.forEach(element => {
             if (element.valor === select) {
-                return (
-                    <option value={element.save} selected>{element.show}</option>
-                )
+
+                items.push(<option value={element.save} selected>{element.show}</option>);
+
             } else {
-                return (
-                    <option value={element.save}>{element.show}</option>
-                )
+
+                items.push(<option value={element.save}>{element.show}</option>);
+
             }
         });
+        return items;
     }
 
     handleChange(e) {
@@ -445,52 +467,56 @@ class CreateOrUpdateField extends React.Component {
             if (estructura.type) {
                 if (estructura.ref) {
 
-                    return (
+                    let item =
                         <div class="campEditCreate">
                             <span>{newPath}</span>
                             <select name={path} tipo={estructura.type.name} class="selectfield" onChange={this.handleChange}>
                                 {this.renderOptions(listaOpciones, dato)}
                             </select>
-                        </div>
+                        </div>;
 
-                    );
+                    return item;
                     // se renderiz con opciones
                 } else {
                     let tipo = estructura.type.name;
+                    let item;
                     switch (tipo) {
                         case "String":
-                            return (
+                            item =
                                 <div>
                                     <span>{newPath}</span>
                                     <input type="text" tipo="String" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                 </div>
-                            );
+                                ;
+                            return item;
                             break;
                         case "Boolean":
 
-                            return (
+                            item =
                                 <div>
                                     <span>{newPath}</span>
                                     <input type="checkbox" name={path} tipo="Boolean" value={newPath} class="checkboxfield" onChange={this.handleChangeC} />
                                 </div>
-                            );
-
+                                ;
+                            return item;
                             break;
                         case "Number":
-                            return (
+                            item =
                                 <div>
                                     <span>{newPath}</span>
                                     <input type="text" tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                 </div>
-                            );
+                                ;
+                            return item;
                             break;
                         case "Date":
-                            return (
+                            item =
                                 <div>
                                     <span>{newPath}</span>
                                     <input type="date" tipo="Date" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                 </div>
-                            );
+                                ;
+                            return item;
 
                             break;
                         default:
@@ -505,48 +531,54 @@ class CreateOrUpdateField extends React.Component {
                 if (estructura.primaryKey) {
                     if (estructura.foreignKey) {
                         //se renderiza con opciones
-                        <div class="campEditCreate">
-                            <span>{newPath}</span>
-                            <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
-                                {this.renderOptions(listaOpciones, dato)}
-                            </select>
-                        </div>
+                        let item =
+                            <div class="campEditCreate">
+                                <span>{newPath}</span>
+                                <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
+                                    {this.renderOptions(listaOpciones, dato)}
+                                </select>
+                            </div>;
+                        return item;
                     } else {
                         //se renderiza
+                        let item;
                         switch (estructura.type.tipo) {
                             case "String":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="text" tipo="String" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                     </div>
-                                );
+                                    ;
+                                return item;
                                 break;
                             case "Boolean":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="checkbox" name={path} tipo="Boolean" value={newPath} class="checkboxfield" onChange={this.handleChangeC} />
                                     </div>
-                                );
+                                    ;
+                                return item;
 
                                 break;
                             case "Number":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="text" tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                     </div>
-                                );
+                                    ;
+                                return item;
                                 break;
                             case "Date":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="date" tipo="Date" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                     </div>
-                                );
-
+                                    ;
+                                return item;
                                 break;
                             default:
                                 break;
@@ -555,47 +587,54 @@ class CreateOrUpdateField extends React.Component {
 
                 } else {
                     if (estructura.foreignKey) {
-                        <div class="campEditCreate">
-                            <span>{newPath}</span>
-                            <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
-                                {this.renderOptions(listaOpciones, dato)}
-                            </select>
-                        </div>
+                        let item =
+                            <div class="campEditCreate">
+                                <span>{newPath}</span>
+                                <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
+                                    {this.renderOptions(listaOpciones, dato)}
+                                </select>
+                            </div>;
+                        return item;
                         //se renderiza con opciones
                     } else {
+                        let item;
                         switch (estructura.type.tipo) {
                             case "String":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="text" tipo="String" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                     </div>
-                                );
+                                    ;
+                                return item;
                                 break;
                             case "Boolean":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="checkbox" name={path} tipo="Boolean" value={newPath} class="checkboxfield" onChange={this.handleChangeC} />
                                     </div>
-                                );
+                                    ;
+                                return item;
 
                                 break;
                             case "Number":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="text" tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                     </div>
-                                );
+                                    ;
+                                return item;
                                 break;
                             case "Date":
-                                return (
+                                item =
                                     <div>
                                         <span>{newPath}</span>
                                         <input type="date" tipo="Date" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                     </div>
-                                );
+                                    ;
+                                return item;
 
                                 break;
                             default:
@@ -631,16 +670,17 @@ class FormCreateOrUpdate extends React.Component {
         if (dbType == "Mongo") {
             if (estructura.type) {
                 // campo
-                return (
+                let item =
                     <CreateOrUpdateField
                         dbType={dbType}
                         dato={dato}
                         estructura={estructura}
                         path={path}
                         listaOpciones={listaOpcionesfeach}
-                        handleFieldChange={tipo, path, value => this.props.handleFieldChange(tipo, path, value)}
+                        handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
                     />
-                );
+                    ;
+                return item;
             } else {
                 if (Array.isArray(estructura)) {
                     let cont = 0;
@@ -656,7 +696,7 @@ class FormCreateOrUpdate extends React.Component {
                             </div>);
                         cont++;
                     });
-                    return (
+                    let item =
                         <div>
                             <h3>{title}</h3>
                             <button value="+" onClick={() => this.props.insertList(path)}></button>
@@ -665,27 +705,30 @@ class FormCreateOrUpdate extends React.Component {
                             </div>
                         </div>
 
-                    );
+                        ;
+                    return item;
                     // lista
                 } else {
+                    let item = []
                     let newkeys = Object.keys(estructura);
                     newkeys.forEach(element => {
-                        this.renderList(dbType, estructura, dato, path.concat(".").concat(element), listaOpcionesfeach[element]);
+                        item.push(this.renderList(dbType, estructura, dato, path.concat(".").concat(element), listaOpcionesfeach[element]));
                     });
-
+                    return item;
                     // objeto
                 }
             }
         } else {
-            // campo
-            <CreateOrUpdateField
-                dbType={dbType}
-                dato={dato}
-                estructura={estructura}
-                path={path}
-                listaOpciones={listaOpcionesfeach}
-                handleFieldChange={tipo, path, value => this.props.handleFieldChange(tipo, path, value)}
-            />
+            let item =
+                <CreateOrUpdateField
+                    dbType={dbType}
+                    dato={dato}
+                    estructura={estructura}
+                    path={path}
+                    listaOpciones={listaOpcionesfeach}
+                    handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                />;
+            return item;
 
         }
     }
@@ -1111,6 +1154,8 @@ class MasterPage extends React.Component {
             }
         });
 
+        return listaM;
+
     }
 
     create() {
@@ -1518,9 +1563,10 @@ class MasterPage extends React.Component {
             });
     }
 
-    changeModel(cont) {
+    changeModel(e) {
+        console.log(e.target);
         let copy = this.state;
-        copy.Model = Modelos[cont];
+        copy.Model = this.Modelos[e.target.cont];
         copy.CreateOrUpdate = "None";
         copy.filtros = {};
         copy.filters = "";
@@ -1544,7 +1590,7 @@ class MasterPage extends React.Component {
         super(props);
         this.Modelos = this.listaModelosR();
         this.state = {
-            modelo: Modelos[0],
+            modelo: this.Modelos[0],
             elementoToUpdateOrCreate: {},
             CreateOrUpdate: "None",
             page: 1,
@@ -1568,14 +1614,16 @@ class MasterPage extends React.Component {
 
     renderTables() {
         let cont = 0;
+        let items = [];
         this.Modelos.forEach(element => {
-            return (
-                <div class="table_list">
-                    <input type="button" value={element.name} onClick={() => this.changeModel(cont)} />
-                </div>
-            );
+            console.log(element);
+
+            items.push(<div class="table_list">
+                <input type="button" cont={cont} value={element.nombre} onClick={this.changeModel} />
+            </div>);
             cont++;
         });
+        return items;
     }
 
     changeseach(value) {
@@ -1703,17 +1751,17 @@ class MasterPage extends React.Component {
     render() {
         if (this.state.CreateOrUpdate == "None") {
             return (
-                <div class="main">
-                    <div class="costadoTablasMenu">
-                        {this.renderTables}
+                <div class="container-fluid main">
+                    <div class="col-2 costadoTablasMenu">
+                        {this.renderTables()}
                     </div>
-                    <div class="module">
+                    <div class="col-10 module">
 
                         <ModuloAdmin
                             changesearch={value => this.changeseach(value)}
                             seach={() => this.searchGet()}
                             create={() => this.toCreate()}
-                            changeFilter={value, key => this.changeFilter(value, key)}
+                            changeFilter={(value, key) => this.changeFilter(value, key)}
                             structure={this.state.modelo.modelo}
                             filters={this.state.filters}
                             listaDatos={this.state.listaDatos}
@@ -1734,7 +1782,7 @@ class MasterPage extends React.Component {
             return (
                 <div class="main">
                     <div class="costadoTablasMenu">
-                        {this.renderTables}
+                        {this.renderTables()}
                     </div>
                     <div class="module">
 

@@ -1,5 +1,6 @@
 adminPage = (req, res) => { 
-    res.render("administrativePages/admin", {});
+    console.log("View -> AdministrativePage -> /admin")
+    res.render("administrativePages/admin.pug", {});
 }
 
 module.exports.adminPage = adminPage;
