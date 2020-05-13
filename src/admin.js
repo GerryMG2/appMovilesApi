@@ -3,12 +3,13 @@
 class Field extends React.Component {
 
     render() {
+        console.log("Field:")
         let variableText = "";
-        switch (this.props.type) {
+        switch (this.props.tipo) {
             case "Lista":
                 variableText = `${this.props.datos.length} Elementos`;
                 break;
-            case "campo":
+            case "Campo":
                 if (this.props.restricted == "password") {
                     for (const iterator of this.props.datos) {
                         variableText += "*";
@@ -28,6 +29,7 @@ class Field extends React.Component {
             default:
                 break;
         }
+        console.log(variableText);
 
         return (
             <div class="ObjectFieldShow" onDoubleClick={this.props.ondclick}>{variableText}</div>
@@ -80,16 +82,21 @@ class ObjetoComplete extends React.Component {
     }
 
     renderStructure(element, dato, key) {
+        // console.log("elemento:", element);
+        // console.log("dato:", dato);
+        // console.log("key:", key);
         if (this.props.dbType == "Mongo") {
             if (Array.isArray(element) || element.type) {
+                console.log("es un array o campo");
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
-                let item = <Field
-                    value={dato}
+                let item = [<Field
+                    datos={dato}
                     tipo={tipo}
                     restricted={element.restricted ? element.restricted : ""}
                     security={element.security ? element.security : ""}
                     ondclick={() => this.handlerManual(dato, tipo, key)}
-                />;
+                />];
+                console.log(item);
                 return item;
 
             } else {
@@ -99,19 +106,20 @@ class ObjetoComplete extends React.Component {
                 keys.forEach(ele => {
                     items.push(...this.renderStructure(element[ele], dato[ele], newkey.concat(ele)));
                 });
-
+                console.log(items);
                 return items;
             }
         } else {
 
 
-            let item = <Field
-                value={dato}
+            let item =[ <Field
+                datos={dato}
                 tipo={"Campo"}
                 restricted={element.restricted ? element.restricted : ""}
                 security={element.security ? element.security : ""}
                 ondclick={() => this.props.handlefilter(dato, key)}
-            />;
+            />];
+            console.log(item);
             return item;
 
         }
@@ -144,6 +152,7 @@ class ObjetoComplete extends React.Component {
             items.push(...this.renderStructure(this.props.structure[key], this.props.datos[key], key.toString()));
 
         });
+        console.log("fields:",items);
         return items;
     }
 
@@ -159,10 +168,10 @@ class ObjetoComplete extends React.Component {
     render() {
         return (
             <div class="ObjectComplete">
-                {this.renderChoice(props.position)}
+                {this.renderChoice(this.props.position)}
                 {this.renderAllFields()}
-                {this.renderEdit(props.position)}
-                {this.renderDelete(props.position)}
+                {this.renderEdit(this.props.position)}
+                {this.renderDelete(this.props.position)}
             </div>
         )
     }
@@ -230,18 +239,20 @@ class ListObjects extends React.Component {
         this.props.listaDatos.forEach(element => {
             items.push(
                 <ObjetoComplete
+                    key={cont}
                     position={cont}
                     dbType={this.props.dbtype}
                     datos={element}
                     structure={this.props.structure}
-                    handlefilter={dato, key => this.props.handleFilter(dato, key)}
+                    handlefilter={(dato, key) => this.props.handleFilter(dato, key)}
                     checkObject={position => this.props.check(position)}
                     editObject={position => this.props.edit(position)}
                     deleteObject={position => this.props.delete(position)}
                 />
             );
-            count++;
+            cont++;
         });
+        return items;
     }
 
     constructor(props) {
@@ -1145,7 +1156,7 @@ class MasterPage extends React.Component {
 
                 id_usuario: { type: "BIGSERIAL", primaryKey: true, name: "id_usuario", modelType: "Number" },
                 username: { type: "VARCHAR(128)", speciaL: "UNIQUE", name: "username", modelType: "String" },
-                password: { type: "VARCHAR(128)", name: "password", modelType: "String" }
+                password: { type: "VARCHAR(128)", name: "password", modelType: "String", restricted: "password" }
             }, blanck: {
 
                 id_usuario: null,

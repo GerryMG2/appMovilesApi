@@ -22,12 +22,13 @@ var Field = function (_React$Component) {
     _createClass(Field, [{
         key: "render",
         value: function render() {
+            console.log("Field:");
             var variableText = "";
-            switch (this.props.type) {
+            switch (this.props.tipo) {
                 case "Lista":
                     variableText = this.props.datos.length + " Elementos";
                     break;
-                case "campo":
+                case "Campo":
                     if (this.props.restricted == "password") {
                         var _iteratorNormalCompletion = true;
                         var _didIteratorError = false;
@@ -89,6 +90,7 @@ var Field = function (_React$Component) {
                 default:
                     break;
             }
+            console.log(variableText);
 
             return React.createElement(
                 "div",
@@ -147,18 +149,23 @@ var ObjetoComplete = function (_React$Component2) {
         value: function renderStructure(element, dato, key) {
             var _this3 = this;
 
+            // console.log("elemento:", element);
+            // console.log("dato:", dato);
+            // console.log("key:", key);
             if (this.props.dbType == "Mongo") {
                 if (Array.isArray(element) || element.type) {
+                    console.log("es un array o campo");
                     var tipo = Array.isArray(element) ? "Lista" : "Campo";
-                    var _item = React.createElement(Field, {
-                        value: dato,
+                    var _item = [React.createElement(Field, {
+                        datos: dato,
                         tipo: tipo,
                         restricted: element.restricted ? element.restricted : "",
                         security: element.security ? element.security : "",
                         ondclick: function ondclick() {
                             return _this3.handlerManual(dato, tipo, key);
                         }
-                    });
+                    })];
+                    console.log(_item);
                     return _item;
                 } else {
                     var _items = [];
@@ -167,20 +174,21 @@ var ObjetoComplete = function (_React$Component2) {
                     keys.forEach(function (ele) {
                         _items.push.apply(_items, _toConsumableArray(_this3.renderStructure(element[ele], dato[ele], newkey.concat(ele))));
                     });
-
+                    console.log(_items);
                     return _items;
                 }
             } else {
 
-                var _item2 = React.createElement(Field, {
-                    value: dato,
+                var _item2 = [React.createElement(Field, {
+                    datos: dato,
                     tipo: "Campo",
                     restricted: element.restricted ? element.restricted : "",
                     security: element.security ? element.security : "",
                     ondclick: function ondclick() {
                         return _this3.props.handlefilter(dato, key);
                     }
-                });
+                })];
+                console.log(_item2);
                 return _item2;
             }
         }
@@ -222,6 +230,7 @@ var ObjetoComplete = function (_React$Component2) {
 
                 items.push.apply(items, _toConsumableArray(_this7.renderStructure(_this7.props.structure[key], _this7.props.datos[key], key.toString())));
             });
+            console.log("fields:", items);
             return items;
         }
     }]);
@@ -246,10 +255,10 @@ var ObjetoComplete = function (_React$Component2) {
             return React.createElement(
                 "div",
                 { "class": "ObjectComplete" },
-                this.renderChoice(props.position),
+                this.renderChoice(this.props.position),
                 this.renderAllFields(),
-                this.renderEdit(props.position),
-                this.renderDelete(props.position)
+                this.renderEdit(this.props.position),
+                this.renderDelete(this.props.position)
             );
         }
     }]);
@@ -352,13 +361,14 @@ var ListObjects = function (_React$Component4) {
             var items = [];
             this.props.listaDatos.forEach(function (element) {
                 items.push(React.createElement(ObjetoComplete, {
+                    key: cont,
                     position: cont,
                     dbType: _this11.props.dbtype,
                     datos: element,
                     structure: _this11.props.structure,
-                    handlefilter: (dato, function (key) {
+                    handlefilter: function handlefilter(dato, key) {
                         return _this11.props.handleFilter(dato, key);
-                    }),
+                    },
                     checkObject: function checkObject(position) {
                         return _this11.props.check(position);
                     },
@@ -369,8 +379,9 @@ var ListObjects = function (_React$Component4) {
                         return _this11.props.delete(position);
                     }
                 }));
-                count++;
+                cont++;
             });
+            return items;
         }
     }]);
 
@@ -1482,7 +1493,7 @@ var MasterPage = function (_React$Component10) {
 
                     id_usuario: { type: "BIGSERIAL", primaryKey: true, name: "id_usuario", modelType: "Number" },
                     username: { type: "VARCHAR(128)", speciaL: "UNIQUE", name: "username", modelType: "String" },
-                    password: { type: "VARCHAR(128)", name: "password", modelType: "String" }
+                    password: { type: "VARCHAR(128)", name: "password", modelType: "String", restricted: "password" }
                 }, blanck: {
 
                     id_usuario: null,
