@@ -197,7 +197,7 @@ var ObjetoComplete = function (_React$Component2) {
         value: function renderChoice(position) {
             var _this4 = this;
 
-            return React.createElement("input", { type: "checkbox", "class": "checkBoxSelect", onClick: function onClick() {
+            return React.createElement("input", { scope: "row", type: "checkbox", "class": "checkBoxSelect", onClick: function onClick() {
                     return _this4.props.checkObject(position);
                 } });
         }
@@ -296,13 +296,17 @@ var NavBarSeach = function (_React$Component3) {
         value: function render() {
             return React.createElement(
                 "div",
-                { "class": "searchBox" },
+                { "class": "navbar navbar-light bg-light" },
                 React.createElement(
-                    "button",
-                    { type: "submit", onClick: this.props.search },
-                    React.createElement("i", { "class": "fa fa-search" })
-                ),
-                React.createElement("input", { type: "text", placeholder: this.props.mensajeBuscar, onKeyUp: this.handleKeyUp, value: this.props.valorBusqueda, onChange: this.handleChange, name: "search" })
+                    "div",
+                    { "class": "form-inline" },
+                    React.createElement("input", { type: "search", "class": "form-control mr-sm-2", placeholder: this.props.mensajeBuscar, onKeyUp: this.handleKeyUp, value: this.props.valorBusqueda, onChange: this.handleChange, name: "search" }),
+                    React.createElement(
+                        "button",
+                        { type: "submit", onClick: this.props.search, "class": "btn btn-outline-success my-2 my-sm-0" },
+                        React.createElement("i", { "class": "fas fa-search" })
+                    )
+                )
             );
         }
     }]);
@@ -400,7 +404,7 @@ var ListObjects = function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 "div",
-                { "class": "containerObjects" },
+                { "class": "table table-dark containerObjects" },
                 React.createElement(
                     "div",
                     { "class": "titles" },
@@ -2181,7 +2185,7 @@ var MasterPage = function (_React$Component10) {
                     ),
                     React.createElement(
                         "div",
-                        { "class": "col-8 module" },
+                        { "class": "col-10 module" },
                         React.createElement(FormCreateOrUpdate, {
                             exitCreateOrUpdate: function exitCreateOrUpdate() {
                                 return _this31.exitCreateUpdate();

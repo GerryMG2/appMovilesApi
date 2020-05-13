@@ -112,7 +112,7 @@ class ObjetoComplete extends React.Component {
         } else {
 
 
-            let item =[ <Field
+            let item = [<Field
                 datos={dato}
                 tipo={"Campo"}
                 restricted={element.restricted ? element.restricted : ""}
@@ -128,7 +128,7 @@ class ObjetoComplete extends React.Component {
 
     renderChoice(position) {
         return (
-            <input type="checkbox" class="checkBoxSelect" onClick={() => this.props.checkObject(position)}></input>
+            <input scope="row" type="checkbox" class="checkBoxSelect" onClick={() => this.props.checkObject(position)}></input>
         )
     }
 
@@ -152,7 +152,7 @@ class ObjetoComplete extends React.Component {
             items.push(...this.renderStructure(this.props.structure[key], this.props.datos[key], key.toString()));
 
         });
-        console.log("fields:",items);
+        console.log("fields:", items);
         return items;
     }
 
@@ -196,9 +196,12 @@ class NavBarSeach extends React.Component {
 
     render() {
         return (
-            <div class="searchBox">
-                <button type="submit" onClick={this.props.search}><i class="fa fa-search"></i></button>
-                <input type="text" placeholder={this.props.mensajeBuscar} onKeyUp={this.handleKeyUp} value={this.props.valorBusqueda} onChange={this.handleChange} name="search" />
+            <div class="navbar navbar-light bg-light">
+                <div class="form-inline">
+                    <input type="search" class="form-control mr-sm-2" placeholder={this.props.mensajeBuscar} onKeyUp={this.handleKeyUp} value={this.props.valorBusqueda} onChange={this.handleChange} name="search" />
+                    <button type="submit" onClick={this.props.search} class="btn btn-outline-success my-2 my-sm-0"><i class="fas fa-search"></i></button>
+
+                </div>
             </div>
         )
     }
@@ -264,7 +267,8 @@ class ListObjects extends React.Component {
 
     render() {
         return (
-            <div class="containerObjects">
+            
+            <div class="table table-dark containerObjects">
                 <div class="titles">
                     {this.renderTitle}
                 </div>
@@ -1810,7 +1814,7 @@ class MasterPage extends React.Component {
                     <div class="col-2 costadoTablasMenu">
                         {this.renderTables()}
                     </div>
-                    <div class="col-8 module">
+                    <div class="col-10 module">
 
                         <FormCreateOrUpdate
                             exitCreateOrUpdate={() => this.exitCreateUpdate()}
