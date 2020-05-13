@@ -268,7 +268,7 @@ class ListObjects extends React.Component {
     render() {
         return (
             
-            <div class="table table-dark containerObjects">
+            <div class="table table-bordered table-dark containerObjects">
                 <div class="titles">
                     {this.renderTitle}
                 </div>

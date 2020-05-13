@@ -404,7 +404,7 @@ var ListObjects = function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 "div",
-                { "class": "table table-dark containerObjects" },
+                { "class": "table table-bordered table-dark containerObjects" },
                 React.createElement(
                     "div",
                     { "class": "titles" },
