@@ -155,12 +155,13 @@ class transactionalModelSQL {
 
     create(model, cb) {
         try {
+            console.log("entra a creacion");
             let fields = "";
             let valores = "";
 
-            let keyFields = Objetc.keys(model);
+            let keyFields = Object.keys(model);
             keyFields.forEach(element => {
-                fields = concat(`${this.modelo[element]["name"]},`);
+                fields = fields.concat(`${this.modelo[element]["name"]},`);
                 if (this.modelo[element]["modelType"] == "Number" ||
                     this.modelo[element]["modelType"] == "Boolean") {
                     valores = valores.concat(`${model[element]},`);
@@ -173,7 +174,7 @@ class transactionalModelSQL {
             valores = valores.slice(0, -1);
             let resultQuerry = `INSERT INTO ${this.table_name}(${fields}) values(${valores});`;
 
-
+            console.log(resultQuerry);
             this.conx.query(resultQuerry, (validar, datos) => {
                 if (validar) {
                     cb(true);
@@ -183,6 +184,7 @@ class transactionalModelSQL {
             });
 
         } catch (error) {
+            console.log(error);
             cb(false);
         }
     }

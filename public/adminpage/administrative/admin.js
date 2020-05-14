@@ -832,12 +832,12 @@ var CreateOrUpdateField = function (_React$Component8) {
         key: "handleChange",
         value: function handleChange(e) {
             //tipo, path, valor
-            this.props.handleFieldChange(e.target.tipo, e.target.name, e.target.value);
+            this.props.handleFieldChange(e.target.getAttribute("tipo"), e.target.name, e.target.value);
         }
     }, {
         key: "handleChangeC",
         value: function handleChangeC(e) {
-            this.props.handleFieldChange(e.target.tipo, e.target.name, e.target.checked);
+            this.props.handleFieldChange(e.target.getAttribute("tipo"), e.target.name, e.target.checked);
         }
     }, {
         key: "renderField",
@@ -1665,23 +1665,28 @@ var MasterPage = function (_React$Component10) {
                     "Content-Type": "application/json"
                 }
             };
-            options_and_body["body"] = JSON.stringify(body);
 
             var body = {};
             if (this.state.modelo.dbType == "Mongo") {
                 body = this.state.elementoToUpdateOrCreate;
+                delete body["_id"];
             } else {
                 var keys = Object.keys(this.state.modelo.modelo);
                 var newModel = {};
 
                 keys.forEach(function (ele) {
-                    if (!_this25.state.modelo.modelo.primaryKey && !_this25.state.modelo.modelo.type == "BIGSERIAL") {
+                    console.log(ele);
+                    console.log(!(_this25.state.modelo.modelo[ele].type == "BIGSERIAL"));
+                    if (!(_this25.state.modelo.modelo[ele].type == "BIGSERIAL")) {
+
                         newModel[ele] = _this25.state.elementoToUpdateOrCreate[ele];
                     }
                 });
 
                 body = newModel;
             }
+            console.log(body);
+            options_and_body["body"] = JSON.stringify({ model: body });
 
             var prefix = "";
             if (this.state.modelo.dbType == "Mongo") {
@@ -1690,15 +1695,19 @@ var MasterPage = function (_React$Component10) {
                 prefix = "/apit";
             }
 
-            var auxUrl = prefix + "/" + this.state.modelo.urlname + "/" + "?" + query;
+            var auxUrl = prefix + "/" + this.state.modelo.urlname + "/";
             fetch(auxUrl, options_and_body).then(function (res) {
                 return res.json();
             }).catch(function (error) {
-                console.log("error: ", error);
-                Swal.fire("Hubo un problema para crear el objet", error, "error");
+                console.log("error: ");
+                swal("Hubo un problema para crear el objet", "error", "error");
             }).then(function (response) {
-                console.log("success: ", response);
-                Swal.fire("Se creo correctamente", "Continua", "ok");
+                if (response.correct) {
+                    console.log("success: ", response);
+                    swal("Se creo correctamente", "Continua", "success");
+                } else {
+                    swal("Hubo un problema para crear el objet", "Server Error", "error");
+                }
             }).then(function () {
                 var copy = _this25.state;
                 copy.elementoToUpdateOrCreate = {};
@@ -1715,7 +1724,7 @@ var MasterPage = function (_React$Component10) {
 
             console.log(estructura);
             if (estructura.ref) {
-                var _query = Object.keys(params).map(function (k) {
+                var query = Object.keys(params).map(function (k) {
                     return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
                 }).join("&");
                 var options_and_body = {
@@ -1726,7 +1735,7 @@ var MasterPage = function (_React$Component10) {
                     }
                 };
 
-                var auxUrl = "/api/" + estructura.ref + "/" + "?" + _query;
+                var auxUrl = "/api/" + estructura.ref + "/" + "?" + query;
                 fetch(auxUrl, options_and_body).then(function (res) {
                     return res.json();
                 }).catch(function (error) {
@@ -1806,7 +1815,7 @@ var MasterPage = function (_React$Component10) {
                 if (_this27.state.modelo.dbType == "Mongo") {
                     if (_this27.state.modelo.modelo[element].ref) {
                         console.log("entra en ref");
-                        var _query2 = Object.keys(params).map(function (k) {
+                        var query = Object.keys(params).map(function (k) {
                             return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
                         }).join("&");
                         var options_and_body = {
@@ -1816,7 +1825,7 @@ var MasterPage = function (_React$Component10) {
                                 "Content-Type": "application/json"
                             }
                         };
-                        var auxUrl = prefix + "/" + _this27.state.modelo.modelo[element].ref + "/" + "?" + _query2;
+                        var auxUrl = prefix + "/" + _this27.state.modelo.modelo[element].ref + "/" + "?" + query;
 
                         fetch(auxUrl, options_and_body).then(function (res) {
                             return res.json();
@@ -1859,7 +1868,7 @@ var MasterPage = function (_React$Component10) {
                 } else {
                     if (_this27.state.modelo.modelo[element].ref) {
                         // no tiene referencias
-                        var _query3 = Object.keys(params).map(function (k) {
+                        var _query = Object.keys(params).map(function (k) {
                             return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
                         }).join("&");
                         var _options_and_body = {
@@ -1870,7 +1879,7 @@ var MasterPage = function (_React$Component10) {
                             }
                         };
 
-                        var _auxUrl = prefix + "/" + _this27.state.modelo.modelo[element].ref + "/" + "?" + _query3;
+                        var _auxUrl = prefix + "/" + _this27.state.modelo.modelo[element].ref + "/" + "?" + _query;
                         fetch(_auxUrl, _options_and_body).then(function (res) {
                             return res.json();
                         }).catch(function (error) {
@@ -1998,10 +2007,10 @@ var MasterPage = function (_React$Component10) {
                 return res.json();
             }).catch(function (error) {
                 console.log("error: ", error);
-                Swal.fire("Hubo un problema para actualizar", error, "error");
+                swal.fire("Hubo un problema para actualizar", error, "error");
             }).then(function (response) {
                 console.log("success: ", response);
-                Swal.fire("actualizado", "Continua", "success");
+                swal.fire("actualizado", "Continua", "success");
             }).then(function () {
                 var copy = _this29.state;
                 copy.elementoToUpdateOrCreate = {};
@@ -2054,10 +2063,10 @@ var MasterPage = function (_React$Component10) {
                 return res.json();
             }).catch(function (error) {
                 console.log("error: ", error);
-                Swal.fire("Error al eliminar.", error, "error");
+                swal.fire("Error al eliminar.", error, "error");
             }).then(function (response) {
                 console.log("success: ", response);
-                Swal.fire(response.msg, "Continua", response.ok);
+                swal.fire(response.msg, "Continua", response.ok);
             }).then(function () {}).then(function () {
                 // implement get
                 _this30.get();
@@ -2243,6 +2252,9 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "changeData",
         value: function changeData(tipo, path, value) {
+            console.log("change data:", path);
+            console.log("change data:", value);
+            console.log("change data:", tipo);
             var copy = this.state;
             switch (tipo) {
                 case "String":

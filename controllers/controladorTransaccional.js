@@ -79,6 +79,7 @@ class controllerTransaccional{
 
     create(req, res){
         try {
+            console.log("entra a crear")
             this.service.create(req.body.model,(validar) => {
                 if(validar){
                     res.status(201).json({correct: true, msg: "ok"});

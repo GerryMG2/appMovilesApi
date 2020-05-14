@@ -560,10 +560,10 @@ class CreateOrUpdateField extends React.Component {
 
     handleChange(e) {
         //tipo, path, valor
-        this.props.handleFieldChange(e.target.tipo, e.target.name, e.target.value);
+        this.props.handleFieldChange(e.target.getAttribute("tipo"), e.target.name, e.target.value);
     }
     handleChangeC(e) {
-        this.props.handleFieldChange(e.target.tipo, e.target.name, e.target.checked);
+        this.props.handleFieldChange(e.target.getAttribute("tipo"), e.target.name, e.target.checked);
     }
 
     renderField(dbType, dato, estructura, path, listaOpciones) {
@@ -1286,18 +1286,22 @@ class MasterPage extends React.Component {
                 "Content-Type": "application/json"
             }
         };
-        options_and_body["body"] = JSON.stringify(body);
+       
 
         let body = {};
         if (this.state.modelo.dbType == "Mongo") {
             body = this.state.elementoToUpdateOrCreate;
+            delete body["_id"];
 
         } else {
             let keys = Object.keys(this.state.modelo.modelo);
             let newModel = {};
 
             keys.forEach(ele => {
-                if (!this.state.modelo.modelo.primaryKey && !this.state.modelo.modelo.type == "BIGSERIAL") {
+                console.log(ele);
+                console.log(! (this.state.modelo.modelo[ele].type == "BIGSERIAL") );
+                if (!(this.state.modelo.modelo[ele].type == "BIGSERIAL")) {
+                    
                     newModel[ele] = this.state.elementoToUpdateOrCreate[ele];
                 }
 
@@ -1306,7 +1310,8 @@ class MasterPage extends React.Component {
             body = newModel;
 
         }
-
+        console.log(body);
+        options_and_body["body"] = JSON.stringify({model: body});
 
         let prefix = "";
         if (this.state.modelo.dbType == "Mongo") {
@@ -1315,16 +1320,21 @@ class MasterPage extends React.Component {
             prefix = "/apit";
         }
 
-        let auxUrl = `${prefix}/${this.state.modelo.urlname}/` + "?" + query;
+        let auxUrl = `${prefix}/${this.state.modelo.urlname}/`;
         fetch(auxUrl, options_and_body)
             .then(res => res.json())
             .catch(error => {
-                console.log("error: ", error);
-                Swal.fire("Hubo un problema para crear el objet", error, "error");
+                console.log("error: ");
+                swal("Hubo un problema para crear el objet", "error", "error");
             })
             .then(response => {
-                console.log("success: ", response);
-                Swal.fire("Se creo correctamente", "Continua", "ok");
+                if(response.correct){
+                    console.log("success: ", response);
+                    swal("Se creo correctamente", "Continua", "success");
+                }else{
+                    swal("Hubo un problema para crear el objet", "Server Error", "error");
+                }
+              
             })
             .then(() => {
                 let copy = this.state;
@@ -1632,11 +1642,11 @@ class MasterPage extends React.Component {
             .then(res => res.json())
             .catch(error => {
                 console.log("error: ", error);
-                Swal.fire("Hubo un problema para actualizar", error, "error");
+                swal.fire("Hubo un problema para actualizar", error, "error");
             })
             .then(response => {
                 console.log("success: ", response);
-                Swal.fire("actualizado", "Continua", "success");
+                swal.fire("actualizado", "Continua", "success");
             })
             .then(() => {
                 let copy = this.state;
@@ -1689,11 +1699,11 @@ class MasterPage extends React.Component {
             .then(res => res.json())
             .catch(error => {
                 console.log("error: ", error);
-                Swal.fire("Error al eliminar.", error, "error");
+                swal.fire("Error al eliminar.", error, "error");
             })
             .then(response => {
                 console.log("success: ", response);
-                Swal.fire(response.msg, "Continua", response.ok);
+                swal.fire(response.msg, "Continua", response.ok);
             })
             .then(() => { })
             .then(() => {
@@ -1867,6 +1877,9 @@ class MasterPage extends React.Component {
     }
 
     changeData(tipo, path, value) {
+        console.log("change data:", path);
+        console.log("change data:", value);
+        console.log("change data:", tipo);
         let copy = this.state;
         switch (tipo) {
             case "String":
