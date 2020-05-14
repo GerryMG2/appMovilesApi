@@ -89,13 +89,17 @@ class ObjetoComplete extends React.Component {
             if (Array.isArray(element) || element.type) {
                 console.log("es un array o campo");
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
-                let item = [<Field
-                    datos={dato}
-                    tipo={tipo}
-                    restricted={element.restricted ? element.restricted : ""}
-                    security={element.security ? element.security : ""}
-                    ondclick={() => this.handlerManual(dato, tipo, key)}
-                />];
+                let item = [
+                    <td>
+                        <Field
+                            datos={dato}
+                            tipo={tipo}
+                            restricted={element.restricted ? element.restricted : ""}
+                            security={element.security ? element.security : ""}
+                            ondclick={() => this.handlerManual(dato, tipo, key)}
+                        />
+                    </td>
+                ];
                 console.log(item);
                 return item;
 
@@ -112,13 +116,17 @@ class ObjetoComplete extends React.Component {
         } else {
 
 
-            let item = [<Field
-                datos={dato}
-                tipo={"Campo"}
-                restricted={element.restricted ? element.restricted : ""}
-                security={element.security ? element.security : ""}
-                ondclick={() => this.props.handlefilter(dato, key)}
-            />];
+            let item = [
+                <td>
+                    <Field
+                        datos={dato}
+                        tipo={"Campo"}
+                        restricted={element.restricted ? element.restricted : ""}
+                        security={element.security ? element.security : ""}
+                        ondclick={() => this.props.handlefilter(dato, key)}
+                    />
+                </td>
+            ];
             console.log(item);
             return item;
 
@@ -128,19 +136,28 @@ class ObjetoComplete extends React.Component {
 
     renderChoice(position) {
         return (
-            <input scope="row" type="checkbox" class="checkBoxSelect" onClick={() => this.props.checkObject(position)}></input>
+            <th scope="row">
+                <input type="checkbox" class="checkBoxSelect" onClick={() => this.props.checkObject(position)}></input>
+
+            </th>
         )
     }
 
     renderEdit(position) {
         return (
-            <input type="button" class="editButton" onClick={() => this.props.editObject(position)}></input>
+            <td>
+                <input type="button" class="editButton" onClick={() => this.props.editObject(position)}></input>
+
+            </td>
         )
     }
 
     renderDelete(position) {
         return (
-            <input type="button" class="deleteButton" onClick={() => this.props.deleteObject(position)}></input>
+            <td>
+                <input type="button" class="deleteButton" onClick={() => this.props.deleteObject(position)}></input>
+
+            </td>
         )
     }
 
@@ -167,12 +184,12 @@ class ObjetoComplete extends React.Component {
     }
     render() {
         return (
-            <div class="ObjectComplete">
+            <tr class="ObjectComplete">
                 {this.renderChoice(this.props.position)}
                 {this.renderAllFields()}
                 {this.renderEdit(this.props.position)}
                 {this.renderDelete(this.props.position)}
-            </div>
+            </tr>
         )
     }
 }
@@ -214,6 +231,11 @@ class ListObjects extends React.Component {
         let keys = Object.keys(this.props.structure);
         let items = [];
         console.log(keys);
+        items.push(
+            <th scope="col">
+                <div>&#x2B1A;</div>
+            </th>
+        );
         keys.forEach(element => {
             if (this.props.orden[element]) {
                 if (this.props.orden[element] == 1) {
@@ -233,17 +255,17 @@ class ListObjects extends React.Component {
                 } else {
 
                     if (this.props.structure[element].type) {
-                        items.push(<div>
-                            <div>{element}</div>
-                            <input type="button" value="&#x2B61;" onClick={() => this.props.changeOrden(element)} />
-
-                        </div>);
+                        items.push(
+                            <th scope="col">
+                                <div>{element}</div>
+                                <input type="button" value="&#x2B61;" onClick={() => this.props.changeOrden(element)} />
+                            </th>);
                     } else {
-                        items.push(<div>
-                            <div>{element}</div>
-
-
-                        </div>);
+                        items.push(
+                            <th scope="col">
+                                <div>{element}</div>
+                            </th>
+                        );
                     }
                 }
 
@@ -251,21 +273,32 @@ class ListObjects extends React.Component {
 
             } else {
                 if (this.props.structure[element].type) {
-                    items.push(<div>
-                        <div>{element}</div>
-                        <input type="button" value="&#x2B64;" onClick={() => this.props.changeOrden(element)} />
-
-                    </div>);
+                    items.push(
+                        <th scope="col">
+                            <div>{element}</div>
+                            <input type="button" value="&#x2B64;" onClick={() => this.props.changeOrden(element)} />
+                        </th>
+                    );
                 } else {
-                    items.push(<div>
-                        <div>{element}</div>
-
-
-                    </div>);
+                    items.push(
+                        <th scope="col">
+                            <div>{element}</div>
+                        </th>);
                 }
             }
 
         });
+        items.push(
+            <th scope="col">
+                <div><i class="fas fa-edit"></i></div>
+            </th>
+        )
+        items.push(
+            <th scope="col">
+                <div><i class="fas fa-minus-circle"></i></div>
+            </th>
+        )
+
         return items;
     }
 
@@ -301,12 +334,19 @@ class ListObjects extends React.Component {
     render() {
         return (
 
-            <div class="table table-bordered table-dark containerObjects">
-                <div class="titles">
-                    {this.renderTitle()}
-                </div>
-                {this.renderall()}
-            </div>
+            <table class="table table-bordered containerObjects">
+                <thead class="titles">
+                    <tr>
+                        {this.renderTitle()}
+                    </tr>
+
+
+                </thead>
+                <tbody>
+                    {this.renderall()}
+                </tbody>
+
+            </table>
         )
     }
 }
@@ -1744,12 +1784,12 @@ class MasterPage extends React.Component {
         if (this.state.orden[key] == undefined) {
             copy.orden[key] = -1;
         } else {
-            if(this.state.orden[key] == -1){
+            if (this.state.orden[key] == -1) {
                 copy.orden[key] = copy.orden[key] * -1;
-            }else{
+            } else {
                 delete copy.orden[key];
             }
-            
+
         }
         copy.page = 1;
         copy.size = 20;

@@ -156,15 +156,19 @@ var ObjetoComplete = function (_React$Component2) {
                 if (Array.isArray(element) || element.type) {
                     console.log("es un array o campo");
                     var tipo = Array.isArray(element) ? "Lista" : "Campo";
-                    var item = [React.createElement(Field, {
-                        datos: dato,
-                        tipo: tipo,
-                        restricted: element.restricted ? element.restricted : "",
-                        security: element.security ? element.security : "",
-                        ondclick: function ondclick() {
-                            return _this3.handlerManual(dato, tipo, key);
-                        }
-                    })];
+                    var item = [React.createElement(
+                        "td",
+                        null,
+                        React.createElement(Field, {
+                            datos: dato,
+                            tipo: tipo,
+                            restricted: element.restricted ? element.restricted : "",
+                            security: element.security ? element.security : "",
+                            ondclick: function ondclick() {
+                                return _this3.handlerManual(dato, tipo, key);
+                            }
+                        })
+                    )];
                     console.log(item);
                     return item;
                 } else {
@@ -179,15 +183,19 @@ var ObjetoComplete = function (_React$Component2) {
                 }
             } else {
 
-                var _item = [React.createElement(Field, {
-                    datos: dato,
-                    tipo: "Campo",
-                    restricted: element.restricted ? element.restricted : "",
-                    security: element.security ? element.security : "",
-                    ondclick: function ondclick() {
-                        return _this3.props.handlefilter(dato, key);
-                    }
-                })];
+                var _item = [React.createElement(
+                    "td",
+                    null,
+                    React.createElement(Field, {
+                        datos: dato,
+                        tipo: "Campo",
+                        restricted: element.restricted ? element.restricted : "",
+                        security: element.security ? element.security : "",
+                        ondclick: function ondclick() {
+                            return _this3.props.handlefilter(dato, key);
+                        }
+                    })
+                )];
                 console.log(_item);
                 return _item;
             }
@@ -197,27 +205,39 @@ var ObjetoComplete = function (_React$Component2) {
         value: function renderChoice(position) {
             var _this4 = this;
 
-            return React.createElement("input", { scope: "row", type: "checkbox", "class": "checkBoxSelect", onClick: function onClick() {
-                    return _this4.props.checkObject(position);
-                } });
+            return React.createElement(
+                "th",
+                { scope: "row" },
+                React.createElement("input", { type: "checkbox", "class": "checkBoxSelect", onClick: function onClick() {
+                        return _this4.props.checkObject(position);
+                    } })
+            );
         }
     }, {
         key: "renderEdit",
         value: function renderEdit(position) {
             var _this5 = this;
 
-            return React.createElement("input", { type: "button", "class": "editButton", onClick: function onClick() {
-                    return _this5.props.editObject(position);
-                } });
+            return React.createElement(
+                "td",
+                null,
+                React.createElement("input", { type: "button", "class": "editButton", onClick: function onClick() {
+                        return _this5.props.editObject(position);
+                    } })
+            );
         }
     }, {
         key: "renderDelete",
         value: function renderDelete(position) {
             var _this6 = this;
 
-            return React.createElement("input", { type: "button", "class": "deleteButton", onClick: function onClick() {
-                    return _this6.props.deleteObject(position);
-                } });
+            return React.createElement(
+                "td",
+                null,
+                React.createElement("input", { type: "button", "class": "deleteButton", onClick: function onClick() {
+                        return _this6.props.deleteObject(position);
+                    } })
+            );
         }
     }, {
         key: "renderAllFields",
@@ -253,7 +273,7 @@ var ObjetoComplete = function (_React$Component2) {
         key: "render",
         value: function render() {
             return React.createElement(
-                "div",
+                "tr",
                 { "class": "ObjectComplete" },
                 this.renderChoice(this.props.position),
                 this.renderAllFields(),
@@ -325,6 +345,15 @@ var ListObjects = function (_React$Component4) {
             var keys = Object.keys(this.props.structure);
             var items = [];
             console.log(keys);
+            items.push(React.createElement(
+                "th",
+                { scope: "col" },
+                React.createElement(
+                    "div",
+                    null,
+                    "\u2B1A"
+                )
+            ));
             keys.forEach(function (element) {
                 if (_this10.props.orden[element]) {
                     if (_this10.props.orden[element] == 1) {
@@ -356,8 +385,8 @@ var ListObjects = function (_React$Component4) {
 
                         if (_this10.props.structure[element].type) {
                             items.push(React.createElement(
-                                "div",
-                                null,
+                                "th",
+                                { scope: "col" },
                                 React.createElement(
                                     "div",
                                     null,
@@ -369,8 +398,8 @@ var ListObjects = function (_React$Component4) {
                             ));
                         } else {
                             items.push(React.createElement(
-                                "div",
-                                null,
+                                "th",
+                                { scope: "col" },
                                 React.createElement(
                                     "div",
                                     null,
@@ -382,8 +411,8 @@ var ListObjects = function (_React$Component4) {
                 } else {
                     if (_this10.props.structure[element].type) {
                         items.push(React.createElement(
-                            "div",
-                            null,
+                            "th",
+                            { scope: "col" },
                             React.createElement(
                                 "div",
                                 null,
@@ -395,8 +424,8 @@ var ListObjects = function (_React$Component4) {
                         ));
                     } else {
                         items.push(React.createElement(
-                            "div",
-                            null,
+                            "th",
+                            { scope: "col" },
                             React.createElement(
                                 "div",
                                 null,
@@ -406,6 +435,25 @@ var ListObjects = function (_React$Component4) {
                     }
                 }
             });
+            items.push(React.createElement(
+                "th",
+                { scope: "col" },
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement("i", { "class": "fas fa-edit" })
+                )
+            ));
+            items.push(React.createElement(
+                "th",
+                { scope: "col" },
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement("i", { "class": "fas fa-minus-circle" })
+                )
+            ));
+
             return items;
         }
     }, {
@@ -455,14 +503,22 @@ var ListObjects = function (_React$Component4) {
         key: "render",
         value: function render() {
             return React.createElement(
-                "div",
-                { "class": "table table-bordered table-dark containerObjects" },
+                "table",
+                { "class": "table table-bordered containerObjects" },
                 React.createElement(
-                    "div",
+                    "thead",
                     { "class": "titles" },
-                    this.renderTitle()
+                    React.createElement(
+                        "tr",
+                        null,
+                        this.renderTitle()
+                    )
                 ),
-                this.renderall()
+                React.createElement(
+                    "tbody",
+                    null,
+                    this.renderall()
+                )
             );
         }
     }]);
