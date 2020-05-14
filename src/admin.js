@@ -213,23 +213,56 @@ class ListObjects extends React.Component {
     renderTitle() {
         let keys = Object.keys(this.props.structure);
         let items = [];
+        console.log(keys);
         keys.forEach(element => {
-            if (this.props.orden[key] == 1) {
+            if (this.props.orden[element]) {
+                if (this.props.orden[element] == 1) {
+                    if (this.props.structure[element].type) {
+                        items.push(<div>
+                            <div>{element}</div>
+                            <input type="button" value="&#x2b63;" onClick={() => this.props.changeOrden(element)} />
 
-                items.push(<div>
-                    <div>{element}</div>
-                    <input type="button" value="&#x2b61;" onClick={() => this.props.changeOrden(key)} />
+                        </div>);
+                    } else {
+                        items.push(<div>
+                            <div>{element}</div>
 
-                </div>);
+
+                        </div>);
+                    }
+                } else {
+
+                    if (this.props.structure[element].type) {
+                        items.push(<div>
+                            <div>{element}</div>
+                            <input type="button" value="&#x2B61;" onClick={() => this.props.changeOrden(element)} />
+
+                        </div>);
+                    } else {
+                        items.push(<div>
+                            <div>{element}</div>
+
+
+                        </div>);
+                    }
+                }
+
+
 
             } else {
-                item.push(
-                    <div>
+                if (this.props.structure[element].type) {
+                    items.push(<div>
                         <div>{element}</div>
-                        <input type="button" value="&#x2b63;" onClick={() => this.props.changeOrden(key)} />
+                        <input type="button" value="&#x2B64;" onClick={() => this.props.changeOrden(element)} />
 
                     </div>);
+                } else {
+                    items.push(<div>
+                        <div>{element}</div>
 
+
+                    </div>);
+                }
             }
 
         });
@@ -267,10 +300,10 @@ class ListObjects extends React.Component {
 
     render() {
         return (
-            
+
             <div class="table table-bordered table-dark containerObjects">
                 <div class="titles">
-                    {this.renderTitle}
+                    {this.renderTitle()}
                 </div>
                 {this.renderall()}
             </div>
@@ -432,6 +465,7 @@ class ModuloAdmin extends React.Component {
                         edit={position => this.props.edit(position)}
                         delete={position => this.props.delete(position)}
                         changeOrden={key => this.props.changeOrden(key)}
+                        orden={this.props.orden}
                     />
 
                 </div>
@@ -1156,7 +1190,7 @@ class MasterPage extends React.Component {
             }
         });
         listaM.push({
-            urlname: "usuarioAdmin", dbType: "postgres", nombre: "adminUsers", modelo: {
+            urlname: "usuarioAdmin", dbType: "postgres", nombre: "adminusers", modelo: {
 
                 id_usuario: { type: "BIGSERIAL", primaryKey: true, name: "id_usuario", modelType: "Number" },
                 username: { type: "VARCHAR(128)", speciaL: "UNIQUE", name: "username", modelType: "String" },
@@ -1710,7 +1744,12 @@ class MasterPage extends React.Component {
         if (this.state.orden[key] == undefined) {
             copy.orden[key] = -1;
         } else {
-            copy.orden[key] = copy.orden[key] * -1;
+            if(this.state.orden[key] == -1){
+                copy.orden[key] = copy.orden[key] * -1;
+            }else{
+                delete copy.orden[key];
+            }
+            
         }
         copy.page = 1;
         copy.size = 20;
@@ -1804,6 +1843,7 @@ class MasterPage extends React.Component {
                             size={this.state.size}
                             page={this.state.page}
                             totalcount={this.state.elementosTotales}
+                            orden={this.state.orden}
                         />
                     </div>
                 </div>

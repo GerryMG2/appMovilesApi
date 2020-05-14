@@ -110,7 +110,7 @@ class transactionalModelSQL {
                 });
                 order = ord.slice(0, -1);
             }
-            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ;`;
+            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters};`;
             console.log("qr count:", queryCount);
             
             let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
