@@ -55,8 +55,8 @@ class transactionalModelSQL {
     get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
         try {
             console.log("Fileter:", filters);
-            console.log("filtros:", filtros=={}) ;
-            console.log("orden:", orden=={});
+            console.log("filtros:", filtros == {});
+            console.log("orden:", orden == {});
             console.log("page:", pag);
             console.log("size:", size);
             let offset = size * (pag - 1);
@@ -66,6 +66,11 @@ class transactionalModelSQL {
             let keysOrden = Object.keys(orden);
             let pagination = `LIMIT ${size} OFFSET ${offset}`;
             let order = "";
+            let where = "";
+            let sendNothing = false;
+            if (Object.entries(filtros).length > 0 || filters.trim() != "") {
+                where = "WHERE ";
+            }
 
             if (Object.entries(filtros).length > 0) {
                 let fil = ""
@@ -73,6 +78,9 @@ class transactionalModelSQL {
                     if (this.modelo[element]["modelType"] != "Number") {
                         fil = fil.concat(`${this.modelo[element]["name"]} = '${filtros[element]}' AND`)
                     } else {
+                        if (typeof (filtros[element]) != "numbers") {
+                            sendNothing = true;
+                        }
                         fil = fil.concat(`${this.modelo[element]["name"]} = ${filtros[element]} AND`)
                     }
                 });
@@ -81,16 +89,20 @@ class transactionalModelSQL {
 
             if (filters.trim() != "") {
                 let search = ""
-                if (filtros != {}) {
+                if (Object.entries(filtros).length > 0) {
                     search = search.concat("AND (");
                 }
                 this.campos.forEach(element => {
                     if (this.modelo[element]["modelType"] != "Number" && this.modelo[element]["modelType"] != "Boolean") {
-                        search = search.concat(`UPPER(${this.modelo[element]["name"]}) like '%${filters.trim().toUpperCase()}%' OR`);
+                        search = search.concat(`UPPER(${this.modelo[element]["name"]}) like '%${filters.trim().toUpperCase()}%' OR `);
                     }
 
                 });
-                conditionsFilters = search.slice(0, -2);
+                search = search.slice(0, -3);
+                if (Object.entries(filtros).length > 0) {
+                    search = search.concat(") ");
+                }
+                conditionsFilters = search;
             }
 
             if (Object.entries(orden).length > 0) {
@@ -110,25 +122,31 @@ class transactionalModelSQL {
                 });
                 order = ord.slice(0, -1);
             }
-            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters};`;
+            let queryCount = `SELECT COUNT(*) as cuenta FROM ${this.table_name} ${where} ${conditionsFiltros} ${conditionsFilters};`;
             console.log("qr count:", queryCount);
-            
-            let query = `SELECT * FROM ${this.table_name} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
-            console.log("qr select: ", query);
-            this.conx.query(query, (validar, datos) => {
-                if (validar) {
-                    this.conx.query(queryCount, (validar, datosC) => {
-                        if (validar) {
-                            cb(true, datos, parseInt(datosC[0].cuenta));
-                        } else {
-                            cb(false, {}, 0);
-                        }
-                    })
 
-                } else {
-                    cb(false, {}, 0);
-                }
-            });
+            let query = `SELECT * FROM ${this.table_name} ${where} ${conditionsFiltros} ${conditionsFilters} ${order} ${pagination};`;
+            console.log("qr select: ", query);
+            if (sendNothing) {
+                cb(true, [], 0);
+            } else {
+                this.conx.query(query, (validar, datos) => {
+                    if (validar) {
+                        this.conx.query(queryCount, (validar, datosC) => {
+                            if (validar) {
+
+                                cb(true, datos, parseInt(datosC[0].cuenta));
+                            } else {
+                                cb(false, {}, 0);
+                            }
+                        })
+
+                    } else {
+                        cb(false, {}, 0);
+                    }
+                });
+            }
+
         } catch (error) {
             cb(false, {}, 0)
         }
@@ -377,9 +395,9 @@ class transactionalModelSQL {
         field = field.slice(0, -1);
 
         let cns = `ALTER TABLE ${this.table_name} ADD PRIMARY KEY (${field});`;
-        if(field == ""){
+        if (field == "") {
             queryResult = "SELECT 'NOT PRIMARY KEYS'";
-        }else{
+        } else {
             queryResult = cns;
         }
         console.log(queryResult);
