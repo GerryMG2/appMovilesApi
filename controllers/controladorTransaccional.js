@@ -14,7 +14,8 @@ class controllerTransaccional{
 
     update(req, res){
         try {
-            this.service.update(JSON.parse(req.body.id), req.body.model, (validar, msg) => {
+            console.log(req.body.id);
+            this.service.update(req.body.id, req.body.model, (validar, msg) => {
                 if(validar){
                     res.status(200).json({msg: msg, correct: true});
                 }else{
@@ -30,7 +31,12 @@ class controllerTransaccional{
 
     get(req,res){
         try {
-            this.service.get(req.query.filters, JSON.parse(req.query.filtro),parseInt(req.query.size), parseInt(req.query.pag),JSON.parse(req.query.orden), (validar, docs, count) => {
+            let newsize = parseInt(req.query.size);
+            console.log(parseInt(req.query.page));
+            if(req.query.size = "ALL"){
+                newsize = "ALL";
+            }
+            this.service.get(req.query.filters, JSON.parse(req.query.filtro),newsize, parseInt(req.query.pag),JSON.parse(req.query.orden), (validar, docs, count) => {
                 if(validar){
                     res.status(200).json({msg: "ok", correct: true, docs: docs, count: count});
                 }else{
@@ -62,7 +68,7 @@ class controllerTransaccional{
 
     delete(req, res){
         try {
-            this.service.delete(JSON.parse(req.body.id), (validar, msg) => {
+            this.service.delete(req.body.id, (validar, msg) => {
                 if(validar){
                     res.status(200).json({msg: msg, correct: true});
                 }else{

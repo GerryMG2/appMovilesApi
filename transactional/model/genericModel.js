@@ -59,7 +59,7 @@ class transactionalModelSQL {
             console.log("orden:", orden == {});
             console.log("page:", pag);
             console.log("size:", size);
-            let offset = size * (pag - 1);
+            let offset = (size == "ALL"? 0 : size) * (pag - 1);
             let conditionsFiltros = "";
             let conditionsFilters = "";
             let keysFiltros = Object.keys(filtros);
@@ -196,6 +196,7 @@ class transactionalModelSQL {
             let modelKeys = Object.keys(model);
 
             this.campos.forEach(element => {
+                console.log(`${objId[this.modelo[element]["name"]]} ${this.modelo[element]["primaryKey"]}`);
                 if (this.modelo[element]["primaryKey"] && objId[this.modelo[element]["name"]] != null) {
                     if (this.modelo[element]["modelType"] == "Number" ||
                         this.modelo[element]["modelType"] == "Boolean") {
@@ -204,7 +205,10 @@ class transactionalModelSQL {
                         conditions = conditions.concat(`${this.modelo[element]["name"]}='${objId[element]}' AND`);
                     }
                 } else {
-                    throw "Hace falta valores de la llave para poder hacer la actualizacion."
+                    if (this.modelo[element]["primaryKey"]) {
+                        throw "Hace falta valores de la llave para poder hacer la actualizacion.";
+                    }
+
                 }
             });
             conditions = conditions.slice(0, -3);
@@ -219,7 +223,7 @@ class transactionalModelSQL {
             });
             changes = changes.slice(0, -1);
             let resultQuerry = `UPDATE ${this.table_name} SET ${changes} WHERE ${conditions};`;
-
+            console.log(resultQuerry);
             this.conx.query(resultQuerry, (validar, datos) => {
                 if (validar) {
                     cb(true, this.msg_update.ok);
@@ -228,6 +232,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
+            console.log(error);
             cb(false, this.mgs_delete.err);
         }
     }
@@ -264,14 +269,18 @@ class transactionalModelSQL {
                         conditions = conditions.concat(`${this.modelo[element]["name"]}='${objeId[element]}' AND`);
                     }
                 } else {
-                    throw "Hace falta valores de la llave para poder hacer la eliminacion."
+                    if (this.modelo[element]["primaryKey"]) {
+                        console.log(objeId[this.modelo[element]["name"]]);
+                        throw "Hace falta valores de la llave para poder hacer la eliminacion.";
+                    }
+
                 }
             });
             conditions = conditions.slice(0, -3);
 
 
             let queryResult = `DELETE FROM ${this.table_name} WHERE ${conditions};`;
-
+            console.log(queryResult);
             this.conx.query(queryResult, (validar, datos) => {
                 if (validar) {
                     cb(true, this.mgs_delete.ok);
@@ -280,6 +289,7 @@ class transactionalModelSQL {
                 }
             });
         } catch (error) {
+            console.log(error);
             cb(false, this.mgs_delete.err);
         }
     }

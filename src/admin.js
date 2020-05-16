@@ -1,5 +1,4 @@
 
-
 class Field extends React.Component {
 
     render() {
@@ -179,7 +178,7 @@ class ObjetoComplete extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log("props:", props);
+        // console.log("props:", props);
         this.renderStructure = this.renderStructure.bind(this);
         this.renderChoice = this.renderChoice.bind(this);
         this.renderEdit = this.renderEdit.bind(this);
@@ -541,25 +540,33 @@ class CreateOrUpdateField extends React.Component {
 
     renderOptions(lista, select) {
         let items = [];
-        if(lista){
+        console.log("lista opciones: select", select)
+        let add = true;
+        if (Array.isArray(lista)) {
             lista.forEach(element => {
-                if (element.valor === select) {
-    
+                console.log("valor", element);
+                if (element.save === select) {
+                    add = false;
+                    console.log("entra en la opcionselect");
+
                     items.push(<option value={element.save} selected>{element.show}</option>);
-    
+
                 } else {
-    
+                    
                     items.push(<option value={element.save}>{element.show}</option>);
-    
+
                 }
             });
         }
-        
+        if(add){
+            items.push(<option disabled selected value="">Seleccione una opcion</option>)
+        }
         return items;
     }
 
     handleChange(e) {
         //tipo, path, valor
+        console.log("valor:", e.target.value);
         this.props.handleFieldChange(e.target.getAttribute("tipo"), e.target.name, e.target.value);
     }
     handleChangeC(e) {
@@ -577,6 +584,7 @@ class CreateOrUpdateField extends React.Component {
                         <div class="campEditCreate">
                             <span>{newPath}</span>
                             <select name={path} tipo={estructura.type.name} class="selectfield" onChange={this.handleChange}>
+                                
                                 {this.renderOptions(listaOpciones, dato)}
                             </select>
                         </div>];
@@ -631,16 +639,18 @@ class CreateOrUpdateField extends React.Component {
                 }
             }
             // se renderiza
-        } else if(dbType != "Mongo") {
+        } else if (dbType != "Mongo") {
             let newPath = path.split(".").slice(-1)[0];
             if (estructura.type != "BIGSERIAL") {
                 if (estructura.primaryKey) {
                     if (estructura.foreignKey) {
                         //se renderiza con opciones
+                        console.log("lista:");
                         let item = [
                             <div class="campEditCreate">
                                 <span>{newPath}</span>
                                 <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
+                                    
                                     {this.renderOptions(listaOpciones, dato)}
                                 </select>
                             </div>];
@@ -697,6 +707,7 @@ class CreateOrUpdateField extends React.Component {
                             <div class="campEditCreate">
                                 <span>{newPath}</span>
                                 <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
+                                   
                                     {this.renderOptions(listaOpciones, dato)}
                                 </select>
                             </div>]
@@ -765,7 +776,7 @@ class CreateOrUpdateField extends React.Component {
 
     render() {
         console.log("props:field:", this.props);
-        let item =[];
+        let item = [];
         item.push(this.renderField(this.props.dbType, this.props.dato, this.props.estructura, this.props.path, this.props.listaOpciones));
         console.log(item);
         return (
@@ -780,11 +791,11 @@ class CreateOrUpdateField extends React.Component {
 class FormCreateOrUpdate extends React.Component {
 
     renderList(dbType, estructura, dato, path, listaOpcionesfeach) {
-        console.log(`lista: ${dbType} ${estructura} ${dato} ${path}`)
+        console.log(`lista: ${dbType} ${estructura} ${dato} ${path} ${listaOpcionesfeach}`)
         if (dbType == "Mongo") {
             if (estructura.type) {
                 // campo
-                let item =[
+                let item = [
                     <CreateOrUpdateField
                         dbType={dbType}
                         dato={dato}
@@ -800,7 +811,7 @@ class FormCreateOrUpdate extends React.Component {
                     let cont = 0;
                     let title = path.split(".").slice(-1)[0]
                     items = [];
-                   
+
                     dato.forEach(element => {
                         let newPa = path.concat("#").concat(cont);
                         items.push(
@@ -853,11 +864,13 @@ class FormCreateOrUpdate extends React.Component {
     constructor(props) {
         super(props);
         this.renderList = this.renderList.bind(this);
+        console.log("props: CreateOrupdate", this.props);
     }
 
     render() {
         let newkeys = Object.keys(this.props.estructura);
-        console.log("props:", this.props);
+
+
         let items = [];
         newkeys.forEach(element => {
             items.push(...this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], element.toString(), this.props.listaOpciones[element]));
@@ -1067,7 +1080,7 @@ class MasterPage extends React.Component {
                 nombre: { type: "VARCHAR(100)", name: "nombre", modelType: "String" }
 
 
-            }, blanck: {
+            }, blank: {
 
                 id_ciudad: null,
                 id_pais: null,
@@ -1085,7 +1098,7 @@ class MasterPage extends React.Component {
                     ref: "usuario", refField: "id_usuario", fieldShow: "id_obj", commentForeing: "id_usuario_fk", modelType: "Number"
                 }
 
-            }, blanck: {
+            }, blank: {
 
                 id_cliente: null,
                 id_usuario: null
@@ -1286,7 +1299,7 @@ class MasterPage extends React.Component {
                 "Content-Type": "application/json"
             }
         };
-       
+
 
         let body = {};
         if (this.state.modelo.dbType == "Mongo") {
@@ -1299,9 +1312,9 @@ class MasterPage extends React.Component {
 
             keys.forEach(ele => {
                 console.log(ele);
-                console.log(! (this.state.modelo.modelo[ele].type == "BIGSERIAL") );
+                console.log(!(this.state.modelo.modelo[ele].type == "BIGSERIAL"));
                 if (!(this.state.modelo.modelo[ele].type == "BIGSERIAL")) {
-                    
+
                     newModel[ele] = this.state.elementoToUpdateOrCreate[ele];
                 }
 
@@ -1311,7 +1324,7 @@ class MasterPage extends React.Component {
 
         }
         console.log(body);
-        options_and_body["body"] = JSON.stringify({model: body});
+        options_and_body["body"] = JSON.stringify({ model: body });
 
         let prefix = "";
         if (this.state.modelo.dbType == "Mongo") {
@@ -1328,26 +1341,26 @@ class MasterPage extends React.Component {
                 swal("Hubo un problema para crear el objet", "error", "error");
             })
             .then(response => {
-                if(response.correct){
+                if (response.correct) {
                     console.log("success: ", response);
                     swal("Se creo correctamente", "Continua", "success");
-                }else{
+                } else {
                     swal("Hubo un problema para crear el objet", "Server Error", "error");
                 }
-              
+
             })
             .then(() => {
-                let copy = this.state;
+                let copy = Object.assign({}, this.state);
                 copy.elementoToUpdateOrCreate = {};
                 copy.CreateOrUpdate = "None";
                 copy.listaOpciones = {};
-                this.setState(copy);
-                this.get();
+                this.setState(copy, () => { this.get(); });
+
             });
 
     }
 
-    recursiveOptionList(estructura, params) {
+    recursiveOptionList(estructura, params, path) {
         console.log(estructura);
         if (estructura.ref) {
             let query = Object.keys(params)
@@ -1368,7 +1381,7 @@ class MasterPage extends React.Component {
                 .catch(error => console.log("error: ", error))
                 .then(response => {
                     if (response.count > 0) {
-                        return response.docs.map(obj => {
+                        let mapita = response.docs.map(obj => {
                             let a = { save: null, show: null }
                             for (i in obj) {
 
@@ -1385,6 +1398,7 @@ class MasterPage extends React.Component {
 
                             return a;
                         });
+                        this.changeListOptions(path, mapita);
                     } else {
                         return [];
                     }
@@ -1395,18 +1409,18 @@ class MasterPage extends React.Component {
         } else {
             if (Array.isArray(estructura)) {
                 //
-                let objRetu = []
-                objRetu.push(this.recursiveOptionList(estructura[0], params));
-                return objRetu;
+
+                this.recursiveOptionList(estructura[0], params, path.concat(".#0"));
+
             } else {
                 if (!estructura.type) {
                     // objeto
-                    let ret = {}
+
                     let newkeys = Object.keys(estructura);
                     newkeys.forEach(ele => {
-                        ret[ele] = this.recursiveOptionList(estructura[ele], params);
+                        this.recursiveOptionList(estructura[ele], params, path.concat(".").concat(ele));
                     });
-                    return ret;
+
                 }
             }
         }
@@ -1418,12 +1432,12 @@ class MasterPage extends React.Component {
         console.log("getting list");
         let prefix = "";
         let params = {};
-        let blank = this.state.modelo.blank;
+        let blank = Object.assign({}, this.state.modelo.blank);
         if (this.state.modelo.dbType == "Mongo") {
             params = {
                 filters: "",
                 filtro: JSON.stringify({}),
-                page: 1,
+                pag: 1,
                 size: 0,
                 orden: JSON.stringify({}),
             };
@@ -1432,7 +1446,7 @@ class MasterPage extends React.Component {
             params = {
                 filters: "",
                 filtro: JSON.stringify({}),
-                page: 1,
+                pag: 1,
                 size: "ALL",
                 orden: JSON.stringify({}),
             };
@@ -1465,35 +1479,43 @@ class MasterPage extends React.Component {
                         .catch(error => console.log("error: ", error))
                         .then(response => {
                             console.log("success: ", response);
-                            blank[element] = response.docs.map(obj => {
-                                let a = { save: null, show: null }
-                                for (i in obj) {
+                            if (response.correct) {
 
-                                    if (i == this.state.modelo.modelo[element].fieldShow) {
-                                        console.log(i);
-                                        a.show = obj[i]
+                                let mapita = response.docs.map(obj => {
+                                    let a = { save: null, show: null }
+                                    for (i in obj) {
+
+                                        if (i == this.state.modelo.modelo[element].fieldShow) {
+                                            console.log(i);
+                                            a.show = obj[i]
+                                        }
+                                        if (i == "_id") {
+                                            console.log(i);
+                                            a.save = obj[i]
+                                        }
                                     }
-                                    if (i == "_id") {
-                                        console.log(i);
-                                        a.save = obj[i]
-                                    }
-                                }
 
 
-                                return a
-                            });
+                                    return a
+                                });
+                                this.changeListOptions(element, mapita);
+                            } else {
+
+                            }
+
                         });
+
                 } else {
                     if (Array.isArray(element)) {
                         console.log("es un array");
-                        blank[element][0] = this.recursiveOptionList(this.state.modelo.modelo[element][0], params)
+                        this.recursiveOptionList(this.state.modelo.modelo[element][0], params, element.concat(".#0"))
                     } else {
                         if (!this.state.modelo.modelo[element].type) {
                             console.log("es un objeto");
                             let keysI = Object.keys(this.state.modelo.modelo[element]);
 
                             keysI.forEach(ele => {
-                                blank[element][ele] = this.recursiveOptionList(this.state.modelo.modelo[element][ele], params);
+                                this.recursiveOptionList(this.state.modelo.modelo[element][ele], params, element.concat(".").concat(ele));
                             });
                         }
                     }
@@ -1501,6 +1523,7 @@ class MasterPage extends React.Component {
             } else {
                 if (this.state.modelo.modelo[element].ref) {
                     // no tiene referencias
+                    console.log("response")
                     let query = Object.keys(params)
                         .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
                         .join("&");
@@ -1518,7 +1541,8 @@ class MasterPage extends React.Component {
                         .then(res => res.json())
                         .catch(error => console.log("error: ", error))
                         .then(response => {
-                            blank[element] = response.docs.map(obj => {
+                            console.log(response);
+                            let mapita = response.docs.map(obj => {
                                 let a = { save: null, show: null }
                                 for (i in obj) {
 
@@ -1535,6 +1559,9 @@ class MasterPage extends React.Component {
 
                                 return a
                             });
+                            console.log("elemento:", element);
+
+                            this.changeListOptions(element, mapita);
                         });
                 } {
                     // no hace nada
@@ -1544,13 +1571,14 @@ class MasterPage extends React.Component {
             }
         });
 
-        console.log("finished blank:", blank);
-        return blank;
+
+
+
 
     }
 
     get() {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         let params = {
             filters: this.state.filters,
             filtro: JSON.stringify(this.state.filtros),
@@ -1607,7 +1635,7 @@ class MasterPage extends React.Component {
             let newModel = {};
             let newkey = {};
             keys.forEach(ele => {
-                if (this.state.modelo.modelo.primaryKey) {
+                if (this.state.modelo.modelo[ele].primaryKey) {
                     newkey[ele] = this.state.elementoToUpdateOrCreate[ele];
                 } else {
                     newModel[ele] = this.state.elementoToUpdateOrCreate[ele];
@@ -1618,6 +1646,7 @@ class MasterPage extends React.Component {
             body.model = newModel;
 
         }
+        console.log(body);
 
         let prefix = "";
         if (this.state.modelo.dbType == "Mongo") {
@@ -1641,20 +1670,26 @@ class MasterPage extends React.Component {
         fetch(url, options_and_body)
             .then(res => res.json())
             .catch(error => {
-                console.log("error: ", error);
-                swal.fire("Hubo un problema para actualizar", error, "error");
+                console.log("error: ", "Error");
+                swal("Hubo un problema para actualizar", "Error", "error");
             })
             .then(response => {
-                console.log("success: ", response);
-                swal.fire("actualizado", "Continua", "success");
+                if (response.correct) {
+                    console.log("success: ", response);
+                    swal("actualizado", "Continua", "success");
+                } else {
+                    console.log("success: ", response);
+                    swal("Hubo un problema para actualizar", "Error", "error");
+                }
+
             })
             .then(() => {
-                let copy = this.state;
+                let copy = Object.assign({}, this.state);
                 copy.elementoToUpdateOrCreate = {};
                 copy.CreateOrUpdate = "None";
                 copy.listaOpciones = {};
-                this.setState(copy);
-                this.get();
+                this.setState(copy, () => { this.get(); });
+
 
             });
     }
@@ -1683,8 +1718,8 @@ class MasterPage extends React.Component {
             let idcond = {};
             let keyModel = Object.keys(this.state.modelo.modelo);
             keyModel.forEach(element => {
-                if (this.state.modelo.modelo.primaryKey) {
-                    idcond[element] = this.state.listaDatos[position][key];
+                if (this.state.modelo.modelo[element].primaryKey) {
+                    idcond[element] = this.state.listaDatos[position][element];
                 }
             });
 
@@ -1693,17 +1728,23 @@ class MasterPage extends React.Component {
             });
 
         }
-
-        let url = `${prefix}/${this.state.modelo.modelo.urlname}/`;
+        console.log(options_and_body);
+        let url = `${prefix}/${this.state.modelo.urlname}/`;
         fetch(url, options_and_body)
             .then(res => res.json())
             .catch(error => {
                 console.log("error: ", error);
-                swal.fire("Error al eliminar.", error, "error");
+                swal("Error al eliminar.", error, "error");
             })
             .then(response => {
-                console.log("success: ", response);
-                swal.fire(response.msg, "Continua", response.ok);
+                if (response.correct) {
+                    console.log("success: ", response);
+                    swal(response.msg, "Continua", "success");
+                } else {
+                    console.log("error: ", response);
+                    swal(response.msg, "Error", "error");
+                }
+
             })
             .then(() => { })
             .then(() => {
@@ -1713,10 +1754,12 @@ class MasterPage extends React.Component {
     }
 
     changeModel(e) {
+        console.log("copia: ", this.Modelos[e.target.getAttribute("cont")]);
         console.log(e.target);
-        let copy = this.state;
-        copy.modelo = this.Modelos[e.target.getAttribute("cont")];
+        let copy = Object.assign({}, this.state);
+        copy.modelo = Object.assign({}, this.Modelos[e.target.getAttribute("cont")]);
         copy.CreateOrUpdate = "None";
+        copy.elementoToUpdateOrCreate = {};
         copy.filtros = {};
         copy.filters = "";
         copy.orden = {};
@@ -1727,11 +1770,11 @@ class MasterPage extends React.Component {
         copy.checkList = [];
         copy.listaOpciones = {};
 
-        this.setState(copy);
+        this.setState(copy, () => { this.get() });
 
 
         //TODO: get implementation
-        this.get();
+
     }
 
     constructor(props) {
@@ -1776,13 +1819,13 @@ class MasterPage extends React.Component {
     }
 
     changeseach(value) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         copy.filters = value;
         this.setState(copy);
 
     }
     changeFilter(value, key) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         if (key.split(".").length > 1) {
             if (value.toString().trim() == "") {
                 copy.filtros = deleteObjPath(copy.filtros, key);
@@ -1799,9 +1842,9 @@ class MasterPage extends React.Component {
 
 
 
-        this.setState(copy);
+        this.setState(copy, () => { this.get(); });
         //implememnt get
-        this.get();
+
     }
 
     searchGet() {
@@ -1810,18 +1853,28 @@ class MasterPage extends React.Component {
     }
 
     toCreate() {
-        console.log(copy);
-        let copy = this.state;
-        copy.elementoToUpdateOrCreate = this.state.modelo.blank;
+        console.log("copia2:", this.state.modelo.blank);
+        let copy = Object.assign({}, this.state);
+
+        copy.elementoToUpdateOrCreate = Object.assign({}, copy.modelo.blank);
+        copy.listaOpciones = Object.assign({}, copy.modelo.blank);
         copy.CreateOrUpdate = "Create";
         // implement options lis
-        copy.listaOpciones = this.getOptionsList();
-        console.log(copy);
-        this.setState(copy);
+        // this.getOptionsList();
+
+        this.setState(copy, () => {
+            this.getOptionsList();
+        });
+
+
+
+
+
+
     }
 
     check(position) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         let index = copy.checkList.indexOf(position);
         if (index > -1) {
             copy.checkList.splice(index, 1);
@@ -1833,16 +1886,18 @@ class MasterPage extends React.Component {
     }
 
     edit(position) {
-        let copy = this.state;
-        copy.elementoToUpdateOrCreate = copy.listaDatos[position];
+        let copy = Object.assign({}, this.state);
+        copy.elementoToUpdateOrCreate = Object.assign({}, copy.listaDatos[position]);
         copy.CreateOrUpdate = "Update";
         // implement option list
-        copy.listaOpciones = this.getOptionsList();
-        this.setState(copy);
+
+        this.setState(copy, () => {
+            this.getOptionsList();
+        });
     }
 
     changeOrden(key) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         if (this.state.orden[key] == undefined) {
             copy.orden[key] = -1;
         } else {
@@ -1855,21 +1910,21 @@ class MasterPage extends React.Component {
         }
         copy.page = 1;
         copy.size = 20;
-        this.setState(copy);
-        this.get();
+        this.setState(copy, () => { { this.get(); } });
+
         // implement get
     }
 
     pagination(page) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         copy.page = page;
-        this.setState(copy);
-        this.get();
+        this.setState(copy, () => { this.get(); });
+
         // implement get
     }
 
     exitCreateUpdate() {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         copy.elementoToUpdateOrCreate = {};
         copy.CreateOrUpdate = "None";
         copy.listaOpciones = {};
@@ -1880,7 +1935,7 @@ class MasterPage extends React.Component {
         console.log("change data:", path);
         console.log("change data:", value);
         console.log("change data:", tipo);
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         switch (tipo) {
             case "String":
                 copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
@@ -1902,8 +1957,17 @@ class MasterPage extends React.Component {
         this.setState(copy);
     }
 
+    changeListOptions(path, value) {
+        console.log(`change lista options: ${path} ${value}`);
+        console.log("change lista options:", this.state.listaOpciones);
+        let copy = Object.assign({}, this.state);
+
+        copy.listaOpciones = insertValuePath(copy.listaOpciones, path, value);
+        this.setState(copy);
+    }
+
     insertInList(path) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
 
         let value = deepFind(this.state.elementoToUpdateOrCreate, path);
         let valuePush = deepFind(this.state.modelo.blank, path.concat(".#0"));
@@ -1914,7 +1978,7 @@ class MasterPage extends React.Component {
     }
 
     deleteInList(path, count) {
-        let copy = this.state;
+        let copy = Object.assign({}, this.state);
         let value = deepFind(this.state.elementoToUpdateOrCreate, path);
 
         value.splice(count, 1);

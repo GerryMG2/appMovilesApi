@@ -266,9 +266,9 @@ var ObjetoComplete = function (_React$Component2) {
     function ObjetoComplete(props) {
         _classCallCheck(this, ObjetoComplete);
 
+        // console.log("props:", props);
         var _this3 = _possibleConstructorReturn(this, (ObjetoComplete.__proto__ || Object.getPrototypeOf(ObjetoComplete)).call(this, props));
 
-        console.log("props:", props);
         _this3.renderStructure = _this3.renderStructure.bind(_this3);
         _this3.renderChoice = _this3.renderChoice.bind(_this3);
         _this3.renderEdit = _this3.renderEdit.bind(_this3);
@@ -806,9 +806,14 @@ var CreateOrUpdateField = function (_React$Component8) {
         key: "renderOptions",
         value: function renderOptions(lista, select) {
             var items = [];
-            if (lista) {
+            console.log("lista opciones: select", select);
+            var add = true;
+            if (Array.isArray(lista)) {
                 lista.forEach(function (element) {
-                    if (element.valor === select) {
+                    console.log("valor", element);
+                    if (element.save === select) {
+                        add = false;
+                        console.log("entra en la opcionselect");
 
                         items.push(React.createElement(
                             "option",
@@ -825,13 +830,20 @@ var CreateOrUpdateField = function (_React$Component8) {
                     }
                 });
             }
-
+            if (add) {
+                items.push(React.createElement(
+                    "option",
+                    { disabled: true, selected: true, value: "" },
+                    "Seleccione una opcion"
+                ));
+            }
             return items;
         }
     }, {
         key: "handleChange",
         value: function handleChange(e) {
             //tipo, path, valor
+            console.log("valor:", e.target.value);
             this.props.handleFieldChange(e.target.getAttribute("tipo"), e.target.name, e.target.value);
         }
     }, {
@@ -935,6 +947,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                     if (estructura.primaryKey) {
                         if (estructura.foreignKey) {
                             //se renderiza con opciones
+                            console.log("lista:");
                             var _item3 = [React.createElement(
                                 "div",
                                 { "class": "campEditCreate" },
@@ -1135,7 +1148,7 @@ var FormCreateOrUpdate = function (_React$Component9) {
         value: function renderList(dbType, estructura, dato, path, listaOpcionesfeach) {
             var _this22 = this;
 
-            console.log("lista: " + dbType + " " + estructura + " " + dato + " " + path);
+            console.log("lista: " + dbType + " " + estructura + " " + dato + " " + path + " " + listaOpcionesfeach);
             if (dbType == "Mongo") {
                 if (estructura.type) {
                     // campo
@@ -1220,6 +1233,7 @@ var FormCreateOrUpdate = function (_React$Component9) {
         var _this21 = _possibleConstructorReturn(this, (FormCreateOrUpdate.__proto__ || Object.getPrototypeOf(FormCreateOrUpdate)).call(this, props));
 
         _this21.renderList = _this21.renderList.bind(_this21);
+        console.log("props: CreateOrupdate", _this21.props);
         return _this21;
     }
 
@@ -1229,7 +1243,7 @@ var FormCreateOrUpdate = function (_React$Component9) {
             var _this23 = this;
 
             var newkeys = Object.keys(this.props.estructura);
-            console.log("props:", this.props);
+
             var items = [];
             newkeys.forEach(function (element) {
                 items.push.apply(items, _toConsumableArray(_this23.renderList(_this23.props.dbType, _this23.props.estructura[element], _this23.props.datos[element], element.toString(), _this23.props.listaOpciones[element])));
@@ -1447,7 +1461,7 @@ var MasterPage = function (_React$Component10) {
                     id_pais: { trype: "BIGINT", name: "id_pais", foreignKey: true, ref: "pais", refField: "id_pais", fieldShow: "nombre", commentForeign: "id_pais_fk", modelType: "Number" },
                     nombre: { type: "VARCHAR(100)", name: "nombre", modelType: "String" }
 
-                }, blanck: {
+                }, blank: {
 
                     id_ciudad: null,
                     id_pais: null,
@@ -1464,7 +1478,7 @@ var MasterPage = function (_React$Component10) {
                         ref: "usuario", refField: "id_usuario", fieldShow: "id_obj", commentForeing: "id_usuario_fk", modelType: "Number"
                     }
 
-                }, blanck: {
+                }, blank: {
 
                     id_cliente: null,
                     id_usuario: null
@@ -1709,17 +1723,18 @@ var MasterPage = function (_React$Component10) {
                     swal("Hubo un problema para crear el objet", "Server Error", "error");
                 }
             }).then(function () {
-                var copy = _this25.state;
+                var copy = Object.assign({}, _this25.state);
                 copy.elementoToUpdateOrCreate = {};
                 copy.CreateOrUpdate = "None";
                 copy.listaOpciones = {};
-                _this25.setState(copy);
-                _this25.get();
+                _this25.setState(copy, function () {
+                    _this25.get();
+                });
             });
         }
     }, {
         key: "recursiveOptionList",
-        value: function recursiveOptionList(estructura, params) {
+        value: function recursiveOptionList(estructura, params, path) {
             var _this26 = this;
 
             console.log(estructura);
@@ -1742,7 +1757,7 @@ var MasterPage = function (_React$Component10) {
                     return console.log("error: ", error);
                 }).then(function (response) {
                     if (response.count > 0) {
-                        return response.docs.map(function (obj) {
+                        var mapita = response.docs.map(function (obj) {
                             var a = { save: null, show: null };
                             for (i in obj) {
 
@@ -1758,6 +1773,7 @@ var MasterPage = function (_React$Component10) {
 
                             return a;
                         });
+                        _this26.changeListOptions(path, mapita);
                     } else {
                         return [];
                     }
@@ -1765,18 +1781,16 @@ var MasterPage = function (_React$Component10) {
             } else {
                 if (Array.isArray(estructura)) {
                     //
-                    var objRetu = [];
-                    objRetu.push(this.recursiveOptionList(estructura[0], params));
-                    return objRetu;
+
+                    this.recursiveOptionList(estructura[0], params, path.concat(".#0"));
                 } else {
                     if (!estructura.type) {
                         // objeto
-                        var ret = {};
+
                         var newkeys = Object.keys(estructura);
                         newkeys.forEach(function (ele) {
-                            ret[ele] = _this26.recursiveOptionList(estructura[ele], params);
+                            _this26.recursiveOptionList(estructura[ele], params, path.concat(".").concat(ele));
                         });
-                        return ret;
                     }
                 }
             }
@@ -1789,12 +1803,12 @@ var MasterPage = function (_React$Component10) {
             console.log("getting list");
             var prefix = "";
             var params = {};
-            var blank = this.state.modelo.blank;
+            var blank = Object.assign({}, this.state.modelo.blank);
             if (this.state.modelo.dbType == "Mongo") {
                 params = {
                     filters: "",
                     filtro: JSON.stringify({}),
-                    page: 1,
+                    pag: 1,
                     size: 0,
                     orden: JSON.stringify({})
                 };
@@ -1803,7 +1817,7 @@ var MasterPage = function (_React$Component10) {
                 params = {
                     filters: "",
                     filtro: JSON.stringify({}),
-                    page: 1,
+                    pag: 1,
                     size: "ALL",
                     orden: JSON.stringify({})
                 };
@@ -1833,34 +1847,38 @@ var MasterPage = function (_React$Component10) {
                             return console.log("error: ", error);
                         }).then(function (response) {
                             console.log("success: ", response);
-                            blank[element] = response.docs.map(function (obj) {
-                                var a = { save: null, show: null };
-                                for (i in obj) {
+                            if (response.correct) {
 
-                                    if (i == _this27.state.modelo.modelo[element].fieldShow) {
-                                        console.log(i);
-                                        a.show = obj[i];
-                                    }
-                                    if (i == "_id") {
-                                        console.log(i);
-                                        a.save = obj[i];
-                                    }
-                                }
+                                var mapita = response.docs.map(function (obj) {
+                                    var a = { save: null, show: null };
+                                    for (i in obj) {
 
-                                return a;
-                            });
+                                        if (i == _this27.state.modelo.modelo[element].fieldShow) {
+                                            console.log(i);
+                                            a.show = obj[i];
+                                        }
+                                        if (i == "_id") {
+                                            console.log(i);
+                                            a.save = obj[i];
+                                        }
+                                    }
+
+                                    return a;
+                                });
+                                _this27.changeListOptions(element, mapita);
+                            } else {}
                         });
                     } else {
                         if (Array.isArray(element)) {
                             console.log("es un array");
-                            blank[element][0] = _this27.recursiveOptionList(_this27.state.modelo.modelo[element][0], params);
+                            _this27.recursiveOptionList(_this27.state.modelo.modelo[element][0], params, element.concat(".#0"));
                         } else {
                             if (!_this27.state.modelo.modelo[element].type) {
                                 console.log("es un objeto");
                                 var keysI = Object.keys(_this27.state.modelo.modelo[element]);
 
                                 keysI.forEach(function (ele) {
-                                    blank[element][ele] = _this27.recursiveOptionList(_this27.state.modelo.modelo[element][ele], params);
+                                    _this27.recursiveOptionList(_this27.state.modelo.modelo[element][ele], params, element.concat(".").concat(ele));
                                 });
                             }
                         }
@@ -1868,6 +1886,7 @@ var MasterPage = function (_React$Component10) {
                 } else {
                     if (_this27.state.modelo.modelo[element].ref) {
                         // no tiene referencias
+                        console.log("response");
                         var _query = Object.keys(params).map(function (k) {
                             return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
                         }).join("&");
@@ -1885,7 +1904,8 @@ var MasterPage = function (_React$Component10) {
                         }).catch(function (error) {
                             return console.log("error: ", error);
                         }).then(function (response) {
-                            blank[element] = response.docs.map(function (obj) {
+                            console.log(response);
+                            var mapita = response.docs.map(function (obj) {
                                 var a = { save: null, show: null };
                                 for (i in obj) {
 
@@ -1901,6 +1921,9 @@ var MasterPage = function (_React$Component10) {
 
                                 return a;
                             });
+                            console.log("elemento:", element);
+
+                            _this27.changeListOptions(element, mapita);
                         });
                     }{}
                     // no hace nada
@@ -1908,16 +1931,13 @@ var MasterPage = function (_React$Component10) {
                     //[{null, []}]
                 }
             });
-
-            console.log("finished blank:", blank);
-            return blank;
         }
     }, {
         key: "get",
         value: function get() {
             var _this28 = this;
 
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
             var params = {
                 filters: this.state.filters,
                 filtro: JSON.stringify(this.state.filtros),
@@ -1976,7 +1996,7 @@ var MasterPage = function (_React$Component10) {
                 var newModel = {};
                 var newkey = {};
                 keys.forEach(function (ele) {
-                    if (_this29.state.modelo.modelo.primaryKey) {
+                    if (_this29.state.modelo.modelo[ele].primaryKey) {
                         newkey[ele] = _this29.state.elementoToUpdateOrCreate[ele];
                     } else {
                         newModel[ele] = _this29.state.elementoToUpdateOrCreate[ele];
@@ -1985,6 +2005,7 @@ var MasterPage = function (_React$Component10) {
                 body.id = newkey;
                 body.model = newModel;
             }
+            console.log(body);
 
             var prefix = "";
             if (this.state.modelo.dbType == "Mongo") {
@@ -2006,18 +2027,24 @@ var MasterPage = function (_React$Component10) {
             fetch(url, options_and_body).then(function (res) {
                 return res.json();
             }).catch(function (error) {
-                console.log("error: ", error);
-                swal.fire("Hubo un problema para actualizar", error, "error");
+                console.log("error: ", "Error");
+                swal("Hubo un problema para actualizar", "Error", "error");
             }).then(function (response) {
-                console.log("success: ", response);
-                swal.fire("actualizado", "Continua", "success");
+                if (response.correct) {
+                    console.log("success: ", response);
+                    swal("actualizado", "Continua", "success");
+                } else {
+                    console.log("success: ", response);
+                    swal("Hubo un problema para actualizar", "Error", "error");
+                }
             }).then(function () {
-                var copy = _this29.state;
+                var copy = Object.assign({}, _this29.state);
                 copy.elementoToUpdateOrCreate = {};
                 copy.CreateOrUpdate = "None";
                 copy.listaOpciones = {};
-                _this29.setState(copy);
-                _this29.get();
+                _this29.setState(copy, function () {
+                    _this29.get();
+                });
             });
         }
     }, {
@@ -2048,8 +2075,8 @@ var MasterPage = function (_React$Component10) {
                 var idcond = {};
                 var keyModel = Object.keys(this.state.modelo.modelo);
                 keyModel.forEach(function (element) {
-                    if (_this30.state.modelo.modelo.primaryKey) {
-                        idcond[element] = _this30.state.listaDatos[position][key];
+                    if (_this30.state.modelo.modelo[element].primaryKey) {
+                        idcond[element] = _this30.state.listaDatos[position][element];
                     }
                 });
 
@@ -2057,16 +2084,21 @@ var MasterPage = function (_React$Component10) {
                     id: idcond
                 });
             }
-
-            var url = prefix + "/" + this.state.modelo.modelo.urlname + "/";
+            console.log(options_and_body);
+            var url = prefix + "/" + this.state.modelo.urlname + "/";
             fetch(url, options_and_body).then(function (res) {
                 return res.json();
             }).catch(function (error) {
                 console.log("error: ", error);
-                swal.fire("Error al eliminar.", error, "error");
+                swal("Error al eliminar.", error, "error");
             }).then(function (response) {
-                console.log("success: ", response);
-                swal.fire(response.msg, "Continua", response.ok);
+                if (response.correct) {
+                    console.log("success: ", response);
+                    swal(response.msg, "Continua", "success");
+                } else {
+                    console.log("error: ", response);
+                    swal(response.msg, "Error", "error");
+                }
             }).then(function () {}).then(function () {
                 // implement get
                 _this30.get();
@@ -2075,10 +2107,14 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "changeModel",
         value: function changeModel(e) {
+            var _this31 = this;
+
+            console.log("copia: ", this.Modelos[e.target.getAttribute("cont")]);
             console.log(e.target);
-            var copy = this.state;
-            copy.modelo = this.Modelos[e.target.getAttribute("cont")];
+            var copy = Object.assign({}, this.state);
+            copy.modelo = Object.assign({}, this.Modelos[e.target.getAttribute("cont")]);
             copy.CreateOrUpdate = "None";
+            copy.elementoToUpdateOrCreate = {};
             copy.filtros = {};
             copy.filters = "";
             copy.orden = {};
@@ -2089,10 +2125,11 @@ var MasterPage = function (_React$Component10) {
             copy.checkList = [];
             copy.listaOpciones = {};
 
-            this.setState(copy);
+            this.setState(copy, function () {
+                _this31.get();
+            });
 
             //TODO: get implementation
-            this.get();
         }
     }]);
 
@@ -2127,7 +2164,7 @@ var MasterPage = function (_React$Component10) {
     _createClass(MasterPage, [{
         key: "renderTables",
         value: function renderTables() {
-            var _this31 = this;
+            var _this32 = this;
 
             var cont = 0;
             var items = [];
@@ -2137,7 +2174,7 @@ var MasterPage = function (_React$Component10) {
                 items.push(React.createElement(
                     "div",
                     { "class": "table_list" },
-                    React.createElement("input", { type: "button", cont: cont, value: element.nombre, onClick: _this31.changeModel })
+                    React.createElement("input", { type: "button", cont: cont, value: element.nombre, onClick: _this32.changeModel })
                 ));
                 cont++;
             });
@@ -2146,14 +2183,16 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "changeseach",
         value: function changeseach(value) {
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
             copy.filters = value;
             this.setState(copy);
         }
     }, {
         key: "changeFilter",
         value: function changeFilter(value, key) {
-            var copy = this.state;
+            var _this33 = this;
+
+            var copy = Object.assign({}, this.state);
             if (key.split(".").length > 1) {
                 if (value.toString().trim() == "") {
                     copy.filtros = deleteObjPath(copy.filtros, key);
@@ -2168,9 +2207,10 @@ var MasterPage = function (_React$Component10) {
                 }
             }
 
-            this.setState(copy);
+            this.setState(copy, function () {
+                _this33.get();
+            });
             //implememnt get
-            this.get();
         }
     }, {
         key: "searchGet",
@@ -2181,19 +2221,25 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "toCreate",
         value: function toCreate() {
-            console.log(copy);
-            var copy = this.state;
-            copy.elementoToUpdateOrCreate = this.state.modelo.blank;
+            var _this34 = this;
+
+            console.log("copia2:", this.state.modelo.blank);
+            var copy = Object.assign({}, this.state);
+
+            copy.elementoToUpdateOrCreate = Object.assign({}, copy.modelo.blank);
+            copy.listaOpciones = Object.assign({}, copy.modelo.blank);
             copy.CreateOrUpdate = "Create";
             // implement options lis
-            copy.listaOpciones = this.getOptionsList();
-            console.log(copy);
-            this.setState(copy);
+            // this.getOptionsList();
+
+            this.setState(copy, function () {
+                _this34.getOptionsList();
+            });
         }
     }, {
         key: "check",
         value: function check(position) {
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
             var index = copy.checkList.indexOf(position);
             if (index > -1) {
                 copy.checkList.splice(index, 1);
@@ -2205,17 +2251,23 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "edit",
         value: function edit(position) {
-            var copy = this.state;
-            copy.elementoToUpdateOrCreate = copy.listaDatos[position];
+            var _this35 = this;
+
+            var copy = Object.assign({}, this.state);
+            copy.elementoToUpdateOrCreate = Object.assign({}, copy.listaDatos[position]);
             copy.CreateOrUpdate = "Update";
             // implement option list
-            copy.listaOpciones = this.getOptionsList();
-            this.setState(copy);
+
+            this.setState(copy, function () {
+                _this35.getOptionsList();
+            });
         }
     }, {
         key: "changeOrden",
         value: function changeOrden(key) {
-            var copy = this.state;
+            var _this36 = this;
+
+            var copy = Object.assign({}, this.state);
             if (this.state.orden[key] == undefined) {
                 copy.orden[key] = -1;
             } else {
@@ -2227,23 +2279,31 @@ var MasterPage = function (_React$Component10) {
             }
             copy.page = 1;
             copy.size = 20;
-            this.setState(copy);
-            this.get();
+            this.setState(copy, function () {
+                {
+                    _this36.get();
+                }
+            });
+
             // implement get
         }
     }, {
         key: "pagination",
         value: function pagination(page) {
-            var copy = this.state;
+            var _this37 = this;
+
+            var copy = Object.assign({}, this.state);
             copy.page = page;
-            this.setState(copy);
-            this.get();
+            this.setState(copy, function () {
+                _this37.get();
+            });
+
             // implement get
         }
     }, {
         key: "exitCreateUpdate",
         value: function exitCreateUpdate() {
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
             copy.elementoToUpdateOrCreate = {};
             copy.CreateOrUpdate = "None";
             copy.listaOpciones = {};
@@ -2255,7 +2315,7 @@ var MasterPage = function (_React$Component10) {
             console.log("change data:", path);
             console.log("change data:", value);
             console.log("change data:", tipo);
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
             switch (tipo) {
                 case "String":
                     copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
@@ -2277,9 +2337,19 @@ var MasterPage = function (_React$Component10) {
             this.setState(copy);
         }
     }, {
+        key: "changeListOptions",
+        value: function changeListOptions(path, value) {
+            console.log("change lista options: " + path + " " + value);
+            console.log("change lista options:", this.state.listaOpciones);
+            var copy = Object.assign({}, this.state);
+
+            copy.listaOpciones = insertValuePath(copy.listaOpciones, path, value);
+            this.setState(copy);
+        }
+    }, {
         key: "insertInList",
         value: function insertInList(path) {
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
 
             var value = deepFind(this.state.elementoToUpdateOrCreate, path);
             var valuePush = deepFind(this.state.modelo.blank, path.concat(".#0"));
@@ -2291,7 +2361,7 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "deleteInList",
         value: function deleteInList(path, count) {
-            var copy = this.state;
+            var copy = Object.assign({}, this.state);
             var value = deepFind(this.state.elementoToUpdateOrCreate, path);
 
             value.splice(count, 1);
@@ -2301,7 +2371,7 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "render",
         value: function render() {
-            var _this32 = this;
+            var _this38 = this;
 
             if (this.state.CreateOrUpdate == "None") {
                 return React.createElement(
@@ -2318,35 +2388,35 @@ var MasterPage = function (_React$Component10) {
                         React.createElement(ModuloAdmin, {
                             valorBusqueda: this.state.filters,
                             changesearch: function changesearch(value) {
-                                return _this32.changeseach(value);
+                                return _this38.changeseach(value);
                             },
                             search: function search() {
-                                return _this32.searchGet();
+                                return _this38.searchGet();
                             },
                             create: function create() {
-                                return _this32.toCreate();
+                                return _this38.toCreate();
                             },
                             changeFilter: function changeFilter(value, key) {
-                                return _this32.changeFilter(value, key);
+                                return _this38.changeFilter(value, key);
                             },
                             structure: this.state.modelo.modelo,
                             filters: this.state.filtros,
                             listaDatos: this.state.listaDatos,
                             dbType: this.state.modelo.dbType,
                             check: function check(position) {
-                                return _this32.check(position);
+                                return _this38.check(position);
                             },
                             edit: function edit(position) {
-                                return _this32.edit(position);
+                                return _this38.edit(position);
                             },
                             "delete": function _delete(position) {
-                                return _this32.delete(position);
+                                return _this38.delete(position);
                             },
                             changeOrden: function changeOrden(key) {
-                                return _this32.changeOrden(key);
+                                return _this38.changeOrden(key);
                             },
                             pagination: function pagination(page) {
-                                return _this32.pagination(page);
+                                return _this38.pagination(page);
                             },
                             size: this.state.size,
                             page: this.state.page,
@@ -2369,27 +2439,27 @@ var MasterPage = function (_React$Component10) {
                         { "class": "col-10 module" },
                         React.createElement(FormCreateOrUpdate, {
                             exitCreateOrUpdate: function exitCreateOrUpdate() {
-                                return _this32.exitCreateUpdate();
+                                return _this38.exitCreateUpdate();
                             },
                             estructura: this.state.modelo.modelo,
                             dbType: this.state.modelo.dbType,
                             datos: this.state.elementoToUpdateOrCreate,
                             createObject: function createObject() {
-                                return _this32.create();
+                                return _this38.create();
                             },
                             updateObject: function updateObject() {
-                                return _this32.update();
+                                return _this38.update();
                             },
                             typeFomr: this.state.CreateOrUpdate,
                             listaOpciones: this.state.listaOpciones,
                             handleFieldChange: function handleFieldChange(tipo, path, value) {
-                                return _this32.changeData(tipo, path, value);
+                                return _this38.changeData(tipo, path, value);
                             },
                             insertList: function insertList() {
-                                return _this32.insertInList(path);
+                                return _this38.insertInList(path);
                             },
                             deleteInList: function deleteInList(newPath, count) {
-                                return _this32.deleteInList(newPath, count);
+                                return _this38.deleteInList(newPath, count);
                             }
                         })
                     )
