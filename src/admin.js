@@ -558,6 +558,7 @@ class ModuloAdmin extends React.Component {
                     valorBusqueda={this.props.valorBusqueda}
                 />
                 <div>
+                    <a href="/admin/logout">Cerrar Sesion</a>
                     <input type="button" class="btn btn-primary" value="Create" onClick={() => this.props.create()} />
                 </div>
                 <div class="listaAndFilters">

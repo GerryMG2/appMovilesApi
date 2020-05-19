@@ -10,7 +10,7 @@ class usuarioAServiceT extends transaccionModel {
 
     validatePass(username, password, cb){
         try {
-            this.get("", {username: username}, 1, 1, (validar, users, total)=>{
+            this.get("", {username: username}, 1, 1,{}, (validar, users, total)=>{
                 if (validar && total == 1) {
                     if (password == users[0].password) {
                         cb(true);

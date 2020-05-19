@@ -850,6 +850,11 @@ var ModuloAdmin = function (_React$Component7) {
                 React.createElement(
                     "div",
                     null,
+                    React.createElement(
+                        "a",
+                        { href: "/admin/logout" },
+                        "Cerrar Sesion"
+                    ),
                     React.createElement("input", { type: "button", "class": "btn btn-primary", value: "Create", onClick: function onClick() {
                             return _this19.props.create();
                         } })
