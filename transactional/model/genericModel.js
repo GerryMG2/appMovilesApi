@@ -9,7 +9,7 @@ class transactionalModelSQL {
         this.modelo = modelo;
         this.msg_create = msg_create;
         this.msg_update = msg_update;
-        this.mgs_delete = mgs_delete;
+        this.msg_delete = mgs_delete;
         this.table_name = table_name;
         this.init();
 
@@ -285,6 +285,7 @@ class transactionalModelSQL {
                 if (validar) {
                     cb(true, this.mgs_delete.ok);
                 } else {
+                    console.log("asd",this.msg_delete);
                     cb(false, this.msg_delete.err);
                 }
             });
