@@ -1,1 +1,56 @@
 /* comentario */
+.change::-webkit-input-placeholder {
+    /* WebKit, Blink, Edge */
+    color: white;
+    opacity: 0.6;
+}
+.change:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: white;
+    opacity: 0.6;
+}
+.change::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: white;
+    opacity: 0.6;
+}
+.change:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: white;
+}
+
+.leftTable {
+  height: 100vh;
+  
+  
+  overflow-y: scroll}
+
+  /* width */
+::-webkit-scrollbar {
+    padding: 0;
+    margin: 0;
+    width: 2px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
+i{
+    pointer-events: none;
+} 
+
+#DataList{
+ font-size: small;
+}

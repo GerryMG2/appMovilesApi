@@ -33,7 +33,7 @@ class controllerTransaccional{
         try {
             let newsize = parseInt(req.query.size);
             console.log(parseInt(req.query.page));
-            if(req.query.size = "ALL"){
+            if(req.query.size == "ALL"){
                 newsize = "ALL";
             }
             this.service.get(req.query.filters, JSON.parse(req.query.filtro),newsize, parseInt(req.query.pag),JSON.parse(req.query.orden), (validar, docs, count) => {

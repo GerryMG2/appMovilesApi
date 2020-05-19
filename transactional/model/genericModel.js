@@ -73,12 +73,12 @@ class transactionalModelSQL {
             }
 
             if (Object.entries(filtros).length > 0) {
-                let fil = ""
+                let fil = "";
                 keysFiltros.forEach(element => {
                     if (this.modelo[element]["modelType"] != "Number") {
                         fil = fil.concat(`${this.modelo[element]["name"]} = '${filtros[element]}' AND`)
                     } else {
-                        if (typeof (filtros[element]) != "numbers") {
+                        if (typeof (filtros[element]) != "number") {
                             sendNothing = true;
                         }
                         fil = fil.concat(`${this.modelo[element]["name"]} = ${filtros[element]} AND`)

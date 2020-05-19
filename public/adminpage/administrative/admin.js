@@ -179,14 +179,14 @@ var ObjetoComplete = function (_React$Component2) {
                     console.log(item);
                     return item;
                 } else {
-                    var _items = [];
+                    var items = [];
                     var keys = Object.keys(element);
                     var newkey = key.concat(".");
                     keys.forEach(function (ele) {
-                        _items.push.apply(_items, _toConsumableArray(_this4.renderStructure(element[ele], dato[ele], newkey.concat(ele))));
+                        items.push.apply(items, _toConsumableArray(_this4.renderStructure(element[ele], dato[ele], newkey.concat(ele))));
                     });
 
-                    return _items;
+                    return items;
                 }
             } else {
 
@@ -369,21 +369,26 @@ var ListObjects = function (_React$Component4) {
                     if (_this11.props.orden[element] == 1) {
                         if (_this11.props.structure[element].type) {
                             items.push(React.createElement(
-                                "div",
-                                null,
+                                "th",
+                                { scope: "col" },
                                 React.createElement(
                                     "div",
                                     null,
-                                    element
-                                ),
-                                React.createElement("input", { type: "button", value: "\u2B63", onClick: function onClick() {
-                                        return _this11.props.changeOrden(element);
-                                    } })
+                                    element,
+                                    " ",
+                                    React.createElement(
+                                        "span",
+                                        { type: "button", "class": "bg-transparent badge", onClick: function onClick() {
+                                                return _this11.props.changeOrden(element);
+                                            } },
+                                        React.createElement("i", { "class": "fas fa-sort-down" })
+                                    )
+                                )
                             ));
                         } else {
                             items.push(React.createElement(
-                                "div",
-                                null,
+                                "th",
+                                { scope: "col" },
                                 React.createElement(
                                     "div",
                                     null,
@@ -400,11 +405,15 @@ var ListObjects = function (_React$Component4) {
                                 React.createElement(
                                     "div",
                                     null,
-                                    element
-                                ),
-                                React.createElement("input", { type: "button", value: "\u2B61", onClick: function onClick() {
-                                        return _this11.props.changeOrden(element);
-                                    } })
+                                    element,
+                                    React.createElement(
+                                        "span",
+                                        { "class": "bg-transparent badge", type: "button", onClick: function onClick() {
+                                                return _this11.props.changeOrden(element);
+                                            } },
+                                        React.createElement("i", { "class": "fas fa-sort-up" })
+                                    )
+                                )
                             ));
                         } else {
                             items.push(React.createElement(
@@ -426,11 +435,15 @@ var ListObjects = function (_React$Component4) {
                             React.createElement(
                                 "div",
                                 null,
-                                element
-                            ),
-                            React.createElement("input", { type: "button", value: "\u2B64", onClick: function onClick() {
-                                    return _this11.props.changeOrden(element);
-                                } })
+                                element,
+                                React.createElement(
+                                    "span",
+                                    { "class": "bg-transparent badge", type: "button", onClick: function onClick() {
+                                            return _this11.props.changeOrden(element);
+                                        } },
+                                    React.createElement("i", { "class": "fas fa-sort" })
+                                )
+                            )
                         ));
                     } else {
                         items.push(React.createElement(
@@ -514,10 +527,10 @@ var ListObjects = function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 "table",
-                { "class": "table table-bordered containerObjects" },
+                { "class": "table table-bordered containerObjects", id: "DataList" },
                 React.createElement(
                     "thead",
-                    { "class": "titles" },
+                    { "class": "thead-dark" },
                     React.createElement(
                         "tr",
                         null,
@@ -550,28 +563,41 @@ var FilterGroup = function (_React$Component5) {
         value: function renderStructure(element, dato, key) {
             var _this14 = this;
 
-            console.log("key:", key);
+            console.log("renderStructure:", element);
+            console.log("renderStructure:", dato);
+            console.log("renderStructure:", key);
             if (this.props.dbType == "Mongo") {
+                console.log("elemento:", element);
                 if (Array.isArray(element) || element.type) {
+                    console.log("elemento: array o campo", element);
                     var tipo = Array.isArray(element) ? "Lista" : "Campo";
                     if (tipo == "Campo") {
-                        var _items2 = [React.createElement("input", { type: "text", value: dato, name: key, onChange: this.handleChange })];
-                        return _items2;
+                        var items = [React.createElement(
+                            "div",
+                            { "class": "badge badge-pill badge-secondary mx-1" },
+                            React.createElement("input", { "class": "bg-transparent text-light change", style: { border: "none" }, placeholder: key, type: "text", value: dato, name: key, onChange: this.handleChange })
+                        )];
+                        return items;
                     } else {
-                        var _items3 = [React.createElement("div", null)];
-                        return _items3;
+                        var _items = [React.createElement("div", null)];
+                        return _items;
                     }
                 } else {
+                    console.log("elemento: objeto", element);
                     var keys = Object.keys(element);
                     var newKey = key.concat(".");
-                    var _items4 = [];
+                    var _items2 = [];
                     keys.forEach(function (ele) {
-                        _items4.push.apply(_items4, _toConsumableArray(_this14.renderStructure(element[ele], dato[ele], newKey.concat(ele))));
+                        _items2.push.apply(_items2, _toConsumableArray(_this14.renderStructure(element[ele], dato[ele], newKey.concat(ele))));
                     });
-                    return _items4;
+                    return _items2;
                 }
             } else {
-                var item = [React.createElement("input", { type: "text", value: dato, name: key, onChange: this.handleChange })];
+                var item = [React.createElement(
+                    "div",
+                    { "class": "badge badge-pill badge-secondary mx-1" },
+                    React.createElement("input", { type: "text", "class": "bg-transparent text-light change", style: { border: "none" }, placeholder: key, value: dato, name: key, onChange: this.handleChange })
+                )];
                 return item;
             }
         }
@@ -580,14 +606,16 @@ var FilterGroup = function (_React$Component5) {
         value: function renderAllFields() {
             var _this15 = this;
 
-            console.log("estructura:", this.props.structure);
+            console.log("renderStructure:", this.props);
             var keysStructure = Object.keys(this.props.structure);
             var items = [];
+            // items.push(<th scope="col"><i class="fas fa-border-none"></i></th>);
             keysStructure.forEach(function (key) {
 
                 items.push.apply(items, _toConsumableArray(_this15.renderStructure(_this15.props.structure[key], _this15.props.filters[key], key.toString())));
             });
-
+            // items.push(<th scope="col"><i class="fas fa-border-none"></i></th>);
+            // items.push(<th scope="col"><i class="fas fa-border-none"></i></th>);
             return items;
         }
     }]);
@@ -607,8 +635,8 @@ var FilterGroup = function (_React$Component5) {
         key: "render",
         value: function render() {
             return React.createElement(
-                "div",
-                { "class": "listaFiltros" },
+                "nav",
+                { "class": "nav py-1" },
                 this.renderAllFields()
             );
         }
@@ -631,64 +659,141 @@ var Pagination = function (_React$Component6) {
             var _this17 = this;
 
             if (page === 1) {
-                return React.createElement(
-                    "div",
-                    null,
-                    React.createElement(
-                        "span",
+                console.log("pagination: ", "total " + total + " size " + size);
+                if (size > total) {
+                    return React.createElement(
+                        "nav",
                         null,
-                        "1-",
-                        size,
-                        " de ",
-                        total
-                    ),
-                    React.createElement("input", { type: "button", name: "anterior", value: "", disabled: true }),
-                    React.createElement("input", { type: "button", name: "siguiente", value: "2", onClick: function onClick() {
-                            return _this17.handlePagination(2);
-                        } })
-                );
+                        React.createElement(
+                            "ul",
+                            { "class": "pagination" },
+                            React.createElement(
+                                "li",
+                                null,
+                                React.createElement(
+                                    "span",
+                                    null,
+                                    "1-",
+                                    size,
+                                    " de ",
+                                    total
+                                )
+                            )
+                        )
+                    );
+                } else {
+                    return React.createElement(
+                        "nav",
+                        null,
+                        React.createElement(
+                            "ul",
+                            { "class": "pagination" },
+                            React.createElement(
+                                "li",
+                                null,
+                                React.createElement(
+                                    "span",
+                                    null,
+                                    "1-",
+                                    size,
+                                    " de ",
+                                    total
+                                )
+                            ),
+                            React.createElement(
+                                "li",
+                                { "class": "page-item" },
+                                React.createElement("input", { "class": "page-link", type: "button", name: "anterior", value: "", disabled: true })
+                            ),
+                            React.createElement(
+                                "li",
+                                { "class": "page-item" },
+                                " ",
+                                React.createElement("input", { type: "button", "class": "page-link", name: "siguiente", value: "2", onClick: function onClick() {
+                                        return _this17.handlePagination(2);
+                                    } })
+                            )
+                        )
+                    );
+                }
             } else {
                 if (page === Math.ceil(total / size)) {
                     var begin = size * (page - 1) + 1;
                     var end = total;
                     return React.createElement(
-                        "div",
+                        "nav",
                         null,
                         React.createElement(
-                            "span",
-                            null,
-                            begin,
-                            "-",
-                            end,
-                            " de ",
-                            total
-                        ),
-                        React.createElement("input", { type: "button", name: "anterior", value: page - 1, onClick: function onClick() {
-                                return _this17.handlePagination(page - 1);
-                            } }),
-                        React.createElement("input", { type: "button", name: "siguiente", value: page + 1, disabled: true })
+                            "ul",
+                            { "class": "pagination" },
+                            React.createElement(
+                                "li",
+                                null,
+                                " ",
+                                React.createElement(
+                                    "span",
+                                    null,
+                                    begin,
+                                    "-",
+                                    end,
+                                    " de ",
+                                    total
+                                )
+                            ),
+                            React.createElement(
+                                "li",
+                                { "class": "page-item" },
+                                " ",
+                                React.createElement("input", { type: "button", "class": "page-link", name: "anterior", value: page - 1, onClick: function onClick() {
+                                        return _this17.handlePagination(page - 1);
+                                    } })
+                            ),
+                            React.createElement(
+                                "li",
+                                { "class": "page-item" },
+                                React.createElement("input", { type: "button", "class": "page-link", name: "siguiente", value: page + 1, disabled: true })
+                            )
+                        )
                     );
                 } else {
                     var _begin = size * (page - 1) + 1;
                     var _end = size * page;
                     return React.createElement(
-                        "div",
+                        "nav",
                         null,
                         React.createElement(
-                            "span",
-                            null,
-                            _begin,
-                            "-",
-                            _end,
-                            " de ",
-                            total
-                        ),
-                        React.createElement("input", { type: "button", name: "anterior", value: page - 1, onClick: function onClick() {
-                                return _this17.handlePagination(page - 1);
-                            } }),
-                        React.createElement("input", { type: "button", name: "siguiente", value: page + 1, onClick: function onClick() {
-                                return _this17.handlePagination(page + 1);
-                            } })
+                            "ul",
+                            { "class": "pagination" },
+                            React.createElement(
+                                "li",
+                                null,
+                                React.createElement(
+                                    "span",
+                                    null,
+                                    _begin,
+                                    "-",
+                                    _end,
+                                    " de ",
+                                    total
+                                )
+                            ),
+                            React.createElement(
+                                "li",
+                                { "class": "page-item" },
+                                " ",
+                                React.createElement("input", { type: "button", "class": "page-link", name: "anterior", value: page - 1, onClick: function onClick() {
+                                        return _this17.handlePagination(page - 1);
+                                    } })
+                            ),
+                            React.createElement(
+                                "li",
+                                { "class": "page-item" },
+                                " ",
+                                React.createElement("input", { type: "button", "class": "page-link", name: "siguiente", value: page + 1, onClick: function onClick() {
+                                        return _this17.handlePagination(page + 1);
+                                    } })
+                            )
+                        )
                     );
                 }
             }
@@ -729,6 +834,7 @@ var ModuloAdmin = function (_React$Component7) {
         value: function render() {
             var _this19 = this;
 
+            console.log("admin module: ", this.props.structure);
             return React.createElement(
                 "div",
                 { "class": "containerModule" },
@@ -744,7 +850,7 @@ var ModuloAdmin = function (_React$Component7) {
                 React.createElement(
                     "div",
                     null,
-                    React.createElement("input", { type: "button", value: "Create", onClick: function onClick() {
+                    React.createElement("input", { type: "button", "class": "btn btn-primary", value: "Create", onClick: function onClick() {
                             return _this19.props.create();
                         } })
                 ),
@@ -854,6 +960,8 @@ var CreateOrUpdateField = function (_React$Component8) {
     }, {
         key: "renderField",
         value: function renderField(dbType, dato, estructura, path, listaOpciones) {
+            var _React$createElement, _React$createElement2;
+
             console.log("dbtype: " + dbType + " dato: " + dato + " path: " + path + " listaOpiones" + listaOpciones);
             if (dbType === "Mongo" && path != "_id") {
                 var newPath = path.split(".").slice(-1)[0];
@@ -862,15 +970,15 @@ var CreateOrUpdateField = function (_React$Component8) {
 
                         var item = [React.createElement(
                             "div",
-                            { "class": "campEditCreate" },
+                            { "class": "form-group" },
                             React.createElement(
-                                "span",
-                                null,
+                                "label",
+                                { "for": path },
                                 newPath
                             ),
                             React.createElement(
                                 "select",
-                                { name: path, tipo: estructura.type.name, "class": "selectfield", onChange: this.handleChange },
+                                { name: path, id: path, tipo: estructura.type.name, "class": "form-control", onChange: this.handleChange },
                                 this.renderOptions(listaOpciones, dato)
                             )
                         )];
@@ -884,13 +992,13 @@ var CreateOrUpdateField = function (_React$Component8) {
                             case "String":
                                 _item2 = [React.createElement(
                                     "div",
-                                    null,
+                                    { "class": "form-group" },
                                     React.createElement(
-                                        "span",
-                                        null,
+                                        "label",
+                                        { "for": path },
                                         newPath
                                     ),
-                                    React.createElement("input", { type: "text", tipo: "String", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                    React.createElement("input", { type: "text", tipo: "String", name: path, id: path, "class": "form-control", value: dato, onChange: this.handleChange })
                                 )];
                                 return _item2;
                                 break;
@@ -898,39 +1006,39 @@ var CreateOrUpdateField = function (_React$Component8) {
 
                                 _item2 = [React.createElement(
                                     "div",
-                                    null,
+                                    { "class": "form-group form-check" },
                                     React.createElement(
-                                        "span",
-                                        null,
+                                        "label",
+                                        { "for": path, "class": "form-check-label" },
                                         newPath
                                     ),
-                                    React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: newPath, "class": "checkboxfield", onChange: this.handleChangeC })
+                                    React.createElement("input", { type: "checkbox", id: path, name: path, tipo: "Boolean", value: newPath, "class": "checkboxfield form-control", onChange: this.handleChangeC })
                                 )];
                                 return _item2;
                                 break;
                             case "Number":
                                 _item2 = [React.createElement(
                                     "div",
-                                    null,
+                                    { "class": "form-group" },
                                     React.createElement(
-                                        "span",
-                                        null,
+                                        "label",
+                                        { "for": path },
                                         newPath
                                     ),
-                                    React.createElement("input", { type: "text", tipo: "Number", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                    React.createElement("input", (_React$createElement = { type: "text", "class": "form-control", id: path, tipo: "Number", name: path }, _defineProperty(_React$createElement, "id", "textfield"), _defineProperty(_React$createElement, "value", dato), _defineProperty(_React$createElement, "onChange", this.handleChange), _React$createElement))
                                 )];
                                 return _item2;
                                 break;
                             case "Date":
                                 _item2 = [React.createElement(
                                     "div",
-                                    null,
+                                    { "class": "form-group" },
                                     React.createElement(
-                                        "span",
-                                        null,
+                                        "label",
+                                        { "for": path },
                                         newPath
                                     ),
-                                    React.createElement("input", { type: "date", tipo: "Date", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                    React.createElement("input", (_React$createElement2 = { type: "date", id: path, tipo: "Date", "class": "form-control", name: path }, _defineProperty(_React$createElement2, "id", "textfield"), _defineProperty(_React$createElement2, "value", dato), _defineProperty(_React$createElement2, "onChange", this.handleChange), _React$createElement2))
                                 )];
                                 return _item2;
 
@@ -950,15 +1058,15 @@ var CreateOrUpdateField = function (_React$Component8) {
                             console.log("lista:");
                             var _item3 = [React.createElement(
                                 "div",
-                                { "class": "campEditCreate" },
+                                { "class": "form-group" },
                                 React.createElement(
-                                    "span",
-                                    null,
+                                    "label",
+                                    { "for": path },
                                     _newPath
                                 ),
                                 React.createElement(
                                     "select",
-                                    { name: path, tipo: estructura.modelType, "class": "selectfield", onChange: this.handleChange },
+                                    { id: path, name: path, tipo: estructura.modelType, "class": "form-control selectfield", onChange: this.handleChange },
                                     this.renderOptions(listaOpciones, dato)
                                 )
                             )];
@@ -970,26 +1078,26 @@ var CreateOrUpdateField = function (_React$Component8) {
                                 case "String":
                                     _item4 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "text", tipo: "String", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                        React.createElement("input", { type: "text", "class": "form-control", tipo: "String", name: path, id: path, value: dato, onChange: this.handleChange })
                                     )];
                                     return _item4;
                                     break;
                                 case "Boolean":
                                     _item4 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group form-check" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "class": "form-check-label", "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath, "class": "checkboxfield", onChange: this.handleChangeC })
+                                        React.createElement("input", { type: "checkbox", id: path, name: path, "class": "form-control", tipo: "Boolean", value: _newPath, onChange: this.handleChangeC })
                                     )];
                                     return _item4;
 
@@ -997,26 +1105,26 @@ var CreateOrUpdateField = function (_React$Component8) {
                                 case "Number":
                                     _item4 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "text", tipo: "Number", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                        React.createElement("input", { type: "text", tipo: "Number", "class": "form-control", name: path, id: path, value: dato, onChange: this.handleChange })
                                     )];
                                     return _item4;
                                     break;
                                 case "Date":
                                     _item4 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "date", tipo: "Date", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                        React.createElement("input", { type: "date", tipo: "Date", "class": "form-control", name: path, id: path, value: dato, onChange: this.handleChange })
                                     )];
                                     return _item4;
                                     break;
@@ -1028,15 +1136,15 @@ var CreateOrUpdateField = function (_React$Component8) {
                         if (estructura.foreignKey) {
                             var _item5 = [React.createElement(
                                 "div",
-                                { "class": "campEditCreate" },
+                                { "class": "form-group" },
                                 React.createElement(
-                                    "span",
-                                    null,
+                                    "label",
+                                    { "for": path },
                                     _newPath
                                 ),
                                 React.createElement(
                                     "select",
-                                    { name: path, tipo: estructura.modelType, "class": "selectfield", onChange: this.handleChange },
+                                    { id: path, name: path, tipo: estructura.modelType, "class": "form-control", onChange: this.handleChange },
                                     this.renderOptions(listaOpciones, dato)
                                 )
                             )];
@@ -1049,26 +1157,26 @@ var CreateOrUpdateField = function (_React$Component8) {
                                     console.log("entro string");
                                     _item6 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "text", tipo: "String", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                        React.createElement("input", { type: "text", tipo: "String", "class": "form-control", name: path, id: path, value: dato, onChange: this.handleChange })
                                     )];
                                     return _item6;
                                     break;
                                 case "Boolean":
                                     _item6 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group form-check" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "class": "form-check-label", "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "checkbox", name: path, tipo: "Boolean", value: _newPath, "class": "checkboxfield", onChange: this.handleChangeC })
+                                        React.createElement("input", { type: "checkbox", id: path, name: path, tipo: "Boolean", value: _newPath, "class": "form-control", onChange: this.handleChangeC })
                                     )];
                                     return _item6;
 
@@ -1076,26 +1184,26 @@ var CreateOrUpdateField = function (_React$Component8) {
                                 case "Number":
                                     _item6 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "text", tipo: "Number", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                        React.createElement("input", { type: "text", id: path, tipo: "Number", name: path, "class": "form-control", value: dato, onChange: this.handleChange })
                                     )];
                                     return _item6;
                                     break;
                                 case "Date":
                                     _item6 = [React.createElement(
                                         "div",
-                                        null,
+                                        { "class": "form-group" },
                                         React.createElement(
-                                            "span",
-                                            null,
+                                            "label",
+                                            { "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "date", tipo: "Date", name: path, id: "textfield", value: dato, onChange: this.handleChange })
+                                        React.createElement("input", { type: "date", "class": "form-control", tipo: "Date", name: path, id: path, value: dato, onChange: this.handleChange })
                                     )];
                                     return _item6;
 
@@ -1129,151 +1237,360 @@ var CreateOrUpdateField = function (_React$Component8) {
             var item = [];
             item.push(this.renderField(this.props.dbType, this.props.dato, this.props.estructura, this.props.path, this.props.listaOpciones));
             console.log(item);
-            return React.createElement(
-                "div",
-                null,
-                item
-            );
+            return item;
         }
     }]);
 
     return CreateOrUpdateField;
 }(React.Component);
 
-var FormCreateOrUpdate = function (_React$Component9) {
-    _inherits(FormCreateOrUpdate, _React$Component9);
+var ListCreateOrUpdate = function (_React$Component9) {
+    _inherits(ListCreateOrUpdate, _React$Component9);
 
-    _createClass(FormCreateOrUpdate, [{
-        key: "renderList",
-        value: function renderList(dbType, estructura, dato, path, listaOpcionesfeach) {
+    function ListCreateOrUpdate(props) {
+        _classCallCheck(this, ListCreateOrUpdate);
+
+        var _this21 = _possibleConstructorReturn(this, (ListCreateOrUpdate.__proto__ || Object.getPrototypeOf(ListCreateOrUpdate)).call(this, props));
+
+        _this21.deleteInList = _this21.deleteInList.bind(_this21);
+        return _this21;
+    }
+
+    _createClass(ListCreateOrUpdate, [{
+        key: "deleteInList",
+        value: function deleteInList(e) {
+            console.log("target: ", e.target);
+            this.props.deleteInList(e.target.name, parseInt(e.target.getAttribute("cont")));
+        }
+    }, {
+        key: "render",
+        value: function render() {
             var _this22 = this;
 
-            console.log("lista: " + dbType + " " + estructura + " " + dato + " " + path + " " + listaOpcionesfeach);
-            if (dbType == "Mongo") {
-                if (estructura.type) {
-                    // campo
-                    var item = [React.createElement(CreateOrUpdateField, {
-                        dbType: dbType,
-                        dato: dato,
-                        estructura: estructura,
-                        path: path,
-                        listaOpciones: listaOpcionesfeach,
-                        handleFieldChange: function handleFieldChange(tipo, path, value) {
-                            return _this22.props.handleFieldChange(tipo, path, value);
-                        }
-                    })];
-                    return item;
-                } else {
-                    if (Array.isArray(estructura)) {
-                        var cont = 0;
-                        var title = path.split(".").slice(-1)[0];
-                        items = [];
+            var item = [];
+            var cont = 0;
+            console.log("pelota: ", this.props);
+            var title = this.props.path.split(".").slice(-1)[0];
+            console.log("titulo:", title);
+            console.log("nulo dato: ", this.props.dato);
+            this.props.dato.forEach(function (ele) {
+                if (_this22.props.estructura[0].type) {
+                    item.push(React.createElement(
+                        "div",
+                        { "class": "container" },
+                        React.createElement(
+                            "a",
+                            { "class": "btn btn-sm", name: _this22.props.path.concat(".#").concat(cont), cont: cont, onClick: _this22.deleteInList },
+                            React.createElement("i", { "class": "fas fa-minus-circle" })
+                        ),
+                        React.createElement(CreateOrUpdateField, {
 
-                        dato.forEach(function (element) {
-                            var newPa = path.concat("#").concat(cont);
-                            items.push(React.createElement(
-                                "div",
-                                { "class": "objectInlist" },
-                                React.createElement("button", { value: "-", onClick: function onClick() {
-                                        return _this22.props.deleteInList(path, cont);
-                                    } }),
-                                _this22.renderList("Mongo", estructura[0], dato[cont], newPa, listaOpcionesfeach[0])
-                            ));
-                            cont++;
-                        });
-                        var _item7 = [React.createElement(
+                            dbType: _this22.props.dbType,
+                            dato: _this22.props.dato[cont],
+                            estructura: _this22.props.estructura[0],
+                            path: _this22.props.path.concat(".#").concat(cont),
+                            listaOpciones: _this22.props.listaOpciones[0],
+                            handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                return _this22.props.handleFieldChange(tipo, path, value);
+                            }
+                        })
+                    ));
+                    //campo
+                } else {
+                    if (Array.isArray(_this22.props.estructura[0])) {
+                        // otra lista
+                        item.push(React.createElement(
                             "div",
-                            null,
+                            { "class": "container" },
                             React.createElement(
-                                "h3",
-                                null,
-                                title
+                                "a",
+                                { "class": "btn   btn-sm", cont: cont, name: _this22.props.path.concat(".#").concat(cont), onClick: _this22.deleteInList },
+                                React.createElement("i", { "class": "fas fa-minus-circle" })
                             ),
-                            React.createElement("button", { value: "+", onClick: function onClick() {
+                            React.createElement(ListCreateOrUpdate, {
+
+                                dbType: _this22.props.dbType,
+                                dato: _this22.props.dato[cont],
+                                estructura: _this22.props.estructura[0],
+                                path: _this22.props.path.concat(".#").concat(cont),
+                                listaOpciones: _this22.props.listaOpciones[0],
+                                handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                    return _this22.props.handleFieldChange(tipo, path, value);
+                                },
+                                insertList: function insertList(path) {
                                     return _this22.props.insertList(path);
-                                } }),
+                                },
+                                deleteInList: function deleteInList(path, cont) {
+                                    return _this22.props.deleteInList(path, cont);
+                                }
+                            })
+                        ));
+                    }{
+                        item.push(React.createElement(
+                            "div",
+                            { "class": "container" },
                             React.createElement(
-                                "div",
-                                { "class": "listaElementos" },
-                                items
-                            )
-                        )];
-                        return _item7;
-                        // lista
-                    } else {
-                        console.log("objeto: " + dbType + " " + estructura + " " + dato + " " + path);
-                        var _item8 = [];
-                        var newkeys = Object.keys(estructura);
-                        newkeys.forEach(function (element) {
-                            _item8.push.apply(_item8, _toConsumableArray(_this22.renderList(dbType, estructura[element], dato[element], path.concat(".").concat(element), listaOpcionesfeach[element])));
-                        });
-                        return _item8;
-                        // objeto
+                                "a",
+                                { "class": "btn   btn-sm", cont: cont, name: _this22.props.path.concat(".#").concat(cont), onClick: _this22.deleteInList },
+                                React.createElement("i", { "class": "fas fa-minus-circle" })
+                            ),
+                            React.createElement(ObjectFieldCreateOrUpdate, {
+
+                                dbType: _this22.props.dbType,
+                                dato: _this22.props.dato[cont],
+                                estructura: _this22.props.estructura[0],
+                                path: _this22.props.path.concat(".#").concat(cont),
+                                listaOpciones: _this22.props.listaOpciones[0],
+                                handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                    return _this22.props.handleFieldChange(tipo, path, value);
+                                },
+                                insertList: function insertList(path) {
+                                    return _this22.props.insertList(path);
+                                },
+                                deleteInList: function deleteInList(path, cont) {
+                                    return _this22.props.deleteInList(path, cont);
+                                }
+                            })
+                        ));
+                        // otro objeto
                     }
                 }
-            } else {
-                var _item9 = [React.createElement(CreateOrUpdateField, {
-                    dbType: dbType,
-                    dato: dato,
-                    estructura: estructura,
-                    path: path,
-                    listaOpciones: listaOpcionesfeach,
-                    handleFieldChange: function handleFieldChange(tipo, path, value) {
-                        return _this22.props.handleFieldChange(tipo, path, value);
-                    }
-                })];
-                return _item9;
-            }
+
+                cont++;
+            });
+
+            return React.createElement(
+                "div",
+                { "class": "form-group", key: this.props.path },
+                React.createElement(
+                    "label",
+                    null,
+                    title
+                ),
+                React.createElement(
+                    "a",
+                    { "class": "btn btn-sm text-primary", onClick: function onClick() {
+                            return _this22.props.insertList(_this22.props.path);
+                        } },
+                    React.createElement("i", { "class": "fas fa-plus" })
+                ),
+                React.createElement(
+                    "div",
+                    { "class": "container" },
+                    item
+                )
+            );
         }
     }]);
 
-    function FormCreateOrUpdate(props) {
+    return ListCreateOrUpdate;
+}(React.Component);
+
+var ObjectFieldCreateOrUpdate = function (_React$Component10) {
+    _inherits(ObjectFieldCreateOrUpdate, _React$Component10);
+
+    function ObjectFieldCreateOrUpdate() {
+        _classCallCheck(this, ObjectFieldCreateOrUpdate);
+
+        return _possibleConstructorReturn(this, (ObjectFieldCreateOrUpdate.__proto__ || Object.getPrototypeOf(ObjectFieldCreateOrUpdate)).apply(this, arguments));
+    }
+
+    _createClass(ObjectFieldCreateOrUpdate, [{
+        key: "render",
+        value: function render() {
+            var _this24 = this;
+
+            var item = [];
+
+            var keys = Object.keys(this.props.estructura);
+            keys.forEach(function (ele) {
+                if (_this24.props.estructura[ele].type) {
+
+                    item.push(React.createElement(CreateOrUpdateField, {
+
+                        dbType: _this24.props.dbType,
+                        dato: _this24.props.dato[ele],
+                        estructura: _this24.props.estructura[ele],
+                        path: _this24.props.path.concat(".").concat(ele),
+                        listaOpciones: _this24.props.listaOpciones[ele],
+                        handleFieldChange: function handleFieldChange(tipo, path, value) {
+                            return _this24.props.handleFieldChange(tipo, path, value);
+                        }
+                    }));
+                    // un campo
+                } else {
+                    if (Array.isArray(_this24.props.estructura[ele])) {
+                        // una lista
+
+                        item.push(React.createElement(ListCreateOrUpdate, {
+
+                            dbType: _this24.props.dbType,
+                            dato: _this24.props.dato[ele],
+                            estructura: _this24.props.estructura[ele],
+                            path: _this24.props.path.concat(".").concat(ele),
+                            listaOpciones: _this24.props.listaOpciones[ele],
+                            handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                return _this24.props.handleFieldChange(tipo, path, value);
+                            },
+                            deleteInList: function deleteInList(path, cont) {
+                                return _this24.props.deleteInList(path, cont);
+                            },
+                            insertList: function insertList(path) {
+                                return _this24.props.insertList(path);
+                            }
+                        }));
+                    } else {
+                        item.push(React.createElement(ObjectFieldCreateOrUpdate, {
+
+                            dbType: _this24.props.dbType,
+                            dato: _this24.props.dato[ele],
+                            estructura: _this24.props.estructura[ele],
+                            path: _this24.props.path.concat(".").concat(ele),
+                            listaOpciones: _this24.props.listaOpciones[ele],
+                            handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                return _this24.props.handleFieldChange(tipo, path, value);
+                            },
+                            deleteInList: function deleteInList(path, cont) {
+                                return _this24.props.deleteInList(path, cont);
+                            },
+                            insertList: function insertList(path) {
+                                return _this24.props.insertList(path);
+                            }
+                        }));
+                        // otro objeto
+                    }
+                }
+            });
+
+            return React.createElement(
+                "div",
+                { "class": "form-group" },
+                item
+            );
+        }
+    }]);
+
+    return ObjectFieldCreateOrUpdate;
+}(React.Component);
+
+var FormCreateOrUpdate = function (_React$Component11) {
+    _inherits(FormCreateOrUpdate, _React$Component11);
+
+    function FormCreateOrUpdate() {
         _classCallCheck(this, FormCreateOrUpdate);
 
-        var _this21 = _possibleConstructorReturn(this, (FormCreateOrUpdate.__proto__ || Object.getPrototypeOf(FormCreateOrUpdate)).call(this, props));
-
-        _this21.renderList = _this21.renderList.bind(_this21);
-        console.log("props: CreateOrupdate", _this21.props);
-        return _this21;
+        return _possibleConstructorReturn(this, (FormCreateOrUpdate.__proto__ || Object.getPrototypeOf(FormCreateOrUpdate)).apply(this, arguments));
     }
 
     _createClass(FormCreateOrUpdate, [{
         key: "render",
         value: function render() {
-            var _this23 = this;
+            var _this26 = this;
 
             var newkeys = Object.keys(this.props.estructura);
+            console.log("form:", this.props);
 
-            var items = [];
+            var item = [];
             newkeys.forEach(function (element) {
-                items.push.apply(items, _toConsumableArray(_this23.renderList(_this23.props.dbType, _this23.props.estructura[element], _this23.props.datos[element], element.toString(), _this23.props.listaOpciones[element])));
-            });
 
+                if (_this26.props.estructura[element].type) {
+                    item.push(React.createElement(CreateOrUpdateField, {
+
+                        dbType: _this26.props.dbType,
+                        dato: _this26.props.datos[element],
+                        estructura: _this26.props.estructura[element],
+                        path: element,
+                        listaOpciones: _this26.props.listaOpciones[element],
+                        handleFieldChange: function handleFieldChange(tipo, path, value) {
+                            return _this26.props.handleFieldChange(tipo, path, value);
+                        }
+                    }));
+                } else {
+                    if (Array.isArray(_this26.props.estructura[element])) {
+                        item.push(React.createElement(ListCreateOrUpdate, {
+
+                            dbType: _this26.props.dbType,
+                            dato: _this26.props.datos[element],
+                            estructura: _this26.props.estructura[element],
+                            path: element,
+                            listaOpciones: _this26.props.listaOpciones[element],
+                            handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                return _this26.props.handleFieldChange(tipo, path, value);
+                            },
+                            deleteInList: function deleteInList(path, cont) {
+                                return _this26.props.deleteInList(path, cont);
+                            },
+                            insertList: function insertList(path) {
+                                return _this26.props.insertList(path);
+                            }
+                        }));
+                    } else {
+                        item.push(React.createElement(ObjectFieldCreateOrUpdate, {
+
+                            dbType: _this26.props.dbType,
+                            dato: _this26.props.datos[element],
+                            estructura: _this26.props.estructura[element],
+                            path: element,
+                            listaOpciones: _this26.props.listaOpciones[element],
+                            handleFieldChange: function handleFieldChange(tipo, path, value) {
+                                return _this26.props.handleFieldChange(tipo, path, value);
+                            },
+                            deleteInList: function deleteInList(path, cont) {
+                                return _this26.props.deleteInList(path, cont);
+                            },
+                            insertList: function insertList(path) {
+                                return _this26.props.insertList(path);
+                            }
+                        }));
+                    }
+                }
+
+                // items.push(this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], element.toString(), this.props.listaOpciones[element]));
+            });
+            // console.log("items form:", items);
             if (this.props.typeFomr == "Create") {
 
                 return React.createElement(
                     "div",
-                    { "class": "formUpdateOrCreate" },
-                    React.createElement("input", { type: "button", value: "x", onClick: function onClick() {
-                            return _this23.props.exitCreateOrUpdate();
-                        } }),
-                    items,
-                    React.createElement("button", { "class": "btn-crear", value: "Create", onClick: function onClick() {
-                            return _this23.props.createObject();
-                        } })
+                    { "class": "form-group" },
+                    React.createElement(
+                        "a",
+                        { type: "button", onClick: function onClick() {
+                                return _this26.props.exitCreateOrUpdate();
+                            } },
+                        "Salir ",
+                        React.createElement("i", { "class": "fas fa-sign-out-alt" })
+                    ),
+                    item,
+                    React.createElement(
+                        "button",
+                        { "class": "btn btn-success", value: "Create", onClick: function onClick() {
+                                return _this26.props.createObject();
+                            } },
+                        "Save."
+                    )
                 );
             } else {
 
                 return React.createElement(
                     "div",
-                    { "class": "formUpdateOrCreate" },
-                    React.createElement("input", { type: "button", value: "x", onClick: function onClick() {
-                            return _this23.props.exitCreateOrUpdate();
-                        } }),
-                    items,
-                    React.createElement("button", { "class": "btn-update", value: "update", onClick: function onClick() {
-                            return _this23.props.updateObject();
-                        } })
+                    { "class": "form-group" },
+                    React.createElement(
+                        "a",
+                        { type: "button", onClick: function onClick() {
+                                return _this26.props.exitCreateOrUpdate();
+                            } },
+                        "Salir ",
+                        React.createElement("i", { "class": "fas fa-sign-out-alt" })
+                    ),
+                    item,
+                    React.createElement(
+                        "button",
+                        { "class": "btn btn-success", value: "update", onClick: function onClick() {
+                                return _this26.props.updateObject();
+                            } },
+                        "Update."
+                    )
                 );
             }
         }
@@ -1282,8 +1599,8 @@ var FormCreateOrUpdate = function (_React$Component9) {
     return FormCreateOrUpdate;
 }(React.Component);
 
-var MasterPage = function (_React$Component10) {
-    _inherits(MasterPage, _React$Component10);
+var MasterPage = function (_React$Component12) {
+    _inherits(MasterPage, _React$Component12);
 
     _createClass(MasterPage, [{
         key: "listaModelosR",
@@ -1458,7 +1775,7 @@ var MasterPage = function (_React$Component10) {
                 urlname: "ciudad", dbType: "postgres", nombre: "ciudad", modelo: {
 
                     id_ciudad: { type: "BIGSERIAL", primaryKey: true, name: "id_ciudad", modelType: "Number" },
-                    id_pais: { trype: "BIGINT", name: "id_pais", foreignKey: true, ref: "pais", refField: "id_pais", fieldShow: "nombre", commentForeign: "id_pais_fk", modelType: "Number" },
+                    id_pais: { type: "BIGINT", name: "id_pais", foreignKey: true, ref: "pais", refField: "id_pais", fieldShow: "nombre", commentForeign: "id_pais_fk", modelType: "Number" },
                     nombre: { type: "VARCHAR(100)", name: "nombre", modelType: "String" }
 
                 }, blank: {
@@ -1670,7 +1987,7 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "create",
         value: function create() {
-            var _this25 = this;
+            var _this28 = this;
 
             var options_and_body = {
                 method: "POST",
@@ -1682,7 +1999,7 @@ var MasterPage = function (_React$Component10) {
 
             var body = {};
             if (this.state.modelo.dbType == "Mongo") {
-                body = this.state.elementoToUpdateOrCreate;
+                body = _.cloneDeep(this.state.elementoToUpdateOrCreate);
                 delete body["_id"];
             } else {
                 var keys = Object.keys(this.state.modelo.modelo);
@@ -1690,10 +2007,10 @@ var MasterPage = function (_React$Component10) {
 
                 keys.forEach(function (ele) {
                     console.log(ele);
-                    console.log(!(_this25.state.modelo.modelo[ele].type == "BIGSERIAL"));
-                    if (!(_this25.state.modelo.modelo[ele].type == "BIGSERIAL")) {
+                    console.log(!(_this28.state.modelo.modelo[ele].type == "BIGSERIAL"));
+                    if (!(_this28.state.modelo.modelo[ele].type == "BIGSERIAL")) {
 
-                        newModel[ele] = _this25.state.elementoToUpdateOrCreate[ele];
+                        newModel[ele] = _this28.state.elementoToUpdateOrCreate[ele];
                     }
                 });
 
@@ -1723,19 +2040,19 @@ var MasterPage = function (_React$Component10) {
                     swal("Hubo un problema para crear el objet", "Server Error", "error");
                 }
             }).then(function () {
-                var copy = Object.assign({}, _this25.state);
-                copy.elementoToUpdateOrCreate = {};
-                copy.CreateOrUpdate = "None";
-                copy.listaOpciones = {};
-                _this25.setState(copy, function () {
-                    _this25.get();
+                var copy = {};
+                copy["elementoToUpdateOrCreate"] = {};
+                copy["CreateOrUpdate"] = "None";
+                copy["listaOpciones"] = {};
+                _this28.setState(copy, function () {
+                    _this28.get();
                 });
             });
         }
     }, {
         key: "recursiveOptionList",
         value: function recursiveOptionList(estructura, params, path) {
-            var _this26 = this;
+            var _this29 = this;
 
             console.log(estructura);
             if (estructura.ref) {
@@ -1756,7 +2073,9 @@ var MasterPage = function (_React$Component10) {
                 }).catch(function (error) {
                     return console.log("error: ", error);
                 }).then(function (response) {
+                    console.log("response: ", response);
                     if (response.count > 0) {
+                        console.log("response: ", response);
                         var mapita = response.docs.map(function (obj) {
                             var a = { save: null, show: null };
                             for (i in obj) {
@@ -1773,10 +2092,8 @@ var MasterPage = function (_React$Component10) {
 
                             return a;
                         });
-                        _this26.changeListOptions(path, mapita);
-                    } else {
-                        return [];
-                    }
+                        _this29.changeListOptions(path, mapita);
+                    } else {}
                 });
             } else {
                 if (Array.isArray(estructura)) {
@@ -1789,7 +2106,7 @@ var MasterPage = function (_React$Component10) {
 
                         var newkeys = Object.keys(estructura);
                         newkeys.forEach(function (ele) {
-                            _this26.recursiveOptionList(estructura[ele], params, path.concat(".").concat(ele));
+                            _this29.recursiveOptionList(estructura[ele], params, path.concat(".").concat(ele));
                         });
                     }
                 }
@@ -1798,12 +2115,12 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "getOptionsList",
         value: function getOptionsList() {
-            var _this27 = this;
+            var _this30 = this;
 
             console.log("getting list");
             var prefix = "";
             var params = {};
-            var blank = Object.assign({}, this.state.modelo.blank);
+            var blank = _.cloneDeep(this.state.modelo.blank);
             if (this.state.modelo.dbType == "Mongo") {
                 params = {
                     filters: "",
@@ -1826,8 +2143,8 @@ var MasterPage = function (_React$Component10) {
 
             var keys = Object.keys(this.state.modelo.modelo);
             keys.forEach(function (element) {
-                if (_this27.state.modelo.dbType == "Mongo") {
-                    if (_this27.state.modelo.modelo[element].ref) {
+                if (_this30.state.modelo.dbType == "Mongo") {
+                    if (_this30.state.modelo.modelo[element].ref) {
                         console.log("entra en ref");
                         var query = Object.keys(params).map(function (k) {
                             return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
@@ -1839,7 +2156,7 @@ var MasterPage = function (_React$Component10) {
                                 "Content-Type": "application/json"
                             }
                         };
-                        var auxUrl = prefix + "/" + _this27.state.modelo.modelo[element].ref + "/" + "?" + query;
+                        var auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].ref + "/" + "?" + query;
 
                         fetch(auxUrl, options_and_body).then(function (res) {
                             return res.json();
@@ -1853,7 +2170,7 @@ var MasterPage = function (_React$Component10) {
                                     var a = { save: null, show: null };
                                     for (i in obj) {
 
-                                        if (i == _this27.state.modelo.modelo[element].fieldShow) {
+                                        if (i == _this30.state.modelo.modelo[element].fieldShow) {
                                             console.log(i);
                                             a.show = obj[i];
                                         }
@@ -1865,26 +2182,26 @@ var MasterPage = function (_React$Component10) {
 
                                     return a;
                                 });
-                                _this27.changeListOptions(element, mapita);
+                                _this30.changeListOptions(element, mapita);
                             } else {}
                         });
                     } else {
                         if (Array.isArray(element)) {
                             console.log("es un array");
-                            _this27.recursiveOptionList(_this27.state.modelo.modelo[element][0], params, element.concat(".#0"));
+                            _this30.recursiveOptionList(_this30.state.modelo.modelo[element][0], params, element.concat(".#0"));
                         } else {
-                            if (!_this27.state.modelo.modelo[element].type) {
+                            if (!_this30.state.modelo.modelo[element].type) {
                                 console.log("es un objeto");
-                                var keysI = Object.keys(_this27.state.modelo.modelo[element]);
+                                var keysI = Object.keys(_this30.state.modelo.modelo[element]);
 
                                 keysI.forEach(function (ele) {
-                                    _this27.recursiveOptionList(_this27.state.modelo.modelo[element][ele], params, element.concat(".").concat(ele));
+                                    _this30.recursiveOptionList(_this30.state.modelo.modelo[element][ele], params, element.concat(".").concat(ele));
                                 });
                             }
                         }
                     }
                 } else {
-                    if (_this27.state.modelo.modelo[element].ref) {
+                    if (_this30.state.modelo.modelo[element].ref) {
                         // no tiene referencias
                         console.log("response");
                         var _query = Object.keys(params).map(function (k) {
@@ -1898,7 +2215,7 @@ var MasterPage = function (_React$Component10) {
                             }
                         };
 
-                        var _auxUrl = prefix + "/" + _this27.state.modelo.modelo[element].ref + "/" + "?" + _query;
+                        var _auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].ref + "/" + "?" + _query;
                         fetch(_auxUrl, _options_and_body).then(function (res) {
                             return res.json();
                         }).catch(function (error) {
@@ -1909,11 +2226,11 @@ var MasterPage = function (_React$Component10) {
                                 var a = { save: null, show: null };
                                 for (i in obj) {
 
-                                    if (i == _this27.state.modelo.modelo[element].fieldShow) {
+                                    if (i == _this30.state.modelo.modelo[element].fieldShow) {
                                         console.log(i);
                                         a.show = obj[i];
                                     }
-                                    if (i == _this27.state.modelo.modelo[element].refField) {
+                                    if (i == _this30.state.modelo.modelo[element].refField) {
                                         console.log(i);
                                         a.save = obj[i];
                                     }
@@ -1923,7 +2240,7 @@ var MasterPage = function (_React$Component10) {
                             });
                             console.log("elemento:", element);
 
-                            _this27.changeListOptions(element, mapita);
+                            _this30.changeListOptions(element, mapita);
                         });
                     }{}
                     // no hace nada
@@ -1935,9 +2252,10 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "get",
         value: function get() {
-            var _this28 = this;
+            var _this31 = this;
 
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
+            console.log("get copy", copy);
             var params = {
                 filters: this.state.filters,
                 filtro: JSON.stringify(this.state.filtros),
@@ -1964,7 +2282,7 @@ var MasterPage = function (_React$Component10) {
             };
 
             var auxUrl = prefix + "/" + this.state.modelo.urlname + "/" + "?" + query;
-
+            console.log("params:", params);
             fetch(auxUrl, options_and_body).then(function (res) {
                 return res.json();
             }).catch(function (error) {
@@ -1976,7 +2294,7 @@ var MasterPage = function (_React$Component10) {
                     copy.elementosTotales = response.count;
                     copy.checkList = [];
                     copy.listaOpciones = {};
-                    _this28.setState(copy);
+                    _this31.setState(copy);
                 } else {
                     console.log("error: ", response);
                 }
@@ -1985,7 +2303,7 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "update",
         value: function update() {
-            var _this29 = this;
+            var _this32 = this;
 
             var body = { id: null, model: null };
             if (this.state.modelo.dbType == "Mongo") {
@@ -1996,10 +2314,10 @@ var MasterPage = function (_React$Component10) {
                 var newModel = {};
                 var newkey = {};
                 keys.forEach(function (ele) {
-                    if (_this29.state.modelo.modelo[ele].primaryKey) {
-                        newkey[ele] = _this29.state.elementoToUpdateOrCreate[ele];
+                    if (_this32.state.modelo.modelo[ele].primaryKey) {
+                        newkey[ele] = _this32.state.elementoToUpdateOrCreate[ele];
                     } else {
-                        newModel[ele] = _this29.state.elementoToUpdateOrCreate[ele];
+                        newModel[ele] = _this32.state.elementoToUpdateOrCreate[ele];
                     }
                 });
                 body.id = newkey;
@@ -2038,19 +2356,19 @@ var MasterPage = function (_React$Component10) {
                     swal("Hubo un problema para actualizar", "Error", "error");
                 }
             }).then(function () {
-                var copy = Object.assign({}, _this29.state);
+                var copy = _.cloneDeep(_this32.state);
                 copy.elementoToUpdateOrCreate = {};
                 copy.CreateOrUpdate = "None";
                 copy.listaOpciones = {};
-                _this29.setState(copy, function () {
-                    _this29.get();
+                _this32.setState(copy, function () {
+                    _this32.get();
                 });
             });
         }
     }, {
         key: "delete",
         value: function _delete(position) {
-            var _this30 = this;
+            var _this33 = this;
 
             var options_and_body = {
                 method: "DELETE",
@@ -2075,8 +2393,8 @@ var MasterPage = function (_React$Component10) {
                 var idcond = {};
                 var keyModel = Object.keys(this.state.modelo.modelo);
                 keyModel.forEach(function (element) {
-                    if (_this30.state.modelo.modelo[element].primaryKey) {
-                        idcond[element] = _this30.state.listaDatos[position][element];
+                    if (_this33.state.modelo.modelo[element].primaryKey) {
+                        idcond[element] = _this33.state.listaDatos[position][element];
                     }
                 });
 
@@ -2101,32 +2419,32 @@ var MasterPage = function (_React$Component10) {
                 }
             }).then(function () {}).then(function () {
                 // implement get
-                _this30.get();
+                _this33.get();
             });
         }
     }, {
         key: "changeModel",
         value: function changeModel(e) {
-            var _this31 = this;
+            var _this34 = this;
 
             console.log("copia: ", this.Modelos[e.target.getAttribute("cont")]);
             console.log(e.target);
-            var copy = Object.assign({}, this.state);
-            copy.modelo = Object.assign({}, this.Modelos[e.target.getAttribute("cont")]);
-            copy.CreateOrUpdate = "None";
-            copy.elementoToUpdateOrCreate = {};
-            copy.filtros = {};
-            copy.filters = "";
-            copy.orden = {};
-            copy.listaDatos = [];
-            copy.page = 1;
-            copy.size = 20;
-            copy.elementosTotales = 0;
-            copy.checkList = [];
-            copy.listaOpciones = {};
+            var copy = {};
+            copy["modelo"] = _.cloneDeep(this.Modelos[e.target.getAttribute("cont")]);
+            copy["CreateOrUpdate"] = "None";
+            copy["elementoToUpdateOrCreate"] = {};
+            copy["filtros"] = {};
+            copy["filters"] = "";
+            copy["orden"] = {};
+            copy["listaDatos"] = [];
+            copy["page"] = 1;
+            copy["size"] = 20;
+            copy["elementosTotales"] = 0;
+            copy["checkList"] = [];
+            copy["listaOpciones"] = {};
 
             this.setState(copy, function () {
-                _this31.get();
+                _this34.get();
             });
 
             //TODO: get implementation
@@ -2136,11 +2454,11 @@ var MasterPage = function (_React$Component10) {
     function MasterPage(props) {
         _classCallCheck(this, MasterPage);
 
-        var _this24 = _possibleConstructorReturn(this, (MasterPage.__proto__ || Object.getPrototypeOf(MasterPage)).call(this, props));
+        var _this27 = _possibleConstructorReturn(this, (MasterPage.__proto__ || Object.getPrototypeOf(MasterPage)).call(this, props));
 
-        _this24.Modelos = _this24.listaModelosR();
-        _this24.state = {
-            modelo: _this24.Modelos[0],
+        _this27.Modelos = _this27.listaModelosR();
+        _this27.state = {
+            modelo: _this27.Modelos[0],
             elementoToUpdateOrCreate: {},
             CreateOrUpdate: "None",
             page: 1,
@@ -2153,29 +2471,38 @@ var MasterPage = function (_React$Component10) {
             checkList: [],
             listaOpciones: {}
         };
-        _this24.get = _this24.get.bind(_this24);
-        _this24.changeModel = _this24.changeModel.bind(_this24);
+        _this27.get = _this27.get.bind(_this27);
+        _this27.changeModel = _this27.changeModel.bind(_this27);
+        console.log("estate", _this27.state);
         //implemente all methods
-        _this24.get();
+        _this27.get();
 
-        return _this24;
+        return _this27;
     }
 
     _createClass(MasterPage, [{
         key: "renderTables",
         value: function renderTables() {
-            var _this32 = this;
+            var _this35 = this;
 
             var cont = 0;
             var items = [];
             this.Modelos.forEach(function (element) {
                 // console.log(element);
+                if (_this35.state.modelo.nombre == element.nombre && _this35.state.modelo.dbType == element.dbType) {
+                    items.push(React.createElement(
+                        "a",
+                        { type: "button", "class": "list-group-item list-group-item-action list-group-item-light active", cont: cont, value: element.nombre, onClick: _this35.changeModel },
+                        element.nombre
+                    ));
+                } else {
+                    items.push(React.createElement(
+                        "a",
+                        { type: "button", "class": "list-group-item list-group-item-action list-group-item-light", cont: cont, value: element.nombre, onClick: _this35.changeModel },
+                        element.nombre
+                    ));
+                }
 
-                items.push(React.createElement(
-                    "div",
-                    { "class": "table_list" },
-                    React.createElement("input", { type: "button", cont: cont, value: element.nombre, onClick: _this32.changeModel })
-                ));
                 cont++;
             });
             return items;
@@ -2183,16 +2510,16 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "changeseach",
         value: function changeseach(value) {
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
             copy.filters = value;
             this.setState(copy);
         }
     }, {
         key: "changeFilter",
         value: function changeFilter(value, key) {
-            var _this33 = this;
+            var _this36 = this;
 
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
             if (key.split(".").length > 1) {
                 if (value.toString().trim() == "") {
                     copy.filtros = deleteObjPath(copy.filtros, key);
@@ -2208,7 +2535,7 @@ var MasterPage = function (_React$Component10) {
             }
 
             this.setState(copy, function () {
-                _this33.get();
+                _this36.get();
             });
             //implememnt get
         }
@@ -2221,25 +2548,25 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "toCreate",
         value: function toCreate() {
-            var _this34 = this;
+            var _this37 = this;
 
             console.log("copia2:", this.state.modelo.blank);
-            var copy = Object.assign({}, this.state);
+            var copy = {};
 
-            copy.elementoToUpdateOrCreate = Object.assign({}, copy.modelo.blank);
-            copy.listaOpciones = Object.assign({}, copy.modelo.blank);
-            copy.CreateOrUpdate = "Create";
+            copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.modelo.blank);
+            copy["listaOpciones"] = _.cloneDeep(this.state.modelo.blank);
+            copy["CreateOrUpdate"] = "Create";
             // implement options lis
             // this.getOptionsList();
 
             this.setState(copy, function () {
-                _this34.getOptionsList();
+                _this37.getOptionsList();
             });
         }
     }, {
         key: "check",
         value: function check(position) {
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
             var index = copy.checkList.indexOf(position);
             if (index > -1) {
                 copy.checkList.splice(index, 1);
@@ -2251,23 +2578,24 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "edit",
         value: function edit(position) {
-            var _this35 = this;
+            var _this38 = this;
 
-            var copy = Object.assign({}, this.state);
-            copy.elementoToUpdateOrCreate = Object.assign({}, copy.listaDatos[position]);
-            copy.CreateOrUpdate = "Update";
+            var copy = {};
+            copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.listaDatos[position]);
+            copy["listaOpciones"] = _.cloneDeep(this.state.modelo.blank);
+            copy["CreateOrUpdate"] = "Update";
             // implement option list
 
             this.setState(copy, function () {
-                _this35.getOptionsList();
+                _this38.getOptionsList();
             });
         }
     }, {
         key: "changeOrden",
         value: function changeOrden(key) {
-            var _this36 = this;
+            var _this39 = this;
 
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
             if (this.state.orden[key] == undefined) {
                 copy.orden[key] = -1;
             } else {
@@ -2281,7 +2609,7 @@ var MasterPage = function (_React$Component10) {
             copy.size = 20;
             this.setState(copy, function () {
                 {
-                    _this36.get();
+                    _this39.get();
                 }
             });
 
@@ -2290,12 +2618,12 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "pagination",
         value: function pagination(page) {
-            var _this37 = this;
+            var _this40 = this;
 
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
             copy.page = page;
             this.setState(copy, function () {
-                _this37.get();
+                _this40.get();
             });
 
             // implement get
@@ -2303,7 +2631,7 @@ var MasterPage = function (_React$Component10) {
     }, {
         key: "exitCreateUpdate",
         value: function exitCreateUpdate() {
-            var copy = Object.assign({}, this.state);
+            var copy = _.cloneDeep(this.state);
             copy.elementoToUpdateOrCreate = {};
             copy.CreateOrUpdate = "None";
             copy.listaOpciones = {};
@@ -2315,20 +2643,57 @@ var MasterPage = function (_React$Component10) {
             console.log("change data:", path);
             console.log("change data:", value);
             console.log("change data:", tipo);
-            var copy = Object.assign({}, this.state);
+
+            var copy = {};
+            copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+            var eletoCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+            console.log("change data:", this.state);
             switch (tipo) {
                 case "String":
-                    copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+                    copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                     break;
                 case "Boolean":
-                    var valor = value == "true";
-                    copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, valor);
+
+                    copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                     break;
                 case "Date":
-                    copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+                    copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                     break;
                 case "Number":
-                    copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, parseFloat(value));
+                    var valor = 0;
+                    try {
+                        if (value == "") {
+                            valor = 0;
+                        } else {
+                            if (isNaN(parseFloat(value))) {
+                                valor = 0;
+                            } else {
+                                if (value.slice(-1) == ".") {
+                                    valor = value;
+                                } else {
+                                    if (value.split(".").length == 2) {
+                                        if (parseInt(value.split(".")[1]) > 0) {
+                                            valor = parseFloat(value);
+                                        } else {
+                                            console.log("entro aqui");
+                                            if (parseInt(value.split(".")[1]) == 0) {
+                                                valor = value;
+                                            } else {
+                                                valor = parseFloat(value);
+                                            }
+                                        }
+                                    } else {
+                                        valor = parseFloat(value);
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.log("error number: ", error);
+                        valor = 0;
+                    }
+
+                    copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, valor);
                     break;
 
                 default:
@@ -2341,82 +2706,95 @@ var MasterPage = function (_React$Component10) {
         value: function changeListOptions(path, value) {
             console.log("change lista options: " + path + " " + value);
             console.log("change lista options:", this.state.listaOpciones);
-            var copy = Object.assign({}, this.state);
-
-            copy.listaOpciones = insertValuePath(copy.listaOpciones, path, value);
+            var copy = {};
+            copy["listaOpciones"] = _.cloneDeep(this.state.listaOpciones);
+            console.log("copia3:", this.state);
+            var listaOpciones = _.cloneDeep(this.state.listaOpciones);
+            copy["listaOpciones"] = insertValuePath(listaOpciones, path, value);
             this.setState(copy);
         }
     }, {
         key: "insertInList",
         value: function insertInList(path) {
-            var copy = Object.assign({}, this.state);
-
-            var value = deepFind(this.state.elementoToUpdateOrCreate, path);
-            var valuePush = deepFind(this.state.modelo.blank, path.concat(".#0"));
+            var copy = {};
+            console.log("insertIntLIst: ", this.state);
+            copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+            var elementoToUpdateOrCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+            var value = deepFind(elementoToUpdateOrCreate, path);
+            var modeloBlank = _.cloneDeep(this.state.modelo.blank);
+            var valuePush = deepFind(modeloBlank, path.concat(".#0"));
+            console.log("value push:", valuePush);
             value.push(valuePush);
-            copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
-
+            copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path, value);
+            console.log("copy:", copy);
             this.setState(copy);
         }
     }, {
         key: "deleteInList",
         value: function deleteInList(path, count) {
-            var copy = Object.assign({}, this.state);
-            var value = deepFind(this.state.elementoToUpdateOrCreate, path);
+            console.log("delete in list: ", path);
+            console.log("delete in list: ", count);
+            var copy = {};
+            console.log("delete copy: ", copy);
+            copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+            var elementoToUpdateOrCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+            var value = deepFind(elementoToUpdateOrCreate, path.split(".").slice(0, -1).join("."));
 
             value.splice(count, 1);
-            copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+            copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path.split(".").slice(0, -1).join("."), value);
+            console.log("delete copy: ", copy);
             this.setState(copy);
         }
     }, {
         key: "render",
         value: function render() {
-            var _this38 = this;
+            var _this41 = this;
 
+            console.log("master page: ", this.state.modelo.modelo);
             if (this.state.CreateOrUpdate == "None") {
                 return React.createElement(
                     "div",
                     { "class": "row" },
                     React.createElement(
                         "div",
-                        { "class": "col-2 costadoTablasMenu" },
+                        { "class": "col-2 list-group leftTable pr-0" },
                         this.renderTables()
                     ),
                     React.createElement(
                         "div",
-                        { "class": "col-10 module" },
+                        { "class": "col-10 module leftTable" },
                         React.createElement(ModuloAdmin, {
                             valorBusqueda: this.state.filters,
                             changesearch: function changesearch(value) {
-                                return _this38.changeseach(value);
+                                return _this41.changeseach(value);
                             },
                             search: function search() {
-                                return _this38.searchGet();
+                                return _this41.searchGet();
                             },
                             create: function create() {
-                                return _this38.toCreate();
+                                return _this41.toCreate();
                             },
                             changeFilter: function changeFilter(value, key) {
-                                return _this38.changeFilter(value, key);
+                                return _this41.changeFilter(value, key);
                             },
                             structure: this.state.modelo.modelo,
                             filters: this.state.filtros,
                             listaDatos: this.state.listaDatos,
                             dbType: this.state.modelo.dbType,
                             check: function check(position) {
-                                return _this38.check(position);
+                                return _this41.check(position);
                             },
                             edit: function edit(position) {
-                                return _this38.edit(position);
+                                return _this41.edit(position);
                             },
                             "delete": function _delete(position) {
-                                return _this38.delete(position);
+                                return _this41.delete(position);
                             },
                             changeOrden: function changeOrden(key) {
-                                return _this38.changeOrden(key);
+                                return _this41.changeOrden(key);
                             },
                             pagination: function pagination(page) {
-                                return _this38.pagination(page);
+                                return _this41.pagination(page);
                             },
                             size: this.state.size,
                             page: this.state.page,
@@ -2431,35 +2809,35 @@ var MasterPage = function (_React$Component10) {
                     { "class": "row" },
                     React.createElement(
                         "div",
-                        { "class": "col-2 costadoTablasMenu" },
+                        { "class": "col-2 list-group leftTable pr-0" },
                         this.renderTables()
                     ),
                     React.createElement(
                         "div",
-                        { "class": "col-10 module" },
+                        { "class": "col-10 module leftTable pr-0" },
                         React.createElement(FormCreateOrUpdate, {
                             exitCreateOrUpdate: function exitCreateOrUpdate() {
-                                return _this38.exitCreateUpdate();
+                                return _this41.exitCreateUpdate();
                             },
                             estructura: this.state.modelo.modelo,
                             dbType: this.state.modelo.dbType,
                             datos: this.state.elementoToUpdateOrCreate,
                             createObject: function createObject() {
-                                return _this38.create();
+                                return _this41.create();
                             },
                             updateObject: function updateObject() {
-                                return _this38.update();
+                                return _this41.update();
                             },
                             typeFomr: this.state.CreateOrUpdate,
                             listaOpciones: this.state.listaOpciones,
                             handleFieldChange: function handleFieldChange(tipo, path, value) {
-                                return _this38.changeData(tipo, path, value);
+                                return _this41.changeData(tipo, path, value);
                             },
-                            insertList: function insertList() {
-                                return _this38.insertInList(path);
+                            insertList: function insertList(path) {
+                                return _this41.insertInList(path);
                             },
                             deleteInList: function deleteInList(newPath, count) {
-                                return _this38.deleteInList(newPath, count);
+                                return _this41.deleteInList(newPath, count);
                             }
                         })
                     )
@@ -2474,7 +2852,13 @@ var MasterPage = function (_React$Component10) {
 ReactDOM.render(React.createElement(MasterPage, null), document.getElementById('contenedorReact'));
 
 function insertValuePath(obj, path, value) {
-    var copy = obj;
+    var copy = void 0;
+    if (Array.isArray(obj)) {
+        copy = obj.slice();
+    } else {
+        copy = _.cloneDeep(obj);
+    }
+
     path = path.split(".");
     if (path == "") {
         return value;
@@ -2499,7 +2883,7 @@ function insertValuePath(obj, path, value) {
 
 function deepFind(obj, path) {
     var paths = path.split('.'),
-        current = obj,
+        current = Array.isArray(obj) ? obj.slice() : _.cloneDeep(obj),
         i;
 
     for (i = 0; i < paths.length; ++i) {

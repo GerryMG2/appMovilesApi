@@ -78,9 +78,9 @@ class service {
             conditions[this.modelId] = id;
             this.model.deleteOne(conditions, (err, doc) => {
                 if (err) {
-                    cb(false, this.msgDelete.ok)
+                    cb(false, this.msgDelete.err)
                 } else {
-                    cb(true, this.msgDelete.err);
+                    cb(true, this.msgDelete.ok);
                 }
             });
         } catch (error) {

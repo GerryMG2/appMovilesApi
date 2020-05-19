@@ -245,25 +245,36 @@ class ListObjects extends React.Component {
             if (this.props.orden[element]) {
                 if (this.props.orden[element] == 1) {
                     if (this.props.structure[element].type) {
-                        items.push(<div>
-                            <div>{element}</div>
-                            <input type="button" value="&#x2b63;" onClick={() => this.props.changeOrden(element)} />
+                        items.push(<th scope="col" >
 
-                        </div>);
+                            <div >
+                                {element} <span type="button" class="bg-transparent badge" onClick={() => this.props.changeOrden(element)} >
+                                    <i class="fas fa-sort-down"></i>
+                                </span>
+                            </div>
+
+
+
+
+                        </th>);
                     } else {
-                        items.push(<div>
+                        items.push(<th scope="col">
                             <div>{element}</div>
 
 
-                        </div>);
+                        </th>);
                     }
                 } else {
 
                     if (this.props.structure[element].type) {
                         items.push(
-                            <th scope="col">
-                                <div>{element}</div>
-                                <input type="button" value="&#x2B61;" onClick={() => this.props.changeOrden(element)} />
+                            <th scope="col" >
+
+                                <div >{element}
+                                    <span class="bg-transparent badge" type="button" onClick={() => this.props.changeOrden(element)} ><i class="fas fa-sort-up"></i></span>
+
+                                </div>
+
                             </th>);
                     } else {
                         items.push(
@@ -279,9 +290,13 @@ class ListObjects extends React.Component {
             } else {
                 if (this.props.structure[element].type) {
                     items.push(
-                        <th scope="col">
-                            <div>{element}</div>
-                            <input type="button" value="&#x2B64;" onClick={() => this.props.changeOrden(element)} />
+                        <th scope="col" >
+
+                            <div >{element}
+                                <span class="bg-transparent badge" type="button" onClick={() => this.props.changeOrden(element)} ><i class="fas fa-sort"></i></span>
+
+                            </div>
+
                         </th>
                     );
                 } else {
@@ -339,8 +354,8 @@ class ListObjects extends React.Component {
     render() {
         return (
 
-            <table class="table table-bordered containerObjects">
-                <thead class="titles">
+            <table class="table table-bordered containerObjects" id="DataList">
+                <thead class="thead-dark" >
                     <tr>
                         {this.renderTitle()}
                     </tr>
@@ -366,20 +381,29 @@ class FilterGroup extends React.Component {
     }
 
     renderStructure(element, dato, key) {
-        console.log("key:", key);
+        console.log("renderStructure:", element);
+        console.log("renderStructure:", dato);
+        console.log("renderStructure:", key);
         if (this.props.dbType == "Mongo") {
+            console.log("elemento:",element);
             if (Array.isArray(element) || element.type) {
+                console.log("elemento: array o campo",element);
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
                 if (tipo == "Campo") {
                     let items = [
-                        <input type="text" value={dato} name={key} onChange={this.handleChange} />];
+                        <div class="badge badge-pill badge-secondary mx-1">
+                            <input class="bg-transparent text-light change" style={{border: "none"}} placeholder={key} type="text" value={dato} name={key} onChange={this.handleChange} />
+                        </div>
+                    ];
                     return items;
                 } else {
-                    let items = [<div></div>];
+                    let items = [<div>
+                    </div>];
                     return items;
 
                 }
             } else {
+                console.log("elemento: objeto",element);
                 let keys = Object.keys(element);
                 let newKey = key.concat(".");
                 let items = [];
@@ -389,8 +413,9 @@ class FilterGroup extends React.Component {
                 return items;
             }
         } else {
-            let item =
-                [<input type="text" value={dato} name={key} onChange={this.handleChange} />];
+            let item = [<div class="badge badge-pill badge-secondary mx-1">
+                <input type="text" class="bg-transparent text-light change" style={{border: "none"}} placeholder={key} value={dato} name={key} onChange={this.handleChange} />
+            </div>];
             return item;
 
         }
@@ -398,16 +423,18 @@ class FilterGroup extends React.Component {
     }
 
     renderAllFields() {
-        console.log("estructura:", this.props.structure);
+        console.log("renderStructure:", this.props);
         let keysStructure = Object.keys(this.props.structure);
         let items = [];
+        // items.push(<th scope="col"><i class="fas fa-border-none"></i></th>);
         keysStructure.forEach(key => {
 
             items.push(...this.renderStructure(this.props.structure[key], this.props.filters[key], key.toString()));
 
 
         });
-
+        // items.push(<th scope="col"><i class="fas fa-border-none"></i></th>);
+        // items.push(<th scope="col"><i class="fas fa-border-none"></i></th>);
         return items;
     }
 
@@ -421,9 +448,10 @@ class FilterGroup extends React.Component {
 
     render() {
         return (
-            <div class="listaFiltros">
+            <nav class="nav py-1">
                 {this.renderAllFields()}
-            </div>
+            </nav>
+
         );
     }
 }
@@ -436,33 +464,64 @@ class Pagination extends React.Component {
 
     renderPagination(size, page, total) {
         if (page === 1) {
-            return (
-                <div>
-                    <span>1-{size} de {total}</span>
-                    <input type="button" name="anterior" value="" disabled />
-                    <input type="button" name="siguiente" value="2" onClick={() => this.handlePagination(2)} />
-                </div>
-            );
+            console.log("pagination: ", `total ${total} size ${size}`)
+            if (size > total) {
+                return (
+                    <nav>
+                        <ul class="pagination">
+                            <li ><span>1-{size} de {total}</span></li>
+                            {/* <li class="page-item"> <input type="button" class="page-link" name="anterior" value="" disabled /></li> */}
+
+                        </ul>
+
+
+
+                    </nav>
+                );
+            } else {
+                return (
+                    <nav>
+                        <ul class="pagination">
+                            <li><span>1-{size} de {total}</span></li>
+                            <li class="page-item"><input class="page-link" type="button" name="anterior" value="" disabled /></li>
+                            <li class="page-item"> <input type="button" class="page-link" name="siguiente" value="2" onClick={() => this.handlePagination(2)} /></li>
+                        </ul>
+
+
+
+                    </nav>)
+            }
+
         } else {
             if (page === Math.ceil(total / size)) {
                 let begin = (size * (page - 1)) + 1;
                 let end = total;
                 return (
-                    <div>
-                        <span>{begin}-{end} de {total}</span>
-                        <input type="button" name="anterior" value={page - 1} onClick={() => this.handlePagination(page - 1)} />
-                        <input type="button" name="siguiente" value={page + 1} disabled />
-                    </div>
+                    <nav>
+                        <ul class="pagination">
+                            <li> <span>{begin}-{end} de {total}</span></li>
+                            <li class="page-item"> <input type="button" class="page-link" name="anterior" value={page - 1} onClick={() => this.handlePagination(page - 1)} /></li>
+                            <li class="page-item"><input type="button" class="page-link" name="siguiente" value={page + 1} disabled /></li>
+                        </ul>
+
+
+
+                    </nav>
                 );
             } else {
                 let begin = (size * (page - 1)) + 1;
                 let end = size * page;
                 return (
-                    <div>
-                        <span>{begin}-{end} de {total}</span>
-                        <input type="button" name="anterior" value={page - 1} onClick={() => this.handlePagination(page - 1)} />
-                        <input type="button" name="siguiente" value={page + 1} onClick={() => this.handlePagination(page + 1)} />
-                    </div>
+                    <nav>
+                        <ul class="pagination">
+                            <li><span>{begin}-{end} de {total}</span></li>
+                            <li class="page-item"> <input type="button" class="page-link" name="anterior" value={page - 1} onClick={() => this.handlePagination(page - 1)} /></li>
+                            <li class="page-item"> <input type="button" class="page-link" name="siguiente" value={page + 1} onClick={() => this.handlePagination(page + 1)} /></li>
+                        </ul>
+
+
+
+                    </nav>
                 );
             }
         }
@@ -490,6 +549,7 @@ class ModuloAdmin extends React.Component {
 
     }
     render() {
+        console.log("admin module: ",this.props.structure);
         return (
             <div class="containerModule">
                 <NavBarSeach
@@ -498,7 +558,7 @@ class ModuloAdmin extends React.Component {
                     valorBusqueda={this.props.valorBusqueda}
                 />
                 <div>
-                    <input type="button" value="Create" onClick={() => this.props.create()} />
+                    <input type="button" class="btn btn-primary" value="Create" onClick={() => this.props.create()} />
                 </div>
                 <div class="listaAndFilters">
                     <FilterGroup
@@ -552,13 +612,13 @@ class CreateOrUpdateField extends React.Component {
                     items.push(<option value={element.save} selected>{element.show}</option>);
 
                 } else {
-                    
+
                     items.push(<option value={element.save}>{element.show}</option>);
 
                 }
             });
         }
-        if(add){
+        if (add) {
             items.push(<option disabled selected value="">Seleccione una opcion</option>)
         }
         return items;
@@ -581,10 +641,10 @@ class CreateOrUpdateField extends React.Component {
                 if (estructura.ref) {
 
                     let item = [
-                        <div class="campEditCreate">
-                            <span>{newPath}</span>
-                            <select name={path} tipo={estructura.type.name} class="selectfield" onChange={this.handleChange}>
-                                
+                        <div class="form-group" >
+                            <label for={path}>{newPath}</label>
+                            <select name={path} id={path} tipo={estructura.type.name} class="form-control" onChange={this.handleChange}>
+
                                 {this.renderOptions(listaOpciones, dato)}
                             </select>
                         </div>];
@@ -597,9 +657,9 @@ class CreateOrUpdateField extends React.Component {
                     switch (tipo) {
                         case "String":
                             item = [
-                                <div>
-                                    <span>{newPath}</span>
-                                    <input type="text" tipo="String" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                <div class="form-group" >
+                                    <label for={path}>{newPath}</label>
+                                    <input type="text" tipo="String" name={path} id={path} class="form-control" value={dato} onChange={this.handleChange} />
                                 </div>
                             ];
                             return item;
@@ -607,27 +667,27 @@ class CreateOrUpdateField extends React.Component {
                         case "Boolean":
 
                             item = [
-                                <div>
-                                    <span>{newPath}</span>
-                                    <input type="checkbox" name={path} tipo="Boolean" value={newPath} class="checkboxfield" onChange={this.handleChangeC} />
+                                <div class="form-group form-check" >
+                                    <label for={path} class="form-check-label">{newPath}</label>
+                                    <input type="checkbox" id={path} name={path} tipo="Boolean" value={newPath} class="checkboxfield form-control" onChange={this.handleChangeC} />
                                 </div>
                             ];
                             return item;
                             break;
                         case "Number":
                             item = [
-                                <div>
-                                    <span>{newPath}</span>
-                                    <input type="text" tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                <div class="form-group">
+                                    <label for={path}>{newPath}</label>
+                                    <input type="text" class="form-control" id={path} tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                 </div>
                             ];
                             return item;
                             break;
                         case "Date":
                             item = [
-                                <div>
-                                    <span>{newPath}</span>
-                                    <input type="date" tipo="Date" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                <div class="form-group" >
+                                    <label for={path}>{newPath}</label>
+                                    <input type="date" id={path} tipo="Date" class="form-control" name={path} id="textfield" value={dato} onChange={this.handleChange} />
                                 </div>
                             ];
                             return item;
@@ -647,10 +707,10 @@ class CreateOrUpdateField extends React.Component {
                         //se renderiza con opciones
                         console.log("lista:");
                         let item = [
-                            <div class="campEditCreate">
-                                <span>{newPath}</span>
-                                <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
-                                    
+                            <div class="form-group" >
+                                <label for={path}>{newPath}</label>
+                                <select id={path} name={path} tipo={estructura.modelType} class="form-control selectfield" onChange={this.handleChange}>
+
                                     {this.renderOptions(listaOpciones, dato)}
                                 </select>
                             </div>];
@@ -661,18 +721,18 @@ class CreateOrUpdateField extends React.Component {
                         switch (estructura.type.name) {
                             case "String":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="text" tipo="String" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                    <div class="form-group" >
+                                        <label for={path}>{newPath}</label>
+                                        <input type="text" class="form-control" tipo="String" name={path} id={path} value={dato} onChange={this.handleChange} />
                                     </div>
                                 ];
                                 return item;
                                 break;
                             case "Boolean":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="checkbox" name={path} tipo="Boolean" value={newPath} class="checkboxfield" onChange={this.handleChangeC} />
+                                    <div class="form-group form-check" >
+                                        <label class="form-check-label" for={path}>{newPath}</label>
+                                        <input type="checkbox" id={path} name={path} class="form-control" tipo="Boolean" value={newPath} onChange={this.handleChangeC} />
                                     </div>
                                 ];
                                 return item;
@@ -680,18 +740,18 @@ class CreateOrUpdateField extends React.Component {
                                 break;
                             case "Number":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="text" tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                    <div class="form-group" >
+                                        <label for={path}>{newPath}</label>
+                                        <input type="text" tipo="Number" class="form-control" name={path} id={path} value={dato} onChange={this.handleChange} />
                                     </div>
                                 ];
                                 return item;
                                 break;
                             case "Date":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="date" tipo="Date" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                    <div class="form-group" >
+                                        <label for={path}>{newPath}</label>
+                                        <input type="date" tipo="Date" class="form-control" name={path} id={path} value={dato} onChange={this.handleChange} />
                                     </div>
                                 ];
                                 return item;
@@ -704,10 +764,10 @@ class CreateOrUpdateField extends React.Component {
                 } else {
                     if (estructura.foreignKey) {
                         let item = [
-                            <div class="campEditCreate">
-                                <span>{newPath}</span>
-                                <select name={path} tipo={estructura.modelType} class="selectfield" onChange={this.handleChange}>
-                                   
+                            <div class="form-group" >
+                                <label for={path}>{newPath}</label>
+                                <select id={path} name={path} tipo={estructura.modelType} class="form-control" onChange={this.handleChange}>
+
                                     {this.renderOptions(listaOpciones, dato)}
                                 </select>
                             </div>]
@@ -719,18 +779,18 @@ class CreateOrUpdateField extends React.Component {
                             case "String":
                                 console.log("entro string");
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="text" tipo="String" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                    <div class="form-group" >
+                                        <label for={path}>{newPath}</label>
+                                        <input type="text" tipo="String" class="form-control" name={path} id={path} value={dato} onChange={this.handleChange} />
                                     </div>]
                                     ;
                                 return item;
                                 break;
                             case "Boolean":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="checkbox" name={path} tipo="Boolean" value={newPath} class="checkboxfield" onChange={this.handleChangeC} />
+                                    <div class="form-group form-check">
+                                        <label class="form-check-label" for={path}>{newPath}</label >
+                                        <input type="checkbox" id={path} name={path} tipo="Boolean" value={newPath} class="form-control" onChange={this.handleChangeC} />
                                     </div>]
                                     ;
                                 return item;
@@ -738,18 +798,18 @@ class CreateOrUpdateField extends React.Component {
                                 break;
                             case "Number":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="text" tipo="Number" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                    <div class="form-group" >
+                                        <label for={path}>{newPath}</label>
+                                        <input type="text" id={path} tipo="Number" name={path} class="form-control" value={dato} onChange={this.handleChange} />
                                     </div>]
                                     ;
                                 return item;
                                 break;
                             case "Date":
                                 item = [
-                                    <div>
-                                        <span>{newPath}</span>
-                                        <input type="date" tipo="Date" name={path} id="textfield" value={dato} onChange={this.handleChange} />
+                                    <div class="form-group" >
+                                        <label for={path}>{newPath}</label>
+                                        <input type="date" class="form-control" tipo="Date" name={path} id={path} value={dato} onChange={this.handleChange} />
                                     </div>]
                                     ;
                                 return item;
@@ -780,118 +840,257 @@ class CreateOrUpdateField extends React.Component {
         item.push(this.renderField(this.props.dbType, this.props.dato, this.props.estructura, this.props.path, this.props.listaOpciones));
         console.log(item);
         return (
-            <div>
-                {item}
-            </div>
+
+            item
+
         );
     }
 
 }
 
-class FormCreateOrUpdate extends React.Component {
+class ListCreateOrUpdate extends React.Component {
 
-    renderList(dbType, estructura, dato, path, listaOpcionesfeach) {
-        console.log(`lista: ${dbType} ${estructura} ${dato} ${path} ${listaOpcionesfeach}`)
-        if (dbType == "Mongo") {
-            if (estructura.type) {
-                // campo
-                let item = [
-                    <CreateOrUpdateField
-                        dbType={dbType}
-                        dato={dato}
-                        estructura={estructura}
-                        path={path}
-                        listaOpciones={listaOpcionesfeach}
-                        handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
-                    />]
-                    ;
-                return item;
+    constructor(props){
+        super(props);
+        this.deleteInList = this.deleteInList.bind(this);
+    }
+
+    deleteInList(e){
+        console.log("target: ",e.target);
+        this.props.deleteInList(e.target.name, parseInt(e.target.getAttribute("cont")));
+    }
+    
+
+    render() {
+        let item = [];
+        var cont = 0;
+        console.log("pelota: ", this.props);
+        let title = this.props.path.split(".").slice(-1)[0]
+        console.log("titulo:", title);
+        console.log("nulo dato: ", this.props.dato);
+        this.props.dato.forEach(ele => {
+            if (this.props.estructura[0].type) {
+                item.push(
+                    <div class="container" >
+                        <a  class="btn btn-sm" name={this.props.path.concat(".#").concat(cont)} cont={cont} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
+                        <CreateOrUpdateField
+                          
+                            dbType={this.props.dbType}
+                            dato={this.props.dato[cont]}
+                            estructura={this.props.estructura[0]}
+                            path={this.props.path.concat(".#").concat(cont)}
+                            listaOpciones={this.props.listaOpciones[0]}
+                            handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                        />
+
+                    </div>
+                );
+                //campo
             } else {
-                if (Array.isArray(estructura)) {
-                    let cont = 0;
-                    let title = path.split(".").slice(-1)[0]
-                    items = [];
+                if (Array.isArray(this.props.estructura[0])) {
+                    // otra lista
+                    item.push(
+                        <div class="container" >
+                            <a  class="btn   btn-sm" cont={cont}  name={this.props.path.concat(".#").concat(cont)} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
+                            <ListCreateOrUpdate
+                               
+                                dbType={this.props.dbType}
+                                dato={this.props.dato[cont]}
+                                estructura={this.props.estructura[0]}
+                                path={this.props.path.concat(".#").concat(cont)}
+                                listaOpciones={this.props.listaOpciones[0]}
+                                handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                                insertList={path => this.props.insertList(path)}
+                                deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            />
 
-                    dato.forEach(element => {
-                        let newPa = path.concat("#").concat(cont);
-                        items.push(
-                            <div class="objectInlist">
-                                <button value="-" onClick={() => this.props.deleteInList(path, cont)}></button>
-                                {this.renderList("Mongo", estructura[0], dato[cont], newPa, listaOpcionesfeach[0])}
+                        </div>
+                    );
+                } {
+                    item.push(
+                        <div class="container" >
+                            <a  class="btn   btn-sm" cont={cont}  name={this.props.path.concat(".#").concat(cont)} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
+                            <ObjectFieldCreateOrUpdate
+                               
+                                dbType={this.props.dbType}
+                                dato={this.props.dato[cont]}
+                                estructura={this.props.estructura[0]}
+                                path={this.props.path.concat(".#").concat(cont)}
+                                listaOpciones={this.props.listaOpciones[0]}
+                                handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                                insertList={path => this.props.insertList(path)}
+                                deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            />
 
-                            </div>);
-                        cont++;
-                    });
-                    let item = [
-                        <div>
-                            <h3>{title}</h3>
-                            <button value="+" onClick={() => this.props.insertList(path)}></button>
-                            <div class="listaElementos">
-                                {items}
-                            </div>
-                        </div>]
-
-                        ;
-                    return item;
-                    // lista
-                } else {
-                    console.log(`objeto: ${dbType} ${estructura} ${dato} ${path}`)
-                    let item = []
-                    let newkeys = Object.keys(estructura);
-                    newkeys.forEach(element => {
-                        item.push(...this.renderList(dbType, estructura[element], dato[element], path.concat(".").concat(element), listaOpcionesfeach[element]));
-                    });
-                    return item;
-                    // objeto
+                        </div>
+                    );
+                    // otro objeto
                 }
             }
-        } else {
-            let item = [
-                <CreateOrUpdateField
-                    dbType={dbType}
-                    dato={dato}
-                    estructura={estructura}
-                    path={path}
-                    listaOpciones={listaOpcionesfeach}
-                    handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
-                />];
-            return item;
 
-        }
+            cont++;
+        });
+
+        return (
+            <div class="form-group" key={this.props.path}>
+                <label>{title}</label>
+                <a  class="btn btn-sm text-primary"  onClick={() => this.props.insertList(this.props.path)}><i class="fas fa-plus"></i></a>
+                <div class="container">
+                    {item}
+                </div>
+            </div>
+        )
+
     }
+}
+
+class ObjectFieldCreateOrUpdate extends React.Component {
 
 
-    constructor(props) {
-        super(props);
-        this.renderList = this.renderList.bind(this);
-        console.log("props: CreateOrupdate", this.props);
+    render() {
+        let item = [];
+
+        let keys = Object.keys(this.props.estructura);
+        keys.forEach(ele => {
+            if (this.props.estructura[ele].type) {
+
+                item.push(
+                    <CreateOrUpdateField
+                       
+                        dbType={this.props.dbType}
+                        dato={this.props.dato[ele]}
+                        estructura={this.props.estructura[ele]}
+                        path={this.props.path.concat(".").concat(ele)}
+                        listaOpciones={this.props.listaOpciones[ele]}
+                        handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                    />
+
+
+                );
+                // un campo
+            } else {
+                if (Array.isArray(this.props.estructura[ele])) {
+                    // una lista
+
+                    item.push(
+
+                        <ListCreateOrUpdate
+                           
+                            dbType={this.props.dbType}
+                            dato={this.props.dato[ele]}
+                            estructura={this.props.estructura[ele]}
+                            path={this.props.path.concat(".").concat(ele)}
+                            listaOpciones={this.props.listaOpciones[ele]}
+                            handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            insertList={path => this.props.insertList(path)}
+                        />
+                    );
+
+                } else {
+                    item.push(
+                        <ObjectFieldCreateOrUpdate
+                            
+                            dbType={this.props.dbType}
+                            dato={this.props.dato[ele]}
+                            estructura={this.props.estructura[ele]}
+                            path={this.props.path.concat(".").concat(ele)}
+                            listaOpciones={this.props.listaOpciones[ele]}
+                            handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            insertList={path => this.props.insertList(path)}
+                        />
+                    );
+                    // otro objeto
+                }
+            }
+        });
+
+        return (
+            <div class="form-group">
+                {item}
+            </div>
+        );
+
+
     }
+}
+
+class FormCreateOrUpdate extends React.Component {
+
+
+
 
     render() {
         let newkeys = Object.keys(this.props.estructura);
+        console.log("form:",this.props);
 
-
-        let items = [];
+        let item = [];
         newkeys.forEach(element => {
-            items.push(...this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], element.toString(), this.props.listaOpciones[element]));
-        });
 
+            if (this.props.estructura[element].type) {
+                item.push(
+                    <CreateOrUpdateField
+                   
+                        dbType={this.props.dbType}
+                        dato={this.props.datos[element]}
+                        estructura={this.props.estructura[element]}
+                        path={element}
+                        listaOpciones={this.props.listaOpciones[element]}
+                        handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                    />
+                );
+            } else {
+                if (Array.isArray(this.props.estructura[element])) {
+                    item.push(
+                        <ListCreateOrUpdate
+                            
+                            dbType={this.props.dbType}
+                            dato={this.props.datos[element]}
+                            estructura={this.props.estructura[element]}
+                            path={element}
+                            listaOpciones={this.props.listaOpciones[element]}
+                            handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            insertList={path => this.props.insertList(path)}
+                        />
+                    );
+                } else {
+                    item.push(
+                        <ObjectFieldCreateOrUpdate
+                 
+                            dbType={this.props.dbType}
+                            dato={this.props.datos[element]}
+                            estructura={this.props.estructura[element]}
+                            path={element}
+                            listaOpciones={this.props.listaOpciones[element]}
+                            handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
+                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            insertList={path => this.props.insertList(path)}
+                        />
+                    );
+                }
+            }
+
+            // items.push(this.renderList(this.props.dbType, this.props.estructura[element], this.props.datos[element], element.toString(), this.props.listaOpciones[element]));
+        });
+        // console.log("items form:", items);
         if (this.props.typeFomr == "Create") {
 
             return (
-                <div class="formUpdateOrCreate">
-                    <input type="button" value="x" onClick={() => this.props.exitCreateOrUpdate()} />
-                    {items}
-                    <button class="btn-crear" value="Create" onClick={() => this.props.createObject()}></button>
+                <div class="form-group">
+                    <a type="button" onClick={() => this.props.exitCreateOrUpdate()}>Salir < i class="fas fa-sign-out-alt"></i></a>
+                    {item}
+                    <button class="btn btn-success" value="Create" onClick={() => this.props.createObject()}>Save.</button>
                 </div>
             );
         } else {
 
             return (
-                <div class="formUpdateOrCreate">
-                    <input type="button" value="x" onClick={() => this.props.exitCreateOrUpdate()} />
-                    {items}
-                    <button class="btn-update" value="update" onClick={() => this.props.updateObject()}></button>
+                <div class="form-group">
+                    <a type="button" onClick={() => this.props.exitCreateOrUpdate()} >Salir <i class="fas fa-sign-out-alt"></i></a>
+                    {item}
+                    <button class="btn btn-success" value="update" onClick={() => this.props.updateObject()}>Update.</button>
                 </div>
             );
         }
@@ -1076,7 +1275,7 @@ class MasterPage extends React.Component {
             urlname: "ciudad", dbType: "postgres", nombre: "ciudad", modelo: {
 
                 id_ciudad: { type: "BIGSERIAL", primaryKey: true, name: "id_ciudad", modelType: "Number" },
-                id_pais: { trype: "BIGINT", name: "id_pais", foreignKey: true, ref: "pais", refField: "id_pais", fieldShow: "nombre", commentForeign: "id_pais_fk", modelType: "Number" },
+                id_pais: { type: "BIGINT", name: "id_pais", foreignKey: true, ref: "pais", refField: "id_pais", fieldShow: "nombre", commentForeign: "id_pais_fk", modelType: "Number" },
                 nombre: { type: "VARCHAR(100)", name: "nombre", modelType: "String" }
 
 
@@ -1303,7 +1502,7 @@ class MasterPage extends React.Component {
 
         let body = {};
         if (this.state.modelo.dbType == "Mongo") {
-            body = this.state.elementoToUpdateOrCreate;
+            body = _.cloneDeep(this.state.elementoToUpdateOrCreate);
             delete body["_id"];
 
         } else {
@@ -1350,10 +1549,10 @@ class MasterPage extends React.Component {
 
             })
             .then(() => {
-                let copy = Object.assign({}, this.state);
-                copy.elementoToUpdateOrCreate = {};
-                copy.CreateOrUpdate = "None";
-                copy.listaOpciones = {};
+                let copy = {};
+                copy["elementoToUpdateOrCreate"] = {};
+                copy["CreateOrUpdate"] = "None";
+                copy["listaOpciones"] = {};
                 this.setState(copy, () => { this.get(); });
 
             });
@@ -1380,7 +1579,9 @@ class MasterPage extends React.Component {
                 .then(res => res.json())
                 .catch(error => console.log("error: ", error))
                 .then(response => {
+                    console.log("response: ", response);
                     if (response.count > 0) {
+                        console.log("response: ", response);
                         let mapita = response.docs.map(obj => {
                             let a = { save: null, show: null }
                             for (i in obj) {
@@ -1400,7 +1601,7 @@ class MasterPage extends React.Component {
                         });
                         this.changeListOptions(path, mapita);
                     } else {
-                        return [];
+                        
                     }
 
 
@@ -1432,7 +1633,7 @@ class MasterPage extends React.Component {
         console.log("getting list");
         let prefix = "";
         let params = {};
-        let blank = Object.assign({}, this.state.modelo.blank);
+        let blank = _.cloneDeep(this.state.modelo.blank);
         if (this.state.modelo.dbType == "Mongo") {
             params = {
                 filters: "",
@@ -1578,7 +1779,8 @@ class MasterPage extends React.Component {
     }
 
     get() {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep(this.state);
+        console.log("get copy",copy);
         let params = {
             filters: this.state.filters,
             filtro: JSON.stringify(this.state.filtros),
@@ -1605,7 +1807,7 @@ class MasterPage extends React.Component {
         };
 
         let auxUrl = `${prefix}/${this.state.modelo.urlname}/` + "?" + query;
-
+        console.log("params:", params);
         fetch(auxUrl, options_and_body)
             .then(res => res.json())
             .catch(error => console.log("error: ", error))
@@ -1684,7 +1886,7 @@ class MasterPage extends React.Component {
 
             })
             .then(() => {
-                let copy = Object.assign({}, this.state);
+                let copy = _.cloneDeep(this.state);
                 copy.elementoToUpdateOrCreate = {};
                 copy.CreateOrUpdate = "None";
                 copy.listaOpciones = {};
@@ -1756,19 +1958,19 @@ class MasterPage extends React.Component {
     changeModel(e) {
         console.log("copia: ", this.Modelos[e.target.getAttribute("cont")]);
         console.log(e.target);
-        let copy = Object.assign({}, this.state);
-        copy.modelo = Object.assign({}, this.Modelos[e.target.getAttribute("cont")]);
-        copy.CreateOrUpdate = "None";
-        copy.elementoToUpdateOrCreate = {};
-        copy.filtros = {};
-        copy.filters = "";
-        copy.orden = {};
-        copy.listaDatos = [];
-        copy.page = 1;
-        copy.size = 20;
-        copy.elementosTotales = 0;
-        copy.checkList = [];
-        copy.listaOpciones = {};
+        let copy = {};
+        copy["modelo"] = _.cloneDeep(this.Modelos[e.target.getAttribute("cont")]);
+        copy["CreateOrUpdate"] = "None";
+        copy["elementoToUpdateOrCreate"] = {};
+        copy["filtros"] = {};
+        copy["filters"] = "";
+        copy["orden"] = {};
+        copy["listaDatos"] = [];
+        copy["page"] = 1;
+        copy["size"] = 20;
+        copy["elementosTotales"] = 0;
+        copy["checkList"] = [];
+        copy["listaOpciones"] = {};
 
         this.setState(copy, () => { this.get() });
 
@@ -1797,6 +1999,7 @@ class MasterPage extends React.Component {
         };
         this.get = this.get.bind(this);
         this.changeModel = this.changeModel.bind(this);
+        console.log("estate",this.state);
         //implemente all methods
         this.get();
 
@@ -1809,23 +2012,29 @@ class MasterPage extends React.Component {
         let items = [];
         this.Modelos.forEach(element => {
             // console.log(element);
-
-            items.push(<div class="table_list">
-                <input type="button" cont={cont} value={element.nombre} onClick={this.changeModel} />
-            </div>);
+            if(this.state.modelo.nombre == element.nombre && this.state.modelo.dbType == element.dbType){
+                items.push(
+                <a type="button" class="list-group-item list-group-item-action list-group-item-light active" cont={cont} value={element.nombre} onClick={this.changeModel}>{element.nombre}</a>
+               );
+            }else{
+                items.push(
+                <a type="button" class="list-group-item list-group-item-action list-group-item-light" cont={cont} value={element.nombre} onClick={this.changeModel}>{element.nombre}</a>
+               );
+            }
+            
             cont++;
         });
         return items;
     }
 
     changeseach(value) {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep(this.state);
         copy.filters = value;
         this.setState(copy);
 
     }
     changeFilter(value, key) {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep(this.state);
         if (key.split(".").length > 1) {
             if (value.toString().trim() == "") {
                 copy.filtros = deleteObjPath(copy.filtros, key);
@@ -1854,11 +2063,11 @@ class MasterPage extends React.Component {
 
     toCreate() {
         console.log("copia2:", this.state.modelo.blank);
-        let copy = Object.assign({}, this.state);
+        let copy = {};
 
-        copy.elementoToUpdateOrCreate = Object.assign({}, copy.modelo.blank);
-        copy.listaOpciones = Object.assign({}, copy.modelo.blank);
-        copy.CreateOrUpdate = "Create";
+        copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.modelo.blank);
+        copy["listaOpciones"] = _.cloneDeep( this.state.modelo.blank);
+        copy["CreateOrUpdate"] = "Create";
         // implement options lis
         // this.getOptionsList();
 
@@ -1874,7 +2083,7 @@ class MasterPage extends React.Component {
     }
 
     check(position) {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep(this.state);
         let index = copy.checkList.indexOf(position);
         if (index > -1) {
             copy.checkList.splice(index, 1);
@@ -1886,9 +2095,10 @@ class MasterPage extends React.Component {
     }
 
     edit(position) {
-        let copy = Object.assign({}, this.state);
-        copy.elementoToUpdateOrCreate = Object.assign({}, copy.listaDatos[position]);
-        copy.CreateOrUpdate = "Update";
+        let copy = {}
+        copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.listaDatos[position]);
+        copy["listaOpciones"] = _.cloneDeep( this.state.modelo.blank);
+        copy["CreateOrUpdate"] = "Update";
         // implement option list
 
         this.setState(copy, () => {
@@ -1897,7 +2107,7 @@ class MasterPage extends React.Component {
     }
 
     changeOrden(key) {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep( this.state);
         if (this.state.orden[key] == undefined) {
             copy.orden[key] = -1;
         } else {
@@ -1916,7 +2126,7 @@ class MasterPage extends React.Component {
     }
 
     pagination(page) {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep(this.state);
         copy.page = page;
         this.setState(copy, () => { this.get(); });
 
@@ -1924,7 +2134,7 @@ class MasterPage extends React.Component {
     }
 
     exitCreateUpdate() {
-        let copy = Object.assign({}, this.state);
+        let copy = _.cloneDeep(this.state);
         copy.elementoToUpdateOrCreate = {};
         copy.CreateOrUpdate = "None";
         copy.listaOpciones = {};
@@ -1935,20 +2145,60 @@ class MasterPage extends React.Component {
         console.log("change data:", path);
         console.log("change data:", value);
         console.log("change data:", tipo);
-        let copy = Object.assign({}, this.state);
+
+        let copy = {};
+        copy["elementoToUpdateOrCreate"] =_.cloneDeep(this.state.elementoToUpdateOrCreate);
+        let eletoCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+        console.log("change data:",this.state);
         switch (tipo) {
             case "String":
-                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+                copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                 break;
             case "Boolean":
-                let valor = value == "true";
-                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, valor);
+                
+                copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                 break;
             case "Date":
-                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+                copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                 break;
             case "Number":
-                copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, parseFloat(value));
+                let valor =0;
+                try {
+                    if(value == ""){
+                        valor = 0;
+                    }else{
+                        if(isNaN(parseFloat(value))){
+                           valor = 0
+                        }else{
+                            if(value.slice(-1) == "."){
+                                valor = value;
+                            }else{
+                                if(value.split(".").length == 2){
+                                    if(parseInt(value.split(".")[1]) > 0){
+                                        valor = parseFloat(value);
+                                    }else{
+                                        console.log("entro aqui");
+                                        if(parseInt(value.split(".")[1]) == 0){
+                                            valor = value;
+                                        }else{
+                                            valor = parseFloat(value);
+                                        }
+                                        
+                                    }
+                                }else{
+                                    valor = parseFloat(value);
+                                }
+                               
+                            }
+                           
+                        }
+                    }
+                } catch (error) {
+                    console.log("error number: ", error);
+                    valor = 0;
+                }
+                
+                copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path,valor);
                 break;
 
             default:
@@ -1960,40 +2210,56 @@ class MasterPage extends React.Component {
     changeListOptions(path, value) {
         console.log(`change lista options: ${path} ${value}`);
         console.log("change lista options:", this.state.listaOpciones);
-        let copy = Object.assign({}, this.state);
-
-        copy.listaOpciones = insertValuePath(copy.listaOpciones, path, value);
+        let copy = {};
+        copy["listaOpciones"] =  _.cloneDeep(this.state.listaOpciones);
+        console.log("copia3:", this.state);
+        let listaOpciones = _.cloneDeep(this.state.listaOpciones);
+        copy["listaOpciones"] = insertValuePath(listaOpciones, path, value);
         this.setState(copy);
     }
 
     insertInList(path) {
-        let copy = Object.assign({}, this.state);
-
-        let value = deepFind(this.state.elementoToUpdateOrCreate, path);
-        let valuePush = deepFind(this.state.modelo.blank, path.concat(".#0"));
+        let copy = {};
+        console.log("insertIntLIst: ",this.state);
+        copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+        let elementoToUpdateOrCreate = _.cloneDeep( this.state.elementoToUpdateOrCreate);
+        let value = deepFind(elementoToUpdateOrCreate, path);
+        let modeloBlank = _.cloneDeep(this.state.modelo.blank);
+        let valuePush = deepFind(modeloBlank, path.concat(".#0"));
+        console.log("value push:", valuePush);
         value.push(valuePush);
-        copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
-
+        copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path, value);
+        console.log("copy:",copy);
         this.setState(copy);
     }
 
     deleteInList(path, count) {
-        let copy = Object.assign({}, this.state);
-        let value = deepFind(this.state.elementoToUpdateOrCreate, path);
+        console.log("delete in list: ", path);
+        console.log("delete in list: ", count);
+        let copy = {};
+        console.log("delete copy: ", copy);
+        copy["elementoToUpdateOrCreate"] =_.cloneDeep( this.state.elementoToUpdateOrCreate);
+        let elementoToUpdateOrCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
+        let value = deepFind(elementoToUpdateOrCreate, path.split(".").slice(0,-1).join("."));
 
         value.splice(count, 1);
-        copy.elementoToUpdateOrCreate = insertValuePath(copy.elementoToUpdateOrCreate, path, value);
+        copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path.split(".").slice(0,-1).join("."), value);
+        console.log("delete copy: ", copy);
         this.setState(copy);
     }
 
+  
+
+
     render() {
+        console.log("master page: ", this.state.modelo.modelo);
         if (this.state.CreateOrUpdate == "None") {
             return (
                 <div class="row">
-                    <div class="col-2 costadoTablasMenu">
+                    <div class="col-2 list-group leftTable pr-0"  >
                         {this.renderTables()}
                     </div>
-                    <div class="col-10 module">
+                    <div class="col-10 module leftTable">
 
                         <ModuloAdmin
                             valorBusqueda={this.state.filters}
@@ -2021,10 +2287,10 @@ class MasterPage extends React.Component {
         } else {
             return (
                 <div class="row">
-                    <div class="col-2 costadoTablasMenu">
+                    <div class="col-2 list-group leftTable pr-0"  >
                         {this.renderTables()}
                     </div>
-                    <div class="col-10 module">
+                    <div class="col-10 module leftTable pr-0">
 
                         <FormCreateOrUpdate
                             exitCreateOrUpdate={() => this.exitCreateUpdate()}
@@ -2036,7 +2302,7 @@ class MasterPage extends React.Component {
                             typeFomr={this.state.CreateOrUpdate}
                             listaOpciones={this.state.listaOpciones}
                             handleFieldChange={(tipo, path, value) => this.changeData(tipo, path, value)}
-                            insertList={() => this.insertInList(path)}
+                            insertList={(path) => this.insertInList(path)}
                             deleteInList={(newPath, count) => this.deleteInList(newPath, count)}
                         />
                     </div>
@@ -2050,7 +2316,13 @@ class MasterPage extends React.Component {
 ReactDOM.render(<MasterPage />, document.getElementById('contenedorReact'));
 
 function insertValuePath(obj, path, value) {
-    let copy = obj;
+    let copy;
+    if(Array.isArray(obj)){
+        copy = obj.slice()
+    }else{
+        copy = _.cloneDeep(obj);
+    }
+    
     path = path.split(".");
     if (path == "") {
         return value;
@@ -2073,12 +2345,13 @@ function insertValuePath(obj, path, value) {
         }
     }
     return copy;
+    
 }
 
 
 function deepFind(obj, path) {
     var paths = path.split('.')
-        , current = obj
+        , current = Array.isArray(obj) ? obj.slice():_.cloneDeep(obj)
         , i;
 
     for (i = 0; i < paths.length; ++i) {
