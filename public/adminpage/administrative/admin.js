@@ -1672,7 +1672,7 @@ var MasterPage = function (_React$Component12) {
             listaM.push({
                 urlname: "notificacion", dbType: "Mongo", nombre: "notificacion", modelo: {
                     _id: { type: String },
-                    usuariok: { type: String, ref: "usuario", fieldsave: "_id", fieldShow: "nombre" },
+                    usuario: { type: String, ref: "usuario", fieldsave: "_id", fieldShow: "nombre" },
                     encuesta: { type: String, ref: "encuesta", fieldsave: "_id", fieldShow: "nombre_encuesta" },
                     descripcion: { type: String, required: true },
                     tipo_notificacion: { type: String, required: true },
@@ -1681,7 +1681,7 @@ var MasterPage = function (_React$Component12) {
                     vista: { type: Boolean, required: true }
                 }, blank: {
                     _id: null,
-                    usuariok: null,
+                    usuario: null,
                     encuesta: null,
                     descripcion: null,
                     tipo_notificacion: null,

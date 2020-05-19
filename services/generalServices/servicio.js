@@ -109,6 +109,8 @@ class service {
 
     get(filters = "", filtros = {}, size = 10, pag = 1, orden = {}, cb) {
         try {
+            console.log("filtros:",filtros);
+            console.log("filters:",filters)
             let nn = 0;
             let validarCount = false;
             this.getcount(filters, filtros, function (validar, n) {
@@ -124,16 +126,40 @@ class service {
                 };
                 let props = Object.keys(this.model.schema.paths);
                 props.forEach(element => {
+                    console.log(this.model.schema.paths[element].instance);
                     if (element != "_id" && element != "__v") {
-                        if (this.model.schema.paths[element] in ["String", "Date", "Number", "Boolean", "ObjectId"]) {
-                            filtro["$and"][0].push({ element: { $regex: '.*' + filters + '.*' } });
+                        if ( ["String", "Date", "Number", "Boolean", "ObjectId"].indexOf(this.model.schema.paths[element].instance) != -1) {
+                            let regex = {};
+                            if(this.model.schema.paths[element].instance != "Number"){
+                                if(this.model.schema.paths[element].instance != "Date"){
+                                    regex[element] =  { $regex: '.*' + filters + '.*' };
+                                filtro["$and"][0]["$or"].push(regex);
+                                }else{
+                                    if(!isNaN(Date.parse(filters))){
+                                        regex[element] =  filters;
+                                    filtro["$and"][0]["$or"].push(regex);
+                                    }else{
+                                        //nada
+                                    }
+                                }
+                                
+                            }else{
+                                if(!isNaN(parseFloat(filters))){
+                                    regex[element] =  parseFloat(filters) 
+                                    filtro["$and"][0]["$or"].push(regex);
+                                }
+                            }
+                          
+                           
                         }
                     }
                 })
+                console.log("result:",filtro["$and"][0]["$or"]);
             }
             
             this.model.find(filtro, function (err, docs) {
                 if (err) {
+                    console.log(err);
                     cb(false, {}, 0);
                 } else {
                     if(validarCount){
@@ -144,6 +170,7 @@ class service {
                 }
             }).skip(size * (pag - 1)).limit(size).sort(orden);
         } catch (error) {
+            console.log(error);
             cb(false, {}, 0);
         }
     }
@@ -158,8 +185,33 @@ class service {
                 };
                 let props = Object.keys(this.model.schema.paths);
                 props.forEach(element => {
+                    console.log(this.model.schema.paths[element].instance);
                     if (element != "_id" && element != "__v") {
-                        filtro["$and"][0].push({ element: { $regex: '.*' + filters + '.*' } });
+                        if ( ["String", "Date", "Number", "Boolean", "ObjectId"].indexOf(this.model.schema.paths[element].instance) != -1) {
+                            let regex = {};
+                            if(this.model.schema.paths[element].instance != "Number"){
+                                if(this.model.schema.paths[element].instance != "Date"){
+                                    regex[element] =  { $regex: '.*' + filters + '.*' };
+                                    filtro["$and"][0]["$or"].push(regex);
+                                }else{
+                                    if(!isNaN(Date.parse(filters))){
+                                        regex[element] =  filters;
+                                    filtro["$and"][0]["$or"].push(regex);
+                                    }else{
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }else{
+                                if(!isNaN(parseFloat(filters))){
+                                    regex[element] =  parseFloat(filters) 
+                                    filtro["$and"][0]["$or"].push(regex);
+                                }
+                            }
+                          
+                           
+                        }
                     }
                 })
             }
