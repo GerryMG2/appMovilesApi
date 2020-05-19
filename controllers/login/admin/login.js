@@ -22,6 +22,8 @@ loginAuth = (req, res) => {
             console.log(validar);
             if (validar) {
                 req.session.user = req.body.username;
+                req.session.cookie.maxAge = 1000 * 60 * 60 * 24;
+                // 24 h dura la sesion;
                 req.session.admin = "administrador";
                 res.redirect("/admin/module");
             } else {
