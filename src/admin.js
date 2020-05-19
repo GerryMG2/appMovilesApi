@@ -385,14 +385,14 @@ class FilterGroup extends React.Component {
         console.log("renderStructure:", dato);
         console.log("renderStructure:", key);
         if (this.props.dbType == "Mongo") {
-            console.log("elemento:",element);
+            console.log("elemento:", element);
             if (Array.isArray(element) || element.type) {
-                console.log("elemento: array o campo",element);
+                console.log("elemento: array o campo", element);
                 let tipo = Array.isArray(element) ? "Lista" : "Campo";
                 if (tipo == "Campo") {
                     let items = [
                         <div class="badge badge-pill badge-secondary mx-1">
-                            <input class="bg-transparent text-light change" style={{border: "none"}} placeholder={key} type="text" value={dato} name={key} onChange={this.handleChange} />
+                            <input class="bg-transparent text-light change" style={{ border: "none" }} placeholder={key} type="text" value={dato} name={key} onChange={this.handleChange} />
                         </div>
                     ];
                     return items;
@@ -403,7 +403,7 @@ class FilterGroup extends React.Component {
 
                 }
             } else {
-                console.log("elemento: objeto",element);
+                console.log("elemento: objeto", element);
                 let keys = Object.keys(element);
                 let newKey = key.concat(".");
                 let items = [];
@@ -414,7 +414,7 @@ class FilterGroup extends React.Component {
             }
         } else {
             let item = [<div class="badge badge-pill badge-secondary mx-1">
-                <input type="text" class="bg-transparent text-light change" style={{border: "none"}} placeholder={key} value={dato} name={key} onChange={this.handleChange} />
+                <input type="text" class="bg-transparent text-light change" style={{ border: "none" }} placeholder={key} value={dato} name={key} onChange={this.handleChange} />
             </div>];
             return item;
 
@@ -549,7 +549,7 @@ class ModuloAdmin extends React.Component {
 
     }
     render() {
-        console.log("admin module: ",this.props.structure);
+        console.log("admin module: ", this.props.structure);
         return (
             <div class="containerModule">
                 <NavBarSeach
@@ -600,12 +600,13 @@ class CreateOrUpdateField extends React.Component {
 
     renderOptions(lista, select) {
         let items = [];
-        console.log("lista opciones: select", select)
+        
         let add = true;
         if (Array.isArray(lista)) {
             lista.forEach(element => {
                 console.log("valor", element);
                 if (element.save === select) {
+                    console.log("lista opciones: select", element)
                     add = false;
                     console.log("entra en la opcionselect");
 
@@ -850,16 +851,16 @@ class CreateOrUpdateField extends React.Component {
 
 class ListCreateOrUpdate extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.deleteInList = this.deleteInList.bind(this);
     }
 
-    deleteInList(e){
-        console.log("target: ",e.target);
+    deleteInList(e) {
+        console.log("target: ", e.target);
         this.props.deleteInList(e.target.name, parseInt(e.target.getAttribute("cont")));
     }
-    
+
 
     render() {
         let item = [];
@@ -872,9 +873,9 @@ class ListCreateOrUpdate extends React.Component {
             if (this.props.estructura[0].type) {
                 item.push(
                     <div class="container" >
-                        <a  class="btn btn-sm" name={this.props.path.concat(".#").concat(cont)} cont={cont} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
+                        <a class="btn btn-sm" name={this.props.path.concat(".#").concat(cont)} cont={cont} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
                         <CreateOrUpdateField
-                          
+
                             dbType={this.props.dbType}
                             dato={this.props.dato[cont]}
                             estructura={this.props.estructura[0]}
@@ -891,9 +892,9 @@ class ListCreateOrUpdate extends React.Component {
                     // otra lista
                     item.push(
                         <div class="container" >
-                            <a  class="btn   btn-sm" cont={cont}  name={this.props.path.concat(".#").concat(cont)} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
+                            <a class="btn   btn-sm" cont={cont} name={this.props.path.concat(".#").concat(cont)} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
                             <ListCreateOrUpdate
-                               
+
                                 dbType={this.props.dbType}
                                 dato={this.props.dato[cont]}
                                 estructura={this.props.estructura[0]}
@@ -901,7 +902,7 @@ class ListCreateOrUpdate extends React.Component {
                                 listaOpciones={this.props.listaOpciones[0]}
                                 handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
                                 insertList={path => this.props.insertList(path)}
-                                deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                                deleteInList={(path, cont) => this.props.deleteInList(path, cont)}
                             />
 
                         </div>
@@ -909,9 +910,9 @@ class ListCreateOrUpdate extends React.Component {
                 } {
                     item.push(
                         <div class="container" >
-                            <a  class="btn   btn-sm" cont={cont}  name={this.props.path.concat(".#").concat(cont)} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
+                            <a class="btn   btn-sm" cont={cont} name={this.props.path.concat(".#").concat(cont)} onClick={this.deleteInList}><i class="fas fa-minus-circle"></i></a>
                             <ObjectFieldCreateOrUpdate
-                               
+
                                 dbType={this.props.dbType}
                                 dato={this.props.dato[cont]}
                                 estructura={this.props.estructura[0]}
@@ -919,7 +920,7 @@ class ListCreateOrUpdate extends React.Component {
                                 listaOpciones={this.props.listaOpciones[0]}
                                 handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
                                 insertList={path => this.props.insertList(path)}
-                                deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                                deleteInList={(path, cont) => this.props.deleteInList(path, cont)}
                             />
 
                         </div>
@@ -934,7 +935,7 @@ class ListCreateOrUpdate extends React.Component {
         return (
             <div class="form-group" key={this.props.path}>
                 <label>{title}</label>
-                <a  class="btn btn-sm text-primary"  onClick={() => this.props.insertList(this.props.path)}><i class="fas fa-plus"></i></a>
+                <a class="btn btn-sm text-primary" onClick={() => this.props.insertList(this.props.path)}><i class="fas fa-plus"></i></a>
                 <div class="container">
                     {item}
                 </div>
@@ -956,7 +957,7 @@ class ObjectFieldCreateOrUpdate extends React.Component {
 
                 item.push(
                     <CreateOrUpdateField
-                       
+
                         dbType={this.props.dbType}
                         dato={this.props.dato[ele]}
                         estructura={this.props.estructura[ele]}
@@ -975,14 +976,14 @@ class ObjectFieldCreateOrUpdate extends React.Component {
                     item.push(
 
                         <ListCreateOrUpdate
-                           
+
                             dbType={this.props.dbType}
                             dato={this.props.dato[ele]}
                             estructura={this.props.estructura[ele]}
                             path={this.props.path.concat(".").concat(ele)}
                             listaOpciones={this.props.listaOpciones[ele]}
                             handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
-                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            deleteInList={(path, cont) => this.props.deleteInList(path, cont)}
                             insertList={path => this.props.insertList(path)}
                         />
                     );
@@ -990,14 +991,14 @@ class ObjectFieldCreateOrUpdate extends React.Component {
                 } else {
                     item.push(
                         <ObjectFieldCreateOrUpdate
-                            
+
                             dbType={this.props.dbType}
                             dato={this.props.dato[ele]}
                             estructura={this.props.estructura[ele]}
                             path={this.props.path.concat(".").concat(ele)}
                             listaOpciones={this.props.listaOpciones[ele]}
                             handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
-                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            deleteInList={(path, cont) => this.props.deleteInList(path, cont)}
                             insertList={path => this.props.insertList(path)}
                         />
                     );
@@ -1023,7 +1024,7 @@ class FormCreateOrUpdate extends React.Component {
 
     render() {
         let newkeys = Object.keys(this.props.estructura);
-        console.log("form:",this.props);
+        console.log("form:", this.props);
 
         let item = [];
         newkeys.forEach(element => {
@@ -1031,7 +1032,7 @@ class FormCreateOrUpdate extends React.Component {
             if (this.props.estructura[element].type) {
                 item.push(
                     <CreateOrUpdateField
-                   
+
                         dbType={this.props.dbType}
                         dato={this.props.datos[element]}
                         estructura={this.props.estructura[element]}
@@ -1044,28 +1045,28 @@ class FormCreateOrUpdate extends React.Component {
                 if (Array.isArray(this.props.estructura[element])) {
                     item.push(
                         <ListCreateOrUpdate
-                            
+
                             dbType={this.props.dbType}
                             dato={this.props.datos[element]}
                             estructura={this.props.estructura[element]}
                             path={element}
                             listaOpciones={this.props.listaOpciones[element]}
                             handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
-                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            deleteInList={(path, cont) => this.props.deleteInList(path, cont)}
                             insertList={path => this.props.insertList(path)}
                         />
                     );
                 } else {
                     item.push(
                         <ObjectFieldCreateOrUpdate
-                 
+
                             dbType={this.props.dbType}
                             dato={this.props.datos[element]}
                             estructura={this.props.estructura[element]}
                             path={element}
                             listaOpciones={this.props.listaOpciones[element]}
                             handleFieldChange={(tipo, path, value) => this.props.handleFieldChange(tipo, path, value)}
-                            deleteInList={(path,cont) => this.props.deleteInList(path,cont)}
+                            deleteInList={(path, cont) => this.props.deleteInList(path, cont)}
                             insertList={path => this.props.insertList(path)}
                         />
                     );
@@ -1447,7 +1448,7 @@ class MasterPage extends React.Component {
                 id_cuenta: { type: "BIGINT", name: "id_cuenta", fieldShow: "nombre", foreignKey: true, ref: "cuenta", refField: "id_cuenta", commentForeign: "id_cuenta_fk", modelType: "Number" },
                 fecha: { type: "DATE", name: "fecha", modelType: "Date" },
                 anulado: { type: "BOOLEAN", name: "anulado", modelType: "Boolean" },
-                id_tipo_pago: { type: "BIGINT", name: "id_tipo_pago", fieldShow: "descripcion_pago", foreignKey: true, ref: "tipo_pago", refField: "id_tipo_pago", commentForeign: "id_tipo_pago_fk", modelType: "Number" }
+                id_tipo_pago: { type: "BIGINT", name: "id_tipo_pago", fieldShow: "descripcion_pago", foreignKey: true, ref: "tipo_pago", refurl: "tipoPago", refField: "id_pago", commentForeign: "id_tipo_pago_fk", modelType: "Number" }
 
 
             }, blank: {
@@ -1574,7 +1575,12 @@ class MasterPage extends React.Component {
             };
 
 
-            let auxUrl = `/api/${estructura.ref}/` + "?" + query;
+            let auxUrl;
+            if (estructura.refurl) {
+                auxUrl = `api/${estructura.refurl}/` + "?" + query;
+            } else {
+                auxUrl = `api/${estructura.ref}/` + "?" + query;
+            }
             fetch(auxUrl, options_and_body)
                 .then(res => res.json())
                 .catch(error => console.log("error: ", error))
@@ -1601,7 +1607,7 @@ class MasterPage extends React.Component {
                         });
                         this.changeListOptions(path, mapita);
                     } else {
-                        
+
                     }
 
 
@@ -1671,7 +1677,13 @@ class MasterPage extends React.Component {
                             "Content-Type": "application/json"
                         }
                     };
-                    let auxUrl = `${prefix}/${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                    let auxUrl;
+                    if (this.state.modelo.modelo[element].refurl) {
+                        auxUrl = `${prefix}/${this.state.modelo.modelo[element].refurl}/` + "?" + query;
+                    } else {
+                        auxUrl = `${prefix}/${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                    }
+
 
 
 
@@ -1737,7 +1749,13 @@ class MasterPage extends React.Component {
                     };
 
 
-                    let auxUrl = `${prefix}/${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                    let auxUrl;
+                    if (this.state.modelo.modelo[element].refurl) {
+                        auxUrl = `${prefix}/${this.state.modelo.modelo[element].refurl}/` + "?" + query;
+                    } else {
+                        auxUrl = `${prefix}/${this.state.modelo.modelo[element].ref}/` + "?" + query;
+                    }
+
                     fetch(auxUrl, options_and_body)
                         .then(res => res.json())
                         .catch(error => console.log("error: ", error))
@@ -1780,7 +1798,7 @@ class MasterPage extends React.Component {
 
     get() {
         let copy = _.cloneDeep(this.state);
-        console.log("get copy",copy);
+        console.log("get copy", copy);
         let params = {
             filters: this.state.filters,
             filtro: JSON.stringify(this.state.filtros),
@@ -1925,7 +1943,7 @@ class MasterPage extends React.Component {
                     idcond[element] = this.state.listaDatos[position][element];
                 }
             });
-            
+
             console.log("cond: ", idcond);
             options_and_body["body"] = JSON.stringify({
                 id: idcond
@@ -2001,7 +2019,7 @@ class MasterPage extends React.Component {
         };
         this.get = this.get.bind(this);
         this.changeModel = this.changeModel.bind(this);
-        console.log("estate",this.state);
+        console.log("estate", this.state);
         //implemente all methods
         this.get();
 
@@ -2014,16 +2032,16 @@ class MasterPage extends React.Component {
         let items = [];
         this.Modelos.forEach(element => {
             // console.log(element);
-            if(this.state.modelo.nombre == element.nombre && this.state.modelo.dbType == element.dbType){
+            if (this.state.modelo.nombre == element.nombre && this.state.modelo.dbType == element.dbType) {
                 items.push(
-                <a type="button" class="list-group-item list-group-item-action list-group-item-light active" cont={cont} value={element.nombre} onClick={this.changeModel}>{element.nombre}</a>
-               );
-            }else{
+                    <a type="button" class="list-group-item list-group-item-action list-group-item-light active" cont={cont} value={element.nombre} onClick={this.changeModel}>{element.nombre}</a>
+                );
+            } else {
                 items.push(
-                <a type="button" class="list-group-item list-group-item-action list-group-item-light" cont={cont} value={element.nombre} onClick={this.changeModel}>{element.nombre}</a>
-               );
+                    <a type="button" class="list-group-item list-group-item-action list-group-item-light" cont={cont} value={element.nombre} onClick={this.changeModel}>{element.nombre}</a>
+                );
             }
-            
+
             cont++;
         });
         return items;
@@ -2068,7 +2086,7 @@ class MasterPage extends React.Component {
         let copy = {};
 
         copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.modelo.blank);
-        copy["listaOpciones"] = _.cloneDeep( this.state.modelo.blank);
+        copy["listaOpciones"] = _.cloneDeep(this.state.modelo.blank);
         copy["CreateOrUpdate"] = "Create";
         // implement options lis
         // this.getOptionsList();
@@ -2099,7 +2117,7 @@ class MasterPage extends React.Component {
     edit(position) {
         let copy = {}
         copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.listaDatos[position]);
-        copy["listaOpciones"] = _.cloneDeep( this.state.modelo.blank);
+        copy["listaOpciones"] = _.cloneDeep(this.state.modelo.blank);
         copy["CreateOrUpdate"] = "Update";
         // implement option list
 
@@ -2109,7 +2127,7 @@ class MasterPage extends React.Component {
     }
 
     changeOrden(key) {
-        let copy = _.cloneDeep( this.state);
+        let copy = _.cloneDeep(this.state);
         if (this.state.orden[key] == undefined) {
             copy.orden[key] = -1;
         } else {
@@ -2149,58 +2167,58 @@ class MasterPage extends React.Component {
         console.log("change data:", tipo);
 
         let copy = {};
-        copy["elementoToUpdateOrCreate"] =_.cloneDeep(this.state.elementoToUpdateOrCreate);
+        copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
         let eletoCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
-        console.log("change data:",this.state);
+        console.log("change data:", this.state);
         switch (tipo) {
             case "String":
                 copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                 break;
             case "Boolean":
-                
+
                 copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                 break;
             case "Date":
                 copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, value);
                 break;
             case "Number":
-                let valor =0;
+                let valor = 0;
                 try {
-                    if(value == ""){
+                    if (value == "") {
                         valor = 0;
-                    }else{
-                        if(isNaN(parseFloat(value))){
-                           valor = 0
-                        }else{
-                            if(value.slice(-1) == "."){
+                    } else {
+                        if (isNaN(parseFloat(value))) {
+                            valor = 0
+                        } else {
+                            if (value.slice(-1) == ".") {
                                 valor = value;
-                            }else{
-                                if(value.split(".").length == 2){
-                                    if(parseInt(value.split(".")[1]) > 0){
+                            } else {
+                                if (value.split(".").length == 2) {
+                                    if (parseInt(value.split(".")[1]) > 0) {
                                         valor = parseFloat(value);
-                                    }else{
+                                    } else {
                                         console.log("entro aqui");
-                                        if(parseInt(value.split(".")[1]) == 0){
+                                        if (parseInt(value.split(".")[1]) == 0) {
                                             valor = value;
-                                        }else{
+                                        } else {
                                             valor = parseFloat(value);
                                         }
-                                        
+
                                     }
-                                }else{
+                                } else {
                                     valor = parseFloat(value);
                                 }
-                               
+
                             }
-                           
+
                         }
                     }
                 } catch (error) {
                     console.log("error number: ", error);
                     valor = 0;
                 }
-                
-                copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path,valor);
+
+                copy["elementoToUpdateOrCreate"] = insertValuePath(eletoCreate, path, valor);
                 break;
 
             default:
@@ -2213,7 +2231,7 @@ class MasterPage extends React.Component {
         console.log(`change lista options: ${path} ${value}`);
         console.log("change lista options:", this.state.listaOpciones);
         let copy = {};
-        copy["listaOpciones"] =  _.cloneDeep(this.state.listaOpciones);
+        copy["listaOpciones"] = _.cloneDeep(this.state.listaOpciones);
         console.log("copia3:", this.state);
         let listaOpciones = _.cloneDeep(this.state.listaOpciones);
         copy["listaOpciones"] = insertValuePath(listaOpciones, path, value);
@@ -2222,16 +2240,16 @@ class MasterPage extends React.Component {
 
     insertInList(path) {
         let copy = {};
-        console.log("insertIntLIst: ",this.state);
+        console.log("insertIntLIst: ", this.state);
         copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
-        let elementoToUpdateOrCreate = _.cloneDeep( this.state.elementoToUpdateOrCreate);
+        let elementoToUpdateOrCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
         let value = deepFind(elementoToUpdateOrCreate, path);
         let modeloBlank = _.cloneDeep(this.state.modelo.blank);
         let valuePush = deepFind(modeloBlank, path.concat(".#0"));
         console.log("value push:", valuePush);
         value.push(valuePush);
         copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path, value);
-        console.log("copy:",copy);
+        console.log("copy:", copy);
         this.setState(copy);
     }
 
@@ -2240,17 +2258,17 @@ class MasterPage extends React.Component {
         console.log("delete in list: ", count);
         let copy = {};
         console.log("delete copy: ", copy);
-        copy["elementoToUpdateOrCreate"] =_.cloneDeep( this.state.elementoToUpdateOrCreate);
+        copy["elementoToUpdateOrCreate"] = _.cloneDeep(this.state.elementoToUpdateOrCreate);
         let elementoToUpdateOrCreate = _.cloneDeep(this.state.elementoToUpdateOrCreate);
-        let value = deepFind(elementoToUpdateOrCreate, path.split(".").slice(0,-1).join("."));
+        let value = deepFind(elementoToUpdateOrCreate, path.split(".").slice(0, -1).join("."));
 
         value.splice(count, 1);
-        copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path.split(".").slice(0,-1).join("."), value);
+        copy["elementoToUpdateOrCreate"] = insertValuePath(elementoToUpdateOrCreate, path.split(".").slice(0, -1).join("."), value);
         console.log("delete copy: ", copy);
         this.setState(copy);
     }
 
-  
+
 
 
     render() {
@@ -2319,12 +2337,12 @@ ReactDOM.render(<MasterPage />, document.getElementById('contenedorReact'));
 
 function insertValuePath(obj, path, value) {
     let copy;
-    if(Array.isArray(obj)){
+    if (Array.isArray(obj)) {
         copy = obj.slice()
-    }else{
+    } else {
         copy = _.cloneDeep(obj);
     }
-    
+
     path = path.split(".");
     if (path == "") {
         return value;
@@ -2347,13 +2365,13 @@ function insertValuePath(obj, path, value) {
         }
     }
     return copy;
-    
+
 }
 
 
 function deepFind(obj, path) {
     var paths = path.split('.')
-        , current = Array.isArray(obj) ? obj.slice():_.cloneDeep(obj)
+        , current = Array.isArray(obj) ? obj.slice() : _.cloneDeep(obj)
         , i;
 
     for (i = 0; i < paths.length; ++i) {

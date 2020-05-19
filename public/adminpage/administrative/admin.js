@@ -912,12 +912,13 @@ var CreateOrUpdateField = function (_React$Component8) {
         key: "renderOptions",
         value: function renderOptions(lista, select) {
             var items = [];
-            console.log("lista opciones: select", select);
+
             var add = true;
             if (Array.isArray(lista)) {
                 lista.forEach(function (element) {
                     console.log("valor", element);
                     if (element.save === select) {
+                        console.log("lista opciones: select", element);
                         add = false;
                         console.log("entra en la opcionselect");
 
@@ -1945,7 +1946,7 @@ var MasterPage = function (_React$Component12) {
                     id_cuenta: { type: "BIGINT", name: "id_cuenta", fieldShow: "nombre", foreignKey: true, ref: "cuenta", refField: "id_cuenta", commentForeign: "id_cuenta_fk", modelType: "Number" },
                     fecha: { type: "DATE", name: "fecha", modelType: "Date" },
                     anulado: { type: "BOOLEAN", name: "anulado", modelType: "Boolean" },
-                    id_tipo_pago: { type: "BIGINT", name: "id_tipo_pago", fieldShow: "descripcion_pago", foreignKey: true, ref: "tipo_pago", refField: "id_tipo_pago", commentForeign: "id_tipo_pago_fk", modelType: "Number" }
+                    id_tipo_pago: { type: "BIGINT", name: "id_tipo_pago", fieldShow: "descripcion_pago", foreignKey: true, ref: "tipo_pago", refurl: "tipoPago", refField: "id_pago", commentForeign: "id_tipo_pago_fk", modelType: "Number" }
 
                 }, blank: {
 
@@ -2067,7 +2068,12 @@ var MasterPage = function (_React$Component12) {
                     }
                 };
 
-                var auxUrl = "/api/" + estructura.ref + "/" + "?" + query;
+                var auxUrl = void 0;
+                if (estructura.refurl) {
+                    auxUrl = "api/" + estructura.refurl + "/" + "?" + query;
+                } else {
+                    auxUrl = "api/" + estructura.ref + "/" + "?" + query;
+                }
                 fetch(auxUrl, options_and_body).then(function (res) {
                     return res.json();
                 }).catch(function (error) {
@@ -2156,7 +2162,12 @@ var MasterPage = function (_React$Component12) {
                                 "Content-Type": "application/json"
                             }
                         };
-                        var auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].ref + "/" + "?" + query;
+                        var auxUrl = void 0;
+                        if (_this30.state.modelo.modelo[element].refurl) {
+                            auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].refurl + "/" + "?" + query;
+                        } else {
+                            auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].ref + "/" + "?" + query;
+                        }
 
                         fetch(auxUrl, options_and_body).then(function (res) {
                             return res.json();
@@ -2215,7 +2226,13 @@ var MasterPage = function (_React$Component12) {
                             }
                         };
 
-                        var _auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].ref + "/" + "?" + _query;
+                        var _auxUrl = void 0;
+                        if (_this30.state.modelo.modelo[element].refurl) {
+                            _auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].refurl + "/" + "?" + _query;
+                        } else {
+                            _auxUrl = prefix + "/" + _this30.state.modelo.modelo[element].ref + "/" + "?" + _query;
+                        }
+
                         fetch(_auxUrl, _options_and_body).then(function (res) {
                             return res.json();
                         }).catch(function (error) {
