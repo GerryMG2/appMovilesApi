@@ -1639,8 +1639,8 @@ var MasterPage = function (_React$Component12) {
                     preguntas: [{
                         encabezado: null,
                         tipo: null,
-                        pregunta_abierta: null,
-                        multi_respuesta: null,
+                        pregunta_abierta: false,
+                        multi_respuesta: false,
                         requiere: [null],
                         opciones: [{ titulo_opcion: null }]
                     }]
@@ -1662,9 +1662,9 @@ var MasterPage = function (_React$Component12) {
                     usuario: null,
                     encuesta: null,
                     cantidad_usuario: null,
-                    pagada: null,
+                    pagada: false,
                     cantidad_respuesta: null,
-                    encuesta_terminada: null,
+                    encuesta_terminada: false,
                     costo: null
                 }
             });
@@ -1685,9 +1685,9 @@ var MasterPage = function (_React$Component12) {
                     encuesta: null,
                     descripcion: null,
                     tipo_notificacion: null,
-                    eliminada: null,
+                    eliminada: false,
                     date: null,
-                    vista: null
+                    vista: false
                 }
             });
 
@@ -1707,7 +1707,7 @@ var MasterPage = function (_React$Component12) {
                     _id: null,
                     usuario: null,
                     encuesta: null,
-                    pagada: null,
+                    pagada: false,
                     respuesta: [{ id_pregunta: null, id_respuesta: null, respuesta_abierta: null }],
                     //respuesta tiene dos referencias(buscar como se hace eso)!\
                     //refOutItsel: {camporef: "encuesta",campo: "preguntas", fielSave: "_id", show: "encabezado"}
@@ -1941,7 +1941,7 @@ var MasterPage = function (_React$Component12) {
             listaM.push({
                 urlname: "transaccion", dbType: "postgres", nombre: "transaccion", modelo: {
 
-                    id_factura: { type: "BIGSERIAL", name: "id_factura", modelType: "Number" },
+                    id_factura: { type: "BIGSERIAL", name: "id_factura", modelType: "Number", primaryKey: true },
                     id_cuenta: { type: "BIGINT", name: "id_cuenta", fieldShow: "nombre", foreignKey: true, ref: "cuenta", refField: "id_cuenta", commentForeign: "id_cuenta_fk", modelType: "Number" },
                     fecha: { type: "DATE", name: "fecha", modelType: "Date" },
                     anulado: { type: "BOOLEAN", name: "anulado", modelType: "Boolean" },
@@ -1952,7 +1952,7 @@ var MasterPage = function (_React$Component12) {
                     id_factura: null,
                     id_cuenta: null,
                     fecha: null,
-                    anulado: null,
+                    anulado: false,
                     id_tipo_pago: null
 
                 }
@@ -2390,6 +2390,7 @@ var MasterPage = function (_React$Component12) {
                     id: this.state.listaDatos[position]["_id"]
                 });
             } else {
+                console.log("entra en postgres");
                 var idcond = {};
                 var keyModel = Object.keys(this.state.modelo.modelo);
                 keyModel.forEach(function (element) {
@@ -2398,6 +2399,7 @@ var MasterPage = function (_React$Component12) {
                     }
                 });
 
+                console.log("cond: ", idcond);
                 options_and_body["body"] = JSON.stringify({
                     id: idcond
                 });

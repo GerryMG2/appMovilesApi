@@ -5,11 +5,11 @@ var conexion = require("../db_connection/connection");
 class transactionalModelSQL {
     constructor(modelo, table_name, msg_create = { ok: "Created", err: "Not created" },
         msg_update = { ok: "Updated", err: "Not updated" },
-        mgs_delete = { ok: "Deleted", err: "Not deleted" }) {
+        msg_delete = { ok: "Deleted", err: "Not deleted" }) {
         this.modelo = modelo;
         this.msg_create = msg_create;
         this.msg_update = msg_update;
-        this.msg_delete = mgs_delete;
+        this.msg_delete = msg_delete;
         this.table_name = table_name;
         this.init();
 
@@ -233,7 +233,7 @@ class transactionalModelSQL {
             });
         } catch (error) {
             console.log(error);
-            cb(false, this.mgs_delete.err);
+            cb(false, this.msg_delete.err);
         }
     }
 
@@ -283,7 +283,7 @@ class transactionalModelSQL {
             console.log(queryResult);
             this.conx.query(queryResult, (validar, datos) => {
                 if (validar) {
-                    cb(true, this.mgs_delete.ok);
+                    cb(true, this.msg_delete.ok);
                 } else {
                     console.log("asd",this.msg_delete);
                     cb(false, this.msg_delete.err);
@@ -291,7 +291,7 @@ class transactionalModelSQL {
             });
         } catch (error) {
             console.log(error);
-            cb(false, this.mgs_delete.err);
+            cb(false, this.msg_delete.err);
         }
     }
 
