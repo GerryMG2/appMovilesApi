@@ -10,5 +10,5 @@ var admin = function(req, res, next) {
     } 
   };
   
-  module.exports = admin;
+module.exports = admin;
   
