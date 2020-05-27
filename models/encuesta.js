@@ -16,7 +16,7 @@ var encuestaSchema = new Schema(
             tipo: { type: String, required: true },
             pregunta_abierta: { type: Boolean, required: true },
             multi_respuesta: { type: Boolean, required: true },
-            requiere: [{ type: String }],
+            requiere: { type: Boolean, required: true },
             opciones: [{ titulo_opcion: { type: String } }]
         }]
     }
