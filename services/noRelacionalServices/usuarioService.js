@@ -11,7 +11,7 @@ class usuarioService  extends generalService{
     }
     
     
-    validarContra(email, password, cb){
+    validarContra(email, password, ip, cb){
         try {
             this.get("",{email: email}, 1, 1, {}, (validar, users, total) => {
                 if(validar && total == 1){
@@ -21,14 +21,17 @@ class usuarioService  extends generalService{
                         //ips de dispositivos
                         let cont = 0;
                         users[0].ip_disp.forEach(element => {
-                            if (element == req.ip) {
+                            if (element == ip) {
                                 cont++;
                                 //user[0].ip_disp.push(req.ip)
                             }
                         });
 
                         if (cont == 0) {
-                            user[0].ip_disp.push(req.ip);    
+                            users[0].ip_disp.push(ip);
+                            let update = {ip_disp: users[0].ip_disp};
+                            console.log(update);
+                            this.update(users[0]["_id"], update, (validar)=>{ });  
                         }
 
                     } else {

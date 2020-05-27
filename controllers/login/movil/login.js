@@ -5,7 +5,8 @@ const auth = new service();
 loginAuth = (req, res) => {
     try {
         console.log(req.body);
-        auth.validarContra(req.body.mail, req.body.password, (validar) => {
+        auth.validarContra(req.body.mail, req.body.password, req.ip, (validar) => {
+            console.log(req.ip + "controller");
             console.log(validar);
             if (validar) {
                 req.session.user = req.body.mail;
