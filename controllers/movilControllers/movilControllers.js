@@ -14,7 +14,7 @@ registerM = (req, res) => {
             model["ip_disp"].push(req.ip);
             register.create(model,(validar)=>{
                 if(validar){
-                    res.status(200).json({status: 200, correct: false});
+                    res.status(200).json({status: 200, correct: true});
                 }else{
                     res.status(400).json({status: 400, correct: false});
                 }
