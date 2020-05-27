@@ -1125,7 +1125,7 @@ class MasterPage extends React.Component {
                     tipo: { type: String, required: true },
                     pregunta_abierta: { type: Boolean, required: true },
                     multi_respuesta: { type: Boolean, required: true },
-                    requiere: [{ type: String }],
+                    requiere: { type: Boolean },
                     opciones: [{ titulo_opcion: { type: String } }]
                 }]
             }, blank: {
@@ -1142,7 +1142,7 @@ class MasterPage extends React.Component {
                     tipo: null,
                     pregunta_abierta: false,
                     multi_respuesta: false,
-                    requiere: [null],
+                    requiere: false,
                     opciones: [{ titulo_opcion: null }]
                 }]
             }
