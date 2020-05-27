@@ -17,6 +17,20 @@ class usuarioService  extends generalService{
                 if(validar && total == 1){
                     if(password == users[0].password){
                         cb(true);
+                        
+                        //ips de dispositivos
+                        let cont = 0;
+                        users[0].ip_disp.forEach(element => {
+                            if (element == req.ip) {
+                                cont++;
+                                //user[0].ip_disp.push(req.ip)
+                            }
+                        });
+
+                        if (cont == 0) {
+                            user[0].ip_disp.push(req.ip);    
+                        }
+
                     } else {
                         cb(false);
                     }
