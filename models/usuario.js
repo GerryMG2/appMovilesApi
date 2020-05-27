@@ -11,7 +11,7 @@ var usuarioSchema = new Schema(
         nacimiento: { type: Date, required: true },
         altura: { type: Number, required: true },
         pais: { type: String, required: true },
-        cuidad: { type: String, required: true },
+        ciudad: { type: String, required: true },
         sexo: { type: String, required: true },
         email: { type: String, unique: true, required: true },
         password: { type: String, required: true },
