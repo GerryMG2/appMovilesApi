@@ -51,15 +51,30 @@ getEncuestas = (req,res) => {
     try {
         encuestaService.getEncuestas(req.session.user,(validar,docs,n)=>{
             if(validar){
-                res.status(200).json({correct: true,encuestas:docs, n: n})
+                res.status(200).json({correct: true,encuestas:docs, n: n});
             }else{
-                res.status(400).json({correct: false,encuestas: [],n: 0})
+                res.status(400).json({correct: false,encuestas: [],n: 0});
             }
         })
     } catch (error) {
-        res.status(500).json({correct: false,encuestas: [], n: 0})       
+        res.status(500).json({correct: false,encuestas: [], n: 0});   
     }
     
 }
 
 module.exports.encuestas = getEncuestas;
+
+createEncuesta = (req,res) => {
+    try {
+        encuestaService.insertEncuestaOrUpdateEncuesta(req.body.modelo,req.ip,(validar)=>{
+            if(validar){
+                res.status(200).json({status: 200,correct: true});
+            }else{
+                res.status(400).json({status: 500, correct: false});
+            }
+        })
+        
+    } catch (error) {
+        res.status(500).json({status: 500, correct: false})
+    }
+}

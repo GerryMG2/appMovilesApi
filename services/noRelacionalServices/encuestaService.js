@@ -26,9 +26,6 @@ class encuestaService extends generalService {
                     } else {
                         cb(false, [], 0);
                     }
-
-
-
                 } else {
                     cb(false, [], 0);
                 }
@@ -39,6 +36,48 @@ class encuestaService extends generalService {
         }
 
     }
+
+    insertEncuestaOrUpdateEncuesta(model,ip, cb){
+        try {
+            if(model.usuario == ""){
+                if(model.preguntas.length > 0){
+                    
+                model["ip_disp"] = ip
+                this.create(model,(validar)=>{
+                    if(validar){
+                        cb(true)
+                    }else{
+                        cb(false)
+                    }
+                })
+                }else{
+                    cb(false)
+                }
+                // crear
+            }else{
+                if(model.preguntas.length > 0){
+                    let key = model["_id"]
+                    let newmodel = model;
+                    delete newmodel["_id"]
+                    this.update(key, newmodel,(validar,msg)=>{
+                        if(validar){
+                            cb(true);
+                        }else{
+                            cb(false);
+                        }
+                    })
+                }else{
+                    cb(false);
+                }
+                
+                //actualizar
+            }
+        } catch (error) {
+            console.log(error);
+            cb(false);
+        }
+    }
+
 }
 
 module.exports = encuestaService;
