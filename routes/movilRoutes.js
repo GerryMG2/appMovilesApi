@@ -9,7 +9,7 @@ router.get("/logout",authMovil,  loginController.logout);
 router.post("/register", controllerMovil.registerPost);
 router.get("/session",authMovil,  controllerMovil.session);
 router.get("/encuestas",authMovil,  controllerMovil.encuestas);
-router.post("/encuestas/createorupdate",authMovil,  controllerMovil.createOrUpdate);
+router.post("/encuesta/createorupdate",authMovil,  controllerMovil.createOrUpdate);
 router.delete("/encuestas/delete",authMovil,  controllerMovil.deleteEncuesta);
 
 
