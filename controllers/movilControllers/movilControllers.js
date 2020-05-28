@@ -1,8 +1,8 @@
 const service = require("../../services/noRelacionalServices/usuarioService");
 const register = new service();
 
-const service = require("../../services/noRelacionalServices/encuestaService");
-const encuestaService = new service();
+const EncuestaService = require("../../services/noRelacionalServices/encuestaService");
+const encuestaService = new EncuestaService();
 
 registerM = (req, res) => {
 
