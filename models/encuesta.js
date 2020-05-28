@@ -8,7 +8,6 @@ var encuestaSchema = new Schema(
         nombre_encuesta: { type: String, require: true },
         descrip_encuesta: { type: String, required: true },
         ip_disp: { type: String, required: true },
-        tags_publico: [{ type: String }],
         lanzamiento_pago: [{ type: String, ref: "lanzamiento" }],
 
         preguntas: [{
