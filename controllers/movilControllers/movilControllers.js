@@ -14,6 +14,8 @@ registerM = (req, res) => {
             model["ip_disp"].push(req.ip);
             register.create(model,(validar)=>{
                 if(validar){
+                    req.session.user = req.body.email;
+                    req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
                     res.status(200).json({status: 200, correct: true});
                 }else{
                     res.status(400).json({status: 400, correct: false});
@@ -30,3 +32,14 @@ registerM = (req, res) => {
 }
 
 module.exports.registerPost = registerM;
+
+inSession = (req,res) => {
+    try {
+        res.status(200).json({session: true});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({session: false});
+    }
+}
+
+module.exports.session = inSession;

@@ -7,6 +7,7 @@ var controllerMovil = require("../controllers/movilControllers/movilControllers"
 router.post("/login", loginController.postlogin);
 router.get("/logout",authMovil,  loginController.logout);
 router.post("/register", controllerMovil.registerPost);
+router.get("/session",authMovil,  controllerMovil.session);
 
 
 module.exports = router;
