@@ -9,11 +9,21 @@ loginAuth = (req, res) => {
             console.log(req.ip + "controller");
             console.log(validar);
             if (validar) {
-                req.session.user = req.body.mail;
-                req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
-                // 6 meses dura la sesion;
-                req.session.role = "user";
-                res.status(200).json({correct: true});
+
+                auth.get("",{email: req.body.mail},1,1,{},(validar,docs,n)=>{
+                    if(validar){
+                        req.session.user = docs[0]["_id"];
+                        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
+                        // 6 meses dura la sesion;
+                        req.session.role = "user";
+                        res.status(200).json({correct: true});
+                    }else{
+                        res.status(400).json({correct: false});
+                    }
+                });
+
+
+               
             } else {
                 console.log("true");
                 res.status(400).json({correct: false});

@@ -10,26 +10,48 @@ class encuestaService extends generalService {
             { ok: "Encuesta eliminada", err: "No se pudo eliminar la encuesta" });
     }
 
-    getEncuestas(mail, cb) {
-
+    deleteEncuesta(id,userid,cb){
         try {
-            this.get("", { email: mail }, 1, 1, {}, (validar, user, count) => {
-                if (validar) {
-                    if (count == 1) {
-                        this.get("", { usuario: user[0]["_id"] }, 0, 1, {}, (validar, encuestas, n) => {
-                            if (validar) {
-                                cb(true, encuestas, n)
-                            } else {
-                                cb(false, [], 0);
+            this.get("",{usuario: userid},0,1,{},(validar,docs,n)=>{
+                if(validar){
+                    let validate = false;
+                    docs.forEach(element => {
+                        if(element["_id"]==id){
+                            validate = true;
+                        }
+                    });
+                    if(validated){
+                        this.delete(id,(validar)=>{
+                            if(validar){
+                                cb(true);
+                            }else{
+                                cb(false);
                             }
                         })
-                    } else {
-                        cb(false, [], 0);
+                    }else{
+                        cb(false);
                     }
+                }else{
+                    cb(false); 
+                }
+            });
+           
+        } catch (error) {
+            console.log(error);
+            cb(false);
+        }
+    }
+
+    getEncuestas(id, cb) {
+
+        try {
+            this.get("", { usuario: id }, 0, 1, {}, (validar, encuestas, n) => {
+                if (validar) {
+                    cb(true, encuestas, n)
                 } else {
                     cb(false, [], 0);
                 }
-            });
+            })
         } catch (error) {
             console.log(error);
             cb(false, [], 0)
@@ -37,11 +59,11 @@ class encuestaService extends generalService {
 
     }
 
-    insertEncuestaOrUpdateEncuesta(model,ip, cb){
+    insertEncuestaOrUpdateEncuesta(model,ip,id, cb){
         try {
             if(model.usuario == ""){
                 if(model.preguntas.length > 0){
-                    
+                model["usuario"] = id
                 model["ip_disp"] = ip
                 this.create(model,(validar)=>{
                     if(validar){
@@ -56,6 +78,8 @@ class encuestaService extends generalService {
                 // crear
             }else{
                 if(model.preguntas.length > 0){
+                    if(model["_id"] == id){
+                        
                     let key = model["_id"]
                     let newmodel = model;
                     delete newmodel["_id"]
@@ -65,7 +89,10 @@ class encuestaService extends generalService {
                         }else{
                             cb(false);
                         }
-                    })
+                    });
+                    }else{
+                        cb(false);
+                    }
                 }else{
                     cb(false);
                 }

@@ -9,72 +9,101 @@ registerM = (req, res) => {
     try {
         // hacer validaciones
         console.log("saldo:", req.body.saldo);
-        if(req.body.saldo == undefined){
+        if (req.body.saldo == undefined) {
             console.log(req.body);
             let model = req.body;
             model["saldo"] = 0.0;
             model["ip_disp"] = [];
             model["ip_disp"].push(req.ip);
-            register.create(model,(validar)=>{
-                if(validar){
-                    req.session.user = req.body.email;
-                    req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
-                    res.status(200).json({status: 200, correct: true});
-                }else{
-                    res.status(400).json({status: 400, correct: false});
+            register.create(model, (validar) => {
+                if (validar) {
+                    register.get("", { email: req.body.email }, 1, 1, {}, (validar, docs, n) => {
+                        if (validar) {
+                            req.session.user = docs[0]._id;
+                            req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
+                            res.status(200).json({ status: 200, correct: true });
+                        } else {
+                            res.status(400).json({ status: 400, correct: false });
+                        }
+                    });
+
+                } else {
+                    res.status(400).json({ status: 400, correct: false });
                 }
             });
-        }else{
-            res.status(500).json({status: 503, correct: false});
+        } else {
+            res.status(500).json({ status: 503, correct: false });
         }
     } catch (error) {
         console.log(error)
-        res.status(500).json({status: 500, correct: false});
+        res.status(500).json({ status: 500, correct: false });
     }
 
 }
 
 module.exports.registerPost = registerM;
 
-inSession = (req,res) => {
+inSession = (req, res) => {
     try {
-        res.status(200).json({session: true});
+        res.status(200).json({ session: true });
     } catch (error) {
         console.log(error);
-        res.status(500).json({session: false});
+        res.status(500).json({ session: false });
     }
 }
 
 module.exports.session = inSession;
 
-getEncuestas = (req,res) => {
+getEncuestas = (req, res) => {
     try {
-        encuestaService.getEncuestas(req.session.user,(validar,docs,n)=>{
-            if(validar){
-                res.status(200).json({correct: true,encuestas:docs, n: n});
-            }else{
-                res.status(400).json({correct: false,encuestas: [],n: 0});
+        encuestaService.getEncuestas(req.session.user, (validar, docs, n) => {
+            if (validar) {
+                res.status(200).json({ correct: true, encuestas: docs, n: n });
+            } else {
+                res.status(400).json({ correct: false, encuestas: [], n: 0 });
             }
         })
     } catch (error) {
-        res.status(500).json({correct: false,encuestas: [], n: 0});   
+        res.status(500).json({ correct: false, encuestas: [], n: 0 });
     }
-    
+
 }
 
 module.exports.encuestas = getEncuestas;
 
-createEncuesta = (req,res) => {
+createEncuesta = (req, res) => {
     try {
-        encuestaService.insertEncuestaOrUpdateEncuesta(req.body.modelo,req.ip,(validar)=>{
-            if(validar){
-                res.status(200).json({status: 200,correct: true});
-            }else{
-                res.status(400).json({status: 500, correct: false});
+
+        encuestaService.insertEncuestaOrUpdateEncuesta(req.body.modelo, req.ip,req.session.user, (validar) => {
+            if (validar) {
+                res.status(200).json({ status: 200, correct: true });
+            } else {
+                res.status(400).json({ status: 500, correct: false });
             }
         })
-        
+
     } catch (error) {
-        res.status(500).json({status: 500, correct: false})
+        res.status(500).json({ status: 500, correct: false })
     }
 }
+
+module.exports.createOrUpdate = createEncuesta
+
+
+deleteEncuesta = (req, res) => {
+    try {
+
+        encuestaService.deleteEncuesta(req.body.id, req.session.user, (validar) => {
+            if (validar) {
+                res.status(200).json({ status: 200, correct: true });
+            } else {
+                res.status(400).json({ status: 500, correct: false });
+            }
+        })
+
+    } catch (error) {
+        res.status(500).json({ status: 500, correct: false })
+    }
+}
+
+module.exports.deleteEncuesta = deleteEncuesta
