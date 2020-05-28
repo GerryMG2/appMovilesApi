@@ -1117,9 +1117,7 @@ class MasterPage extends React.Component {
                 nombre_encuesta: { type: String, require: true },
                 descrip_encuesta: { type: String, required: true },
                 ip_disp: { type: String },
-                tags_publico: [{ type: String }],
                 lanzamiento_pago: [{ type: String, ref: "lanzamiento", fieldsave: "_id", fieldShow: "_id" }],
-
                 preguntas: [{
                     encabezado: { type: String, require: true },
                     tipo: { type: String, required: true },
@@ -1134,7 +1132,6 @@ class MasterPage extends React.Component {
                 nombre_encuesta: null,
                 descrip_encuesta: null,
                 ip_disp: null,
-                tags_publico: [null],
                 lanzamiento_pago: [null],
 
                 preguntas: [{
@@ -1155,6 +1152,7 @@ class MasterPage extends React.Component {
                 encuesta: { type: String, ref: "encuesta", fieldsave: "_id", fieldShow: "nombre_encuesta" },
                 cantidad_usuario: { type: Number, required: true },
                 pagada: { type: Boolean, required: true },
+                tags_publico: [{ type: String }],
                 cantidad_respuesta: { type: Number, required: true },
                 encuesta_terminada: { type: Boolean, required: true },
                 costo: { type: Number }
@@ -1164,6 +1162,7 @@ class MasterPage extends React.Component {
                 encuesta: null,
                 cantidad_usuario: null,
                 pagada: false,
+                tags_publico: [null],
                 cantidad_respuesta: null,
                 encuesta_terminada: false,
                 costo: null
