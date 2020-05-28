@@ -1,6 +1,9 @@
 const service = require("../../services/noRelacionalServices/usuarioService");
 const register = new service();
 
+const service = require("../../services/noRelacionalServices/encuestaService");
+const encuestaService = new service();
+
 registerM = (req, res) => {
 
     try {
@@ -43,3 +46,20 @@ inSession = (req,res) => {
 }
 
 module.exports.session = inSession;
+
+getEncuestas = (req,res) => {
+    try {
+        encuestaService.getEncuestas(req.session.user,(validar,docs,n)=>{
+            if(validar){
+                res.status(200).json({correct: true,encuestas:docs, n: n})
+            }else{
+                res.status(400).json({correct: false,encuestas: [],n: 0})
+            }
+        })
+    } catch (error) {
+        res.status(500).json({correct: false,encuestas: [], n: 0})       
+    }
+    
+}
+
+module.exports.encuestas = getEncuestas;
