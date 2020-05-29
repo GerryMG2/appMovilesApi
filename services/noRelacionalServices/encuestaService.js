@@ -61,10 +61,14 @@ class encuestaService extends generalService {
 
     insertEncuestaOrUpdateEncuesta(model,ip,id, cb){
         try {
-            if(model.usuario == ""){
+            console.log(model)
+            console.log(ip)
+            console.log("usuario",id);
+            if(model["_id"] == ""){
                 if(model.preguntas.length > 0){
-                model["usuario"] = id
-                model["ip_disp"] = ip
+                model["usuario"] = id;
+                model["ip_disp"] = ip;
+                delete model["_id"];
                 this.create(model,(validar)=>{
                     if(validar){
                         cb(true)

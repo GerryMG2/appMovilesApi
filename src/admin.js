@@ -671,7 +671,7 @@ class CreateOrUpdateField extends React.Component {
                             item = [
                                 <div class="form-group form-check" >
                                     <label for={path} class="form-check-label">{newPath}</label>
-                                    <input type="checkbox" id={path} name={path} tipo="Boolean" value={newPath} class="checkboxfield form-control" onChange={this.handleChangeC} />
+                                    <input type="checkbox" id={path} name={path} tipo="Boolean" defaultChecked={dato} value={dato} class="checkboxfield form-control" onChange={this.handleChangeC} />
                                 </div>
                             ];
                             return item;
@@ -734,7 +734,7 @@ class CreateOrUpdateField extends React.Component {
                                 item = [
                                     <div class="form-group form-check" >
                                         <label class="form-check-label" for={path}>{newPath}</label>
-                                        <input type="checkbox" id={path} name={path} class="form-control" tipo="Boolean" value={newPath} onChange={this.handleChangeC} />
+                                        <input type="checkbox" id={path} name={path} class="form-control" defaultChecked={dato} tipo="Boolean" value={dato} onChange={this.handleChangeC} />
                                     </div>
                                 ];
                                 return item;
@@ -792,7 +792,7 @@ class CreateOrUpdateField extends React.Component {
                                 item = [
                                     <div class="form-group form-check">
                                         <label class="form-check-label" for={path}>{newPath}</label >
-                                        <input type="checkbox" id={path} name={path} tipo="Boolean" value={newPath} class="form-control" onChange={this.handleChangeC} />
+                                        <input type="checkbox" id={path} name={path} tipo="Boolean" defaultChecked={dato} value={newPath} class="form-control" onChange={this.handleChangeC} />
                                     </div>]
                                     ;
                                 return item;
