@@ -57,6 +57,7 @@ class service {
 
     update(id, newModel, cb) {
         try {
+            console.log(newModel);
             var conditions = {};
             conditions[this.modelId] = id;
             this.model.updateOne(conditions, newModel, (err, doc) => {

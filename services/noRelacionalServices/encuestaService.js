@@ -14,10 +14,10 @@ class encuestaService extends generalService {
         try {
             this.get("",{usuario: userid},0,1,{},(validar,docs,n)=>{
                 if(validar){
-                    let validate = false;
+                    let validated = false;
                     docs.forEach(element => {
                         if(element["_id"]==id){
-                            validate = true;
+                            validated = true;
                         }
                     });
                     if(validated){
@@ -82,15 +82,18 @@ class encuestaService extends generalService {
                 // crear
             }else{
                 if(model.preguntas.length > 0){
-                    if(model["_id"] == id){
-                        
+                    console.log("lengt ok")
+                    if(model["usuario"] == id){
+                        console.log("id ok")
                     let key = model["_id"]
                     let newmodel = model;
                     delete newmodel["_id"]
                     this.update(key, newmodel,(validar,msg)=>{
+                        console.log("mesnaje:",msg);
                         if(validar){
                             cb(true);
                         }else{
+                            console.log("es falso")
                             cb(false);
                         }
                     });

@@ -75,6 +75,7 @@ createEncuesta = (req, res) => {
     try {
 
         encuestaService.insertEncuestaOrUpdateEncuesta(req.body.modelo, req.ip,req.session.user, (validar) => {
+            console.log("validar:", validar);
             if (validar) {
                 res.status(200).json({ status: 200, correct: true });
             } else {
@@ -83,6 +84,7 @@ createEncuesta = (req, res) => {
         })
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({ status: 500, correct: false })
     }
 }
