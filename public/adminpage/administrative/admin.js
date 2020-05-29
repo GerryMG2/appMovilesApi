@@ -1018,7 +1018,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                         { "for": path, "class": "form-check-label" },
                                         newPath
                                     ),
-                                    React.createElement("input", { type: "checkbox", id: path, name: path, tipo: "Boolean", value: newPath, "class": "checkboxfield form-control", onChange: this.handleChangeC })
+                                    React.createElement("input", { type: "checkbox", id: path, name: path, tipo: "Boolean", defaultChecked: dato, value: dato, "class": "checkboxfield form-control", onChange: this.handleChangeC })
                                 )];
                                 return _item2;
                                 break;
@@ -1103,7 +1103,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                             { "class": "form-check-label", "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "checkbox", id: path, name: path, "class": "form-control", tipo: "Boolean", value: _newPath, onChange: this.handleChangeC })
+                                        React.createElement("input", { type: "checkbox", id: path, name: path, "class": "form-control", defaultChecked: dato, tipo: "Boolean", value: dato, onChange: this.handleChangeC })
                                     )];
                                     return _item4;
 
@@ -1182,7 +1182,7 @@ var CreateOrUpdateField = function (_React$Component8) {
                                             { "class": "form-check-label", "for": path },
                                             _newPath
                                         ),
-                                        React.createElement("input", { type: "checkbox", id: path, name: path, tipo: "Boolean", value: _newPath, "class": "form-control", onChange: this.handleChangeC })
+                                        React.createElement("input", { type: "checkbox", id: path, name: path, tipo: "Boolean", defaultChecked: dato, value: _newPath, "class": "form-control", onChange: this.handleChangeC })
                                     )];
                                     return _item6;
 
