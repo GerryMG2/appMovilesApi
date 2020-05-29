@@ -1,4 +1,4 @@
-# Ask&Answer
+Ask&Answer
 
 Aplicación móvil para crear encuestas.
 
