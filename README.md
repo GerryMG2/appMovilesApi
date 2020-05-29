@@ -1,4 +1,4 @@
-Project Title
+# Ask&Answer
 
 Aplicación móvil para crear encuestas.
 
@@ -70,6 +70,4 @@ Ahora, cuando corres la aplicación móvil, puedes loguearte o bien crear un nue
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-
+V 0.1.0
