@@ -10,6 +10,21 @@ class encuestaService extends generalService {
             { ok: "Encuesta eliminada", err: "No se pudo eliminar la encuesta" });
     }
 
+    getEncuestaToResolve(encuestaId, cb){
+        try {
+            this.get("", { _id: encuestaId }, 1, 1, {}, (validar, encuestas, n) => {
+                if (validar) {
+                    cb(true, encuestas, n)
+                } else {
+                    cb(false, [], 0);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            cb(false, [], 0)
+        }
+    }
+
     deleteEncuesta(id,userid,cb){
         try {
             this.get("",{usuario: userid},0,1,{},(validar,docs,n)=>{
@@ -51,7 +66,7 @@ class encuestaService extends generalService {
                 } else {
                     cb(false, [], 0);
                 }
-            })
+            });
         } catch (error) {
             console.log(error);
             cb(false, [], 0)

@@ -4,6 +4,9 @@ const register = new service();
 const EncuestaService = require("../../services/noRelacionalServices/encuestaService");
 const encuestaService = new EncuestaService();
 
+const ResponderEncuesta = require("../../services/noRelacionalServices/respuestaService");
+const responderService = new ResponderEncuesta();
+
 registerM = (req, res) => {
 
     try {
@@ -89,7 +92,7 @@ createEncuesta = (req, res) => {
     }
 }
 
-module.exports.createOrUpdate = createEncuesta
+module.exports.createOrUpdate = createEncuesta;
 
 
 deleteEncuesta = (req, res) => {
@@ -108,4 +111,37 @@ deleteEncuesta = (req, res) => {
     }
 }
 
-module.exports.deleteEncuesta = deleteEncuesta
+module.exports.deleteEncuesta = deleteEncuesta;
+
+getEncuestaToResolve = (req, res) => {
+    try {
+        encuestaService.getEncuestaToResolve(req.query.encuestaid, (validar, docs, n) => {
+            if (validar) {
+                res.status(200).json({ correct: true, encuestas: docs, n: n });
+            } else {
+                res.status(400).json({ correct: false, encuestas: [], n: 0 });
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ correct: false, encuestas: [], n: 0 });
+    }
+}
+
+module.exports.getEncuestaToResolve = getEncuestaToResolve;
+
+CrearRespuesta = (req,res) => {
+    try {
+        console.log(req.body);
+        responderService.ResponderEncuesta(req.body,req.session.user,Date().toString(),req.ip,(validar)=>{
+            if(validar){
+                res.status(200).json({ status: 200, correct: true });
+            }else{
+                res.status(400).json({ status: 500, correct: false });
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ status: 500, correct: false })
+    }
+}
+
+module.exports.crearRespuesta = CrearRespuesta;

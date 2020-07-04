@@ -9,6 +9,24 @@ class respuestaService  extends generalService{
             {ok: "Respuesta actualizada", err: "No se pudo actualizar la respuesta"},
             {ok: "Respuesta eliminada", err: "No se pudo eliminar la respuesta"});
     }
+
+    ResponderEncuesta(modelo,idUsuario,fecha,ip,cb){
+        try {
+            modelo["usuario"] = idUsuario;
+            modelo["fecha"] = fecha;
+            modelo["ip_disp"] = ip;
+            this.create(modelo,(validar)=>{
+                if(validar){
+                    cb(true);
+                }else{
+                    cb(false);
+                }
+            });
+        } catch (error) {
+            cb(false);
+        }
+       
+    }
 }
 
 module.exports = respuestaService;

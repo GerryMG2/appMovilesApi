@@ -11,6 +11,7 @@ router.get("/session",authMovil,  controllerMovil.session);
 router.get("/encuestas",authMovil,  controllerMovil.encuestas);
 router.post("/encuesta/createorupdate",authMovil,  controllerMovil.createOrUpdate);
 router.delete("/encuestas/delete",authMovil,  controllerMovil.deleteEncuesta);
-
+router.get("/encuestas/resolve",authMovil,  controllerMovil.getEncuestaToResolve);
+router.post("/encuestas/resolve",authMovil,  controllerMovil.crearRespuesta);
 
 module.exports = router;
