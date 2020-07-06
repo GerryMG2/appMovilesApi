@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "toreactjsx": "npx babel --watch src/web.js --out-dir public/webApp/ --presets react-app/prod"
+    "toreactjsx2": "npx babel --watch src/web.js --out-dir public/webApp/ --presets react-app/prod",
+    "toreactjsx": "npx babel --watch src --out-dir public/adminpage/administrative/  --presets react-app/prod"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -19,6 +20,7 @@
     "mongoose": "^5.9.9",
     "morgan": "~1.9.1",
     "pg-promise": "^10.5.1",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "stripe": "^8.68.0"
   }
 }

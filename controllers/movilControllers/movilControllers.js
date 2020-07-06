@@ -7,6 +7,10 @@ const encuestaService = new EncuestaService();
 const ResponderEncuesta = require("../../services/noRelacionalServices/respuestaService");
 const responderService = new ResponderEncuesta();
 
+const cliente = require("../../transactional/transactionServices/clienteService");
+const clienteService = new cliente();
+
+
 registerM = (req, res) => {
 
     try {
@@ -20,10 +24,18 @@ registerM = (req, res) => {
             model["ip_disp"].push(req.ip);
             register.create(model, (validar) => {
                 if (validar) {
+                    
                     register.get("", { email: req.body.email }, 1, 1, {}, (validar, docs, n) => {
                         if (validar) {
                             req.session.user = docs[0]._id;
                             req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
+                            clienteService.create({id_usuario: docs[0]._id },(validar)=>{
+                                if(validar){
+                                    console.log("Se creo el cliente!")
+                                }else{
+                                    console.log("Hubo un error al crear el cliente");
+                                }
+                            });
                             res.status(200).json({ status: 200, correct: true });
                         } else {
                             res.status(400).json({ status: 400, correct: false });

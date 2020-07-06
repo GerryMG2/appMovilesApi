@@ -94,13 +94,25 @@ var Field = function (_React$Component) {
             }
             console.log(variableText);
             console.log(this.props.path);
-            return React.createElement(
-                "div",
-                { "class": "ObjectFieldShow", onDoubleClick: function onDoubleClick() {
-                        return _this2.props.ondclick(variableText, _this2.props.tipo, _this2.props.path);
-                    } },
-                variableText
-            );
+            console.log(typeof variableText == "boolean");
+            if (typeof variableText == "boolean") {
+                console.log("es booleano");
+                return React.createElement(
+                    "div",
+                    { "class": "ObjectFieldShow", onDoubleClick: function onDoubleClick() {
+                            return _this2.props.ondclick(variableText, _this2.props.tipo, _this2.props.path);
+                        } },
+                    variableText.toString() + ""
+                );
+            } else {
+                return React.createElement(
+                    "div",
+                    { "class": "ObjectFieldShow", onDoubleClick: function onDoubleClick() {
+                            return _this2.props.ondclick(variableText, _this2.props.tipo, _this2.props.path);
+                        } },
+                    variableText
+                );
+            }
         }
     }]);
 
@@ -1855,7 +1867,7 @@ var MasterPage = function (_React$Component12) {
             listaM.push({
                 urlname: "encuestaT", dbType: "postgres", nombre: "encuesta", modelo: {
 
-                    id_encuesta: { type: "BIGSERIAL", primarykey: true, name: "id_encuesta", modelType: "Number" },
+                    id_encuesta: { type: "BIGSERIAL", primaryKey: true, name: "id_encuesta", modelType: "Number" },
                     id_obj: { type: "VARCHAR(128)", name: "id_obj", modelType: "String" },
                     nombre: { type: "VARCHAR(100)", name: "nombre", modelType: "String" }
                 }, blank: {

@@ -259,6 +259,7 @@ class transactionalModelSQL {
 
     delete(objeId, cb) {
         try {
+            console.log(objeId);
             let conditions = "";
             this.campos.forEach(element => {
                 if (this.modelo[element]["primaryKey"] && objeId[this.modelo[element]["name"]] != null) {

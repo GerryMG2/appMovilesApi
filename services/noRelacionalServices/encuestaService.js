@@ -27,7 +27,7 @@ class encuestaService extends generalService {
 
     deleteEncuesta(id,userid,cb){
         try {
-            this.get("",{usuario: userid},0,1,{},(validar,docs,n)=>{
+            this.get("",{usuario: userid,_id: id},1,1,{},(validar,docs,n)=>{
                 if(validar){
                     let validated = false;
                     docs.forEach(element => {

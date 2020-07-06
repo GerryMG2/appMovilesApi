@@ -30,9 +30,18 @@ class Field extends React.Component {
         }
         console.log(variableText);
         console.log(this.props.path);
-        return (
-            <div class="ObjectFieldShow" onDoubleClick={() => this.props.ondclick(variableText, this.props.tipo, this.props.path)}>{variableText}</div>
-        )
+        console.log(typeof(variableText) == "boolean");
+        if(typeof(variableText) == "boolean"){
+            console.log("es booleano");
+            return (
+                <div class="ObjectFieldShow" onDoubleClick={() => this.props.ondclick(variableText, this.props.tipo, this.props.path)}>{variableText.toString() + ""}</div>
+            )
+        }else{
+            return (
+                <div class="ObjectFieldShow" onDoubleClick={() => this.props.ondclick(variableText, this.props.tipo, this.props.path)}>{variableText}</div>
+            )
+        }
+        
 
     }
 
@@ -1353,7 +1362,7 @@ class MasterPage extends React.Component {
         listaM.push({
             urlname: "encuestaT", dbType: "postgres", nombre: "encuesta", modelo: {
 
-                id_encuesta: { type: "BIGSERIAL", primarykey: true, name: "id_encuesta", modelType: "Number" },
+                id_encuesta: { type: "BIGSERIAL", primaryKey: true, name: "id_encuesta", modelType: "Number" },
                 id_obj: { type: "VARCHAR(128)", name: "id_obj", modelType: "String" },
                 nombre: { type: "VARCHAR(100)", name: "nombre", modelType: "String" }
             }, blank: {
