@@ -29,6 +29,20 @@ class GenericDB {
             });
     }
 
+    querryId(qr,cb){
+        GenericDB.db.one(qr)
+        .then(function (data) {
+            console.log("Connection -> query() -> data: ", data);
+            // success;
+            cb(true, data);
+        })
+        .catch(function (error) {
+            console.log("Connection -> error -> error: ", error);
+            // error;
+            cb(false, {});
+        });
+    }
+
 
 }
 

@@ -13,5 +13,8 @@ router.post("/encuesta/createorupdate",authMovil,  controllerMovil.createOrUpdat
 router.delete("/encuestas/delete",authMovil,  controllerMovil.deleteEncuesta);
 router.get("/encuestas/resolve",authMovil,  controllerMovil.getEncuestaToResolve);
 router.post("/encuestas/resolve",authMovil,  controllerMovil.crearRespuesta);
+router.get("/lanzamientos",authMovil,  controllerMovil.getlanzamientos);
+router.post("/lanzamientos/createorupdate",authMovil,  controllerMovil.createLanzamiento);
+router.delete("/lanzamientos/delete",authMovil,  controllerMovil.deleteLanzamiento);
 
 module.exports = router;

@@ -189,6 +189,53 @@ class transactionalModelSQL {
         }
     }
 
+    createWithId(model, cb) {
+        try {
+            console.log("entra a creacion");
+            let fields = "";
+            let valores = "";
+
+            let keyFields = Object.keys(model);
+            keyFields.forEach(element => {
+                fields = fields.concat(`${this.modelo[element]["name"]},`);
+                if (this.modelo[element]["modelType"] == "Number" ||
+                    this.modelo[element]["modelType"] == "Boolean") {
+                    valores = valores.concat(`${model[element]},`);
+                } else {
+                    valores = valores.concat(`'${model[element]}',`);
+                }
+
+            });
+            var camposReturn = "";
+            console.log(this.campos);
+            this.campos.forEach(element=>{
+                if(this.modelo[element]["primaryKey"]){
+                    console.log("es primary key");
+                    camposReturn = camposReturn.concat(`${this.modelo[element]["name"]},`);
+                }
+            });
+            console.log("returning:", camposReturn);
+            fields = fields.slice(0, -1);
+            valores = valores.slice(0, -1);
+            camposReturn = camposReturn.slice(0,-1);
+            let resultQuerry = `INSERT INTO ${this.table_name}(${fields}) values(${valores}) RETURNING ${camposReturn};`;
+
+            console.log(resultQuerry);
+            this.conx.querryId(resultQuerry, (validar, datos) => {
+                if (validar) {
+                    console.log("Datos: ", datos);
+                    cb(true,datos);
+                } else {
+                    cb(false,{});
+                }
+            });
+
+        } catch (error) {
+            console.log(error);
+            cb(false,{});
+        }
+    }
+
     update(objId, model, cb) {
         try {
             let conditions = "";

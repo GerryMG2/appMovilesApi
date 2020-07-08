@@ -19,8 +19,16 @@ class lanzamientoService  extends generalService{
                     model["pagada"] = false;
                     let multiplier = Math.ceil(model["tags_publico"].length / 3)
                     model["costo"] = model["cantidad_usuario"] * 0.02 * multiplier;
-                    cantidad_respuesta = 0;
-                    encuesta_terminada = false;
+                    model["cantidad_respuesta"] = 0;
+                    model["encuesta_terminada"] = false;
+                    delete model["_id"];
+                    this.create(model,(validar)=>{
+                        if(validar){
+                            cb(true);
+                        }else{
+                            cb(false);
+                        }
+                    });
                 }else{
                     console.log("el numero es menor a 250 o no es entero");
                     cb(false);
@@ -85,7 +93,7 @@ class lanzamientoService  extends generalService{
 
     getLanzamientos(id, cb){
         try {
-            this.get("",{usuario: id},1,1,{},(validar, docs, n)=>{
+            this.get("",{usuario: id},0,1,{},(validar, docs, n)=>{
                 if(validar){
                     cb(true, docs, n)
                 }else{

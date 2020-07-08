@@ -10,6 +10,7 @@ var apiTRouter = require('./routes/apiTransaccional');
 var adminPageRouter = require("./routes/adminPage");
 var movilRouter = require("./routes/movilRoutes");
 var webRouter = require("./routes/web")
+var paymentRouter = require("./routes/payment");
 
 //configs
 const {APP_KEY} = require("./config");
@@ -45,12 +46,13 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }))
-
+app.use('/',paymentRouter);
 app.use('/api', apiRouter);
 app.use('/apit', apiTRouter);
 app.use('/admin', adminPageRouter);
 app.use('/movil', movilRouter);
 app.use('/web',webRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

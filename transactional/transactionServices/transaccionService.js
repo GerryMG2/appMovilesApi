@@ -8,6 +8,7 @@ class transaccionService extends transaccionModel {
 
     }
 
+
 }
 
 module.exports = transaccionService;
