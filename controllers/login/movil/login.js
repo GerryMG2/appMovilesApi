@@ -16,9 +16,14 @@ loginAuth = (req, res) => {
                         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
                         // 6 meses dura la sesion;
                         req.session.role = "user";
-                        res.status(200).json({correct: true});
+                        var user = docs[0]
+                        delete user["_id"];
+                        delete user["password"];
+                        delete user["ip_disp"];
+                        delete user["carrito"];
+                        res.status(200).json({correct: true, usuario: user});
                     }else{
-                        res.status(400).json({correct: false});
+                        res.status(400).json({correct: false, usuario: {}});
                     }
                 });
 
@@ -26,12 +31,12 @@ loginAuth = (req, res) => {
                
             } else {
                 console.log("true");
-                res.status(400).json({correct: false});
+                res.status(400).json({correct: false, usuario: {}});
             }
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({correct: false});
+        res.status(500).json({correct: false,usuario: {}});
     }
 
 }

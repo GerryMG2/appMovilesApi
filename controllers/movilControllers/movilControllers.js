@@ -38,7 +38,12 @@ registerM = (req, res) => {
                             req.session.user = docs[0]._id;
                             req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
                             req.session.role = "user";
-                            res.status(200).json({ status: 200, correct: true });
+                            var user = docs[0]
+                            delete user["_id"];
+                            delete user["password"];
+                            delete user["ip_disp"];
+                            delete user["carrito"];
+                            res.status(200).json({ status: 200, correct: true, usuario: user });
                             usuarioNomalService.create({id_obj: docs[0]._id},(validarU)=>{
                                 if(validarU){
                                     console.log("se creo el usuario postgres");
@@ -82,20 +87,20 @@ registerM = (req, res) => {
                             
                             
                         } else {
-                            res.status(400).json({ status: 400, correct: false });
+                            res.status(400).json({ status: 400, correct: false,usuario: {} });
                         }
                     });
 
                 } else {
-                    res.status(400).json({ status: 400, correct: false });
+                    res.status(400).json({ status: 400, correct: false,usuario: {} });
                 }
             });
         } else {
-            res.status(500).json({ status: 503, correct: false });
+            res.status(500).json({ status: 503, correct: false,usuario: {} });
         }
     } catch (error) {
         console.log(error)
-        res.status(500).json({ status: 500, correct: false });
+        res.status(500).json({ status: 500, correct: false ,usuario: {}});
     }
 
 }
@@ -104,10 +109,22 @@ module.exports.registerPost = registerM;
 
 inSession = (req, res) => {
     try {
-        res.status(200).json({ session: true });
+        register.get("",{_id: req.session.user},1,1,{},(validar,doc,n)=>{
+            if(validar){
+                var user = doc[0]
+                delete user["_id"];
+                delete user["password"];
+                delete user["ip_disp"];
+                delete user["carrito"];
+                res.status(200).json({ session: true , usuario: user});
+            }else{
+                res.status(500).json({ session: false , usuario:{}});
+            }
+        });
+        
     } catch (error) {
         console.log(error);
-        res.status(500).json({ session: false });
+        res.status(500).json({ session: false, usuario:{}});
     }
 }
 
