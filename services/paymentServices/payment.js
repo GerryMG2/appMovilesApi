@@ -143,10 +143,10 @@ const createFactura = (id_lanzamiento,monto)=>{
                                                 id_factura: id_transaccion["id_factura"],
                                                 id_servicio: 1,
                                                 id_documento: 2,
-                                                costo: 0.5,
-                                                monto: monto,
-                                                descuento: 0,
-                                                monto_con_descuento: monto,
+                                                costo: parseFloat(0.5),
+                                                monto: parseFloat(monto/100),
+                                                descuento: parseFloat(0),
+                                                monto_con_descuento: parseFloat(monto/100),
                                                 id_descuento: 2
                                             },(validar, id_final)=>{
                                                 if(validar){

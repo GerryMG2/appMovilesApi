@@ -9,13 +9,11 @@ class postgressDB {
             return parseInt(val);
         });
 
-        this.pgp.pg.types.setTypeParser(this.pgp.pg.types.builtins.MONEY,function(val){
-            return parseFloat(val);
-        });
-
-        // this.pgp.pg.types.setTypeParser(this.pgp.pg.types.builtins.TIMESTAMP,function(val){
+        // this.pgp.pg.types.setTypeParser(this.pgp.pg.types.builtins.MONEY,function(val){
         //     return parseFloat(val);
         // });
+
+        
 
         this.pgp.pg.defaults.ssl = true;
         this.db = null;
