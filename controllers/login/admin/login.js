@@ -17,7 +17,7 @@ module.exports.getlogin = loginAdmin;
 
 loginAuth = (req, res) => {
     try {
-        console.log(req);
+        
         auth.validatePass(req.body.username, req.body.password, (validar) => {
             console.log(validar);
             if (validar) {
