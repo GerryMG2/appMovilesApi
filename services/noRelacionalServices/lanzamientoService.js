@@ -18,6 +18,9 @@ class lanzamientoService  extends generalService{
                     model["usuario"] = id;
                     model["pagada"] = false;
                     let multiplier = Math.ceil(model["tags_publico"].length / 3)
+                    if(multiplier == 0){
+                        multiplier = 1;
+                    }
                     model["costo"] = model["cantidad_usuario"] * 0.02 * multiplier;
                     model["cantidad_respuesta"] = 0;
                     model["encuesta_terminada"] = false;
