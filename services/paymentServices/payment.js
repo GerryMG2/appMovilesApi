@@ -97,7 +97,7 @@ const calculateOrderAmount = (items) => {
         serviceLanzamientos.get("",{_id: items[0].id},1,1,{},(validar,docs,n)=>{
             if(validar){
                 console.log("Costo: $", docs[0].costo);
-                resolve(docs[0].costo * 100)
+                resolve((docs[0].costo * 100).toFixed())
             }else{
                 resolve(0)
             }
