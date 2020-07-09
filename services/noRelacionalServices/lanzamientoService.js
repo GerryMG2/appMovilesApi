@@ -21,7 +21,7 @@ class lanzamientoService  extends generalService{
                     if(multiplier == 0){
                         multiplier = 1;
                     }
-                    model["costo"] = model["cantidad_usuario"] * 0.02 * multiplier;
+                    model["costo"] = (model["cantidad_usuario"] * 0.02 * multiplier).toFixed(2);
                     model["cantidad_respuesta"] = 0;
                     model["encuesta_terminada"] = false;
                     delete model["_id"];
