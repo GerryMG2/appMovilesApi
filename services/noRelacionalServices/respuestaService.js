@@ -27,6 +27,22 @@ class respuestaService  extends generalService{
         }
        
     }
+
+    // getDataEncuesta(idUser,idEncuesta,cb){
+    //     try {
+    //         this.get("",{usuario: idUser,idEncuesta: idEncuesta},0,1,{},(validar,docs,n)=>{
+    //             if(validar){
+    //                 docs.array.forEach(element => {
+                        
+    //                 });
+    //             }else{
+    //                 cb(false);
+    //             }
+    //         });
+    //     } catch (error) {
+    //         cb(false);
+    //     }
+    // }
 }
 
 module.exports = respuestaService;

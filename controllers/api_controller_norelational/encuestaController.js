@@ -9,3 +9,5 @@ class encuestaController extends genericController{
 }
 
 module.exports = encuestaController;
+
+
