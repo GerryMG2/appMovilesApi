@@ -5,8 +5,8 @@ var web = function(req, res, next) {
       
       return next();
     } else{
-      
-        res.status(403).end()
+        req.session.redirect = req.originalUrl;
+        res.redirect("/web/login");
     } 
   };
   

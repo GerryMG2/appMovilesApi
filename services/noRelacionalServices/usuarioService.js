@@ -15,6 +15,7 @@ class usuarioService  extends generalService{
         try {
             this.get("",{email: email}, 1, 1, {}, (validar, users, total) => {
                 if(validar && total == 1){
+                    console.log(password + " " + users[0].password );
                     if(password == users[0].password){
                         cb(true);
                         

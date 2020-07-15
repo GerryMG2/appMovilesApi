@@ -18,7 +18,7 @@ module.exports.getlogin = loginAdmin;
 loginAuth = (req, res) => {
     try {
         console.log(req.body);
-        auth.validarContra(req.body.mail, req.body.password, req.ip, (validar) => {
+        auth.validarContra(req.body.mail, req.body.password.toString(), req.ip, (validar) => {
             console.log(req.ip + "controller");
             console.log(validar);
             if (validar) {
@@ -29,7 +29,14 @@ loginAuth = (req, res) => {
                         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 31 * 6;
                         // 6 meses dura la sesion;
                         req.session.role = "user";
-                        res.redirect("/web/main");
+                        if(req.session.redirect){
+                            var red = req.session.redirect;
+                            delete req.session.redirect;
+                            res.redirect(red);
+                        }else{
+                            res.redirect("/web/main");
+                        }
+                        
                     }else{
                         res.render("webApp/loginweb.pug",  { msg: "Error en los datos.", alerta: "alert alert-danger"  });
                     }

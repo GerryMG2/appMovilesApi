@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var authMovil = require("../security/movilsecurity/auth");
+var authWeb = require("../security/websecurity/auth")
 const payment = require("../controllers/paymentController");
 const { Router } = require('express');
 
@@ -16,6 +17,6 @@ router.get("/terms",(req,res)=>{
     res.render("webApp/terms.pug",{});
 });
 
-router.get("/donwload/:id",payment.donwloadData);
+router.get("/donwload/:id",authWeb,payment.donwloadData);
 
 module.exports = router;

@@ -19,12 +19,15 @@ const pay = (req,res) =>{
 
 module.exports.pay = pay;
 
-const getEncuestaData = (req,res) => {
+const getEncuestaData = async (req,res) => {
     data.getEncuestaData(req.session.user,req.params.id,(validar, buffer)=>{
+        console.log("validar:",validar)
         if(validar){
-            res.sendFile(buffer);
+            res.writeHead(200, [['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']]);
+            res.end(buffer);
+            
         }else{
-            res.end();
+            res.status(500).send("Imposiblle to send Data");
         }
     })
 };
